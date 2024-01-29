@@ -1,0 +1,8 @@
+# See https://docs.pytest.org/en/7.4.x/explanation/goodpractices.html
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openlcb"
+version = "0.0.1"
