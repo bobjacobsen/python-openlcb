@@ -24,3 +24,12 @@ class Message :
 
     def __str__(self) :
         return "Message ("+self.mti.name+")"
+        
+    def __eq__ (lhs, rhs) :
+        if rhs == None : return False
+        if rhs.mti != lhs.mti : return False
+        if rhs.source != lhs.source : return False
+        if rhs.destination != lhs.destination : return False
+        if rhs.data != lhs.data : return False
+        return True
+        

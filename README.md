@@ -15,8 +15,9 @@ python3.10 pythonolcb/example_frame_interface.py
 python3.10 pythonolcb/example_message_interface.py
 python3.10 pythonolcb/example_datagram_transfer.py
 python3.10 pythonolcb/example_memory_transfer.py
+python3.10 pythonolcb/example_node_implementation.py
 ```
 
-These will require editing to have the right host name, port number, and in some cases the right remote node ID for your hardware configuration. See the top of the files.
+These will require editing to have the right host name, port number, and in some cases the right node IDs for your hardware configuration. See the top of the files.
 
 For an overview of the structure, see [this diagram](doc/Overview.png) of the example programs
