@@ -1,48 +1,55 @@
 # Demo of using the datagram service to send and receive a datagram
-
-# specify connection information
-host = "192.168.16.212"
-port = 12021
-localNodeID = "05.01.01.01.03.01"
-farNodeID   = "09.00.99.03.00.35"
-
-from tcpsocket import TcpSocket
-s = TcpSocket()
-s.connect(host, port)
+from openlcb.tcpsocket import TcpSocket
 
 from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canbus.canframe import CanFrame
+# from canbus.canframe import CanFrame
 from canbus.canlink import CanLink
-from controlframe import ControlFrame
+# from openlcb.controlframe import ControlFrame
 from openlcb.nodeid import NodeID
 from openlcb.datagramservice import (
-    DatagramWriteMemo,
-    DatagramReadMemo,
+    # DatagramWriteMemo,
+    # DatagramReadMemo,
     DatagramService,
 )
 from openlcb.memoryservice import (
-    MemoryReadMemo,
-    MemoryWriteMemo,
+    # MemoryReadMemo,
+    # MemoryWriteMemo,
     MemoryService,
 )
 from openlcb.localnodeprocessor import LocalNodeProcessor
 from openlcb.pip import PIP
 from openlcb.snip import SNIP
+from openlcb.node import Node
 
-print("RR, SR are raw socket interface receive and send; RL, SL are link interface; RM, SM are message interface")
+# specify connection information
+host = "192.168.16.212"
+port = 12021
+localNodeID = "05.01.01.01.03.01"
+farNodeID = "09.00.99.03.00.35"
 
-def sendToSocket(string) :
+s = TcpSocket()
+s.connect(host, port)
+
+print("RR, SR are raw socket interface receive and send;"
+      " RL, SL are link interface; RM, SM are message interface")
+
+
+def sendToSocket(string):
     print("      SR: "+string)
     s.send(string)
 
-def printFrame(frame) :
-    print("   RL: "+str(frame) )
+
+def printFrame(frame):
+    print("   RL: "+str(frame))
+
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
-def printMessage(message) :
+
+def printMessage(message):
     print("RM: "+str(message)+" from "+str(message.source))
+
 
 canLink = CanLink(NodeID(localNodeID))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
@@ -51,27 +58,44 @@ canLink.registerMessageReceivedListener(printMessage)
 datagramService = DatagramService(canLink)
 canLink.registerMessageReceivedListener(datagramService.process)
 
-# create a call-back to print datagram contents when received
+
 def printDatagram(memo):
-    print ("Datagram receive call back: "+str(memo.data))
-    return False # means we did not send reply to this datagram - let the MemoryService do that
+    """create a call-back to print datagram contents when received
+
+    Args:
+        memo (_type_): _description_
+
+    Returns:
+        bool: Always False (True would mean we sent a reply to the datagram,
+            but let the MemoryService do that).
+    """
+    print("Datagram receive call back: {}".format(memo.data))
+    return False
+
+
 datagramService.registerDatagramReceivedListener(printDatagram)
 
 memoryService = MemoryService(datagramService)
 
+
 # createcallbacks to get results of memory read
-def memoryReadSuccess(memo) :
+def memoryReadSuccess(memo):
     print("successful memory read: "+str(memo.data))
-def memoryReadFail(memo) :
+
+
+def memoryReadFail(memo):
     print("memory read failed: "+str(memo.data))
 
+
 # create a node and connect it update
-# This is a very minimal node, which just takes part in the low-level common protocols
-localNode = Node(NodeID(localNodeID),
+# This is a very minimal node, which just takes part in the low-level common
+# protocols
+localNode = Node(
+    NodeID(localNodeID),
     SNIP("PythonOlcbNode", "example_node_implementation",
-           "0.1", "0.2","User Name Here", "User Description Here" ),
+         "0.1", "0.2", "User Name Here", "User Description Here"),
     set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL, PIP.DATAGRAM_PROTOCOL])
-    )
+)
 
 localNodeProcessor = LocalNodeProcessor(canLink, localNode)
 canLink.registerMessageReceivedListener(localNodeProcessor.process)

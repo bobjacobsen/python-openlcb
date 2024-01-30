@@ -1,24 +1,25 @@
-# demo of access to and from the message layer, i.e. down through the link layer
-# This is an interface in terms of OpenLCB messages.
+'''
+demo of access to and from the message layer, i.e. down through the link layer
+
+This is an interface in terms of OpenLCB messages.
+'''
+from openlcb.tcpsocket import TcpSocket
+
+from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+# from canbus.canframe import CanFrame
+from canbus.canlink import CanLink
+# from openlcb.controlframe import ControlFrame
+from openlcb.nodeid import NodeID
+from openlcb.message import Message
+from openlcb.mti import MTI
 
 # specify connection information
 host = "192.168.16.212"
 port = 12021
 localNodeID = "05.01.01.01.03.01"
 
-from tcpsocket import TcpSocket
-
 s = TcpSocket()
 s.connect(host, port)
-
-from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-# from canbus.canframe import CanFrame
-from canbus.canlink import CanLink
-# from controlframe import ControlFrame
-from openlcb.nodeid import NodeID
-from openlcb.message import Message
-from openlcb.mti import MTI
-
 
 print("RR, SR are raw socket interface receive and send; RL,"
       " SL are link interface; RM, SM are message interface")

@@ -253,7 +253,8 @@ class DatagramService:
             return memo
 
         # did not find one
-        logging.error("Did not match memo to message \(message)")
+        logging.error("Did not match memo to message {}"
+                      "".format(message))
         return None  # this will prevent firther processing
 
     def sendNextDatagramFromQueue(self):

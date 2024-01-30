@@ -1,20 +1,21 @@
-# demo of access to and from the link layer.
-# This is an interface in terms of CAN frames.
+'''
+Demo of access to and from the link layer.
+This is an interface in terms of CAN frames.
+'''
+
+from openlcb.tcpsocket import TcpSocket
+from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from canbus.canframe import CanFrame
+from openlcb.controlframe import ControlFrame
 
 # specify connection information
 host = "192.168.16.212"
 port = 12021
-
-from openlcb.tcpsocket import TcpSocket
-
 s = TcpSocket()
 s.connect(host, port)
 
-from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canbus.canframe import CanFrame
-from controlframe import ControlFrame
-
-print("RR, SR are raw socket interface receive and send; RL, SL are link (frame) interface")
+print("RR, SR are raw socket interface receive and send;"
+      " RL, SL are link (frame) interface")
 
 
 def sendToSocket(string):
