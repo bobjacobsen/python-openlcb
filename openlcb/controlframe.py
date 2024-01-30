@@ -1,9 +1,13 @@
-# an Enum representing the various kinds of CAN control frames.
+"""
+An Enum representing the various kinds of CAN control frames.
+These are link-layer concepts, so are here instead of CanFrame.
+"""
 
 from enum import Enum
 
-# these are link-layer concepts, so below here instead of CanFrame
-class ControlFrame(Enum) : 
+
+class ControlFrame(Enum):
+    '''link-layer control frame'''
     RID = 0x0700
     AMD = 0x0701
     AME = 0x0702
@@ -12,7 +16,7 @@ class ControlFrame(Enum) :
     EIR1 = 0x00711
     EIR2 = 0x00712
     EIR3 = 0x00713
-    
+
     # note these two don't code the entire control field value (i.e. there are arguments in the lower bits)
     CID  =  0x4000
     Data = 0x18000

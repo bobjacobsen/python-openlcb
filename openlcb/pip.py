@@ -1,19 +1,18 @@
 '''
-//
-//  PIP.swift
-//
-//  Created by Bob Jacobsen on 6/1/22.
-//
-/// Defines the various protocol bits as a enum, and
-/// provides a routine for converting a numeric value to a set of enum constants.
-///
+based on PIP.swift
+Created by Bob Jacobsen on 6/1/22.
+
+Defines the various protocol bits as a enum, and
+provides a routine for converting a numeric value to a set of enum constants.
 '''
 
 from enum import Enum
 
-class PIP(Enum) :
-    
-    # Coded as a 32-bit values instead of the 24-bit values in the standard to give expansion room
+
+class PIP(Enum):
+    """Coded as a 32-bit values
+    instead of the 24-bit values in the standard to give expansion room.
+    """
     SIMPLE_PROTOCOL                        = 0x80_00_00_00
     DATAGRAM_PROTOCOL                      = 0x40_00_00_00
     STREAM_PROTOCOL                        = 0x20_00_00_00
@@ -38,35 +37,53 @@ class PIP(Enum) :
     # get a list of all enum entries
     def list():
         return list(map(lambda c: c, PIP))
-    
+
     # return an array of strings found in an int value
-    def contentsNamesFromInt(contents) :
+    def contentsNamesFromInt(contents):
         retval = []
-        for pip in PIP.list() :
-            if (pip.value & contents == pip.value) :
+        for pip in PIP.list():
+            if (pip.value & contents == pip.value):
                 retval.append(pip.name)
         return retval
 
     # return an array of strings for all values included in a collection
-    def contentsNamesFromList(contents) : 
+    def contentsNamesFromList(contents):
         retval = []
-        for pip in contents :
+        for pip in contents:
             retval.append(pip.name.replace("_", " ").title())
         return retval
-    
-    # Get a set of contents from a single numeric input
-    def setContentsFromInt(input ) : 
+
+    def setContentsFromInt(input):
+        """Get a set of contents from a single numeric input
+
+        Args:
+            input (_type_): _description_
+
+        Returns:
+            set: _description_
+        """
         retVal = []
-        for val in PIP.list() :
-            if (val.value & input != 0) :
+        for val in PIP.list():
+            if (val.value & input != 0):
                 retVal.append(val)
         return set(retVal)
-    
-    # set contents from a list of numeric inputs
-    def setContentsFromList(raw) : 
+
+    def setContentsFromList(raw):
+        """set contents from a list of numeric inputs
+
+        Args:
+            raw (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         data = 0
-        if (len(raw) > 0 ) : data |= ((raw[0]) << 24 ) 
-        if (len(raw) > 1 ) : data |= ((raw[1]) << 16 ) 
-        if (len(raw) > 2 ) : data |= ((raw[2]) <<  8 ) 
-        if (len(raw) > 3 ) : data |= ((raw[3])       ) 
+        if (len(raw) > 0):
+            data |= ((raw[0]) << 24)
+        if (len(raw) > 1):
+            data |= ((raw[1]) << 16)
+        if (len(raw) > 2):
+            data |= ((raw[2]) << 8)
+        if (len(raw) > 3):
+            data |= ((raw[3]))
         return PIP.setContentsFromInt(data)

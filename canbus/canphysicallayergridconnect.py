@@ -1,7 +1,7 @@
 '''
 //
 //  CanPhysicalLayerGridConnect.swift
-//  
+//
 //
 //  Created by Bob Jacobsen on 6/14/22.
 //
@@ -13,30 +13,30 @@
 ///  -      :X19170365N020112FE056C;
 '''
 
-from canphysicallayer import *
+from canbus.canphysicallayer import CanPhysicalLayer
 
 class CanPhysicalLayerGridConnect(CanPhysicalLayer) :
-        
+
     def __init__( self, callback) :
         CanPhysicalLayer.__init__(self)
         self.canSendCallback = callback
         self.inboundBuffer = []
-        
+
     def setCallBack(self, callback ) :
         self.canSendCallback = callback
-    
+
     def sendCanFrame(self, frame) :
         output  = ":X{:08X}N".format(frame.header)
         for byte in frame.data :
             output += "{:02X}".format(byte)
         output += ";\n"
         self.canSendCallback(output)
-    
-    
+
+
     # Receive a string from the outside link to be parsed
     def receiveString(self, string) :
         self.receiveChars(string.encode("ASCII"))
-    
+
     # Provide characters from the outside link to be parsed
     def receiveChars(self, data) :
         self.inboundBuffer += data
@@ -66,10 +66,10 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer) :
                         outData += [part1<<4 | part2]
                         lastByte += 2
                     # lastByte is index of ; in this message
-                    
+
                     cf = CanFrame(header, outData)
                     self.fireListeners(cf)
 
             # shorten buffer by removing the processed message
             self.inboundBuffer = self.inboundBuffer[lastByte:]
-  
+

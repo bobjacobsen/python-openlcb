@@ -1,13 +1,15 @@
 
 import unittest
 
-from physicallayer import PhysicalLayer
-
-class TestPhysicalLayerClass(unittest.TestCase) :
+from openlcb.physicallayer import PhysicalLayer
 
 
-    def testExample(self) :
+class TestPhysicalLayerClass(unittest.TestCase):
+
+    def testExample(self):
+        # FIXME: finish this
         pass
+
 
 if __name__ == '__main__':
     unittest.main()

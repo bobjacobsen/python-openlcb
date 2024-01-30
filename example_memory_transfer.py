@@ -10,13 +10,21 @@ from tcpsocket import TcpSocket
 s = TcpSocket()
 s.connect(host, port)
 
-from canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canframe import CanFrame
-from canlink import *
+from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+# from canbus.canframe import CanFrame
+from canbus.canlink import CanLink
 from controlframe import ControlFrame
-from nodeid import *
-from datagramservice import *
-from memoryservice import *
+from openlcb.nodeid import NodeID
+from openlcb.datagramservice import (
+    # DatagramWriteMemo,
+    # DatagramReadMemo,
+    DatagramService,
+)
+from openlcb.memoryservice import (
+    MemoryReadMemo,
+    # MemoryWriteMemo,
+    MemoryService,
+)
 
 print("RR, SR are raw socket interface receive and send; RL, SL are link interface; RM, SM are message interface")
 
@@ -24,13 +32,13 @@ def sendToSocket(string) :
     print("      SR: "+string)
     s.send(string)
 
-def printFrame(frame) : 
+def printFrame(frame) :
     print("   RL: "+str(frame) )
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
-def printMessage(message) : 
+def printMessage(message) :
     print("RM: "+str(message)+" from "+str(message.source))
 
 canLink = CanLink(NodeID(localNodeID))
@@ -66,7 +74,7 @@ canPhysicalLayerGridConnect.physicalLayerUp()
 def memoryRead() :
     import time
     time.sleep(1)
-    
+
     # read 64 bytes from the CDI space starting at address zero
     memMemo = MemoryReadMemo(NodeID(farNodeID), 64, 0xFF, 0, memoryReadFail, memoryReadSuccess)
     memoryService.requestMemoryRead(memMemo)

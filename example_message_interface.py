@@ -11,26 +11,35 @@ from tcpsocket import TcpSocket
 s = TcpSocket()
 s.connect(host, port)
 
-from canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canframe import CanFrame
-from canlink import *
-from controlframe import ControlFrame
-from nodeid import *
+from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+# from canbus.canframe import CanFrame
+from canbus.canlink import CanLink
+# from controlframe import ControlFrame
+from openlcb.nodeid import NodeID
+from openlcb.message import Message
+from openlcb.mti import MTI
 
-print("RR, SR are raw socket interface receive and send; RL, SL are link interface; RM, SM are message interface")
 
-def sendToSocket(string) :
+print("RR, SR are raw socket interface receive and send; RL,"
+      " SL are link interface; RM, SM are message interface")
+
+
+def sendToSocket(string):
     print("      SR: "+string)
     s.send(string)
 
-def printFrame(frame) : 
-    print("   RL: "+str(frame) )
+
+def printFrame(frame):
+    print("   RL: "+str(frame))
+
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
-def printMessage(msg) : 
+
+def printMessage(msg):
     print("RM: "+str(msg)+" from "+str(msg.source))
+
 
 canLink = CanLink(NodeID(localNodeID))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)

@@ -1,11 +1,12 @@
 import unittest
 
-from canframe import CanFrame
-from nodeid import NodeID
+from canbus.canframe import CanFrame
+from openlcb.nodeid import NodeID
 
-class TestCanFrameClass(unittest.TestCase) :
 
-    def testInit(self) :
+class TestCanFrameClass(unittest.TestCase):
+
+    def testInit(self):
         frame1 = CanFrame(0, [])
         self.assertEqual(frame1.header, 0x0_000_000)
         self.assertEqual(frame1.data, [])
@@ -14,11 +15,11 @@ class TestCanFrameClass(unittest.TestCase) :
         self.assertEqual(frame2.header, 0x1234)
         self.assertEqual(frame2.data, [])
 
-        frame3 = CanFrame(0x123456, [1,2,3])
+        frame3 = CanFrame(0x123456, [1, 2, 3])
         self.assertEqual(frame3.header, 0x123456)
-        self.assertEqual(frame3.data, [1,2,3])
-    
-    def testCID(self) :
+        self.assertEqual(frame3.data, [1, 2, 3])
+
+    def testCID(self):
         cidFrame40 = CanFrame(4, NodeID(0x00_00_00_00_00_00), 0)
         self.assertEqual(cidFrame40.header, 0x14_000_000)
         self.assertEqual(cidFrame40.data, [])
@@ -39,10 +40,11 @@ class TestCanFrameClass(unittest.TestCase) :
         self.assertEqual(cidFrame7.header, 0x17_123_010)
         self.assertEqual(cidFrame7.data, [])
 
-    def testControlFrame(self) :
+    def testControlFrame(self):
         frame0703 = CanFrame(0x0701, 0x123)
         self.assertEqual(frame0703.header, 0x10701123)
         self.assertEqual(frame0703.data, [])
-        
+
+
 if __name__ == '__main__':
     unittest.main()

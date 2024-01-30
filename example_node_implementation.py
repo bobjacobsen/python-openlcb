@@ -10,16 +10,24 @@ from tcpsocket import TcpSocket
 s = TcpSocket()
 s.connect(host, port)
 
-from canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canframe import CanFrame
-from canlink import *
+from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from canbus.canframe import CanFrame
+from canbus.canlink import CanLink
 from controlframe import ControlFrame
-from nodeid import *
-from datagramservice import *
-from memoryservice import *
-from localnodeprocessor import *
-from pip import *
-from snip import *
+from openlcb.nodeid import NodeID
+from openlcb.datagramservice import (
+    DatagramWriteMemo,
+    DatagramReadMemo,
+    DatagramService,
+)
+from openlcb.memoryservice import (
+    MemoryReadMemo,
+    MemoryWriteMemo,
+    MemoryService,
+)
+from openlcb.localnodeprocessor import LocalNodeProcessor
+from openlcb.pip import PIP
+from openlcb.snip import SNIP
 
 print("RR, SR are raw socket interface receive and send; RL, SL are link interface; RM, SM are message interface")
 
@@ -27,13 +35,13 @@ def sendToSocket(string) :
     print("      SR: "+string)
     s.send(string)
 
-def printFrame(frame) : 
+def printFrame(frame) :
     print("   RL: "+str(frame) )
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
-def printMessage(message) : 
+def printMessage(message) :
     print("RM: "+str(message)+" from "+str(message.source))
 
 canLink = CanLink(NodeID(localNodeID))
@@ -59,12 +67,12 @@ def memoryReadFail(memo) :
 
 # create a node and connect it update
 # This is a very minimal node, which just takes part in the low-level common protocols
-localNode = Node(NodeID(localNodeID), 
+localNode = Node(NodeID(localNodeID),
     SNIP("PythonOlcbNode", "example_node_implementation",
            "0.1", "0.2","User Name Here", "User Description Here" ),
     set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL, PIP.DATAGRAM_PROTOCOL])
     )
-    
+
 localNodeProcessor = LocalNodeProcessor(canLink, localNode)
 canLink.registerMessageReceivedListener(localNodeProcessor.process)
 
