@@ -148,7 +148,9 @@ class MemoryService:
         # datagram must has a command value
         if len(dmemo.data) < 2:
             logging.error("Memory service datagram too short:"
-                          " \(dmemo.data.count, privacy: .public)")
+                          " {}".format(dmemo.data.count))
+            # TODO: ^ more necessary to show same output as Swift? Formerly:
+            #   " \(dmemo.data.count, privacy: .public)")
             self.service.negativeReplyToDatagram(dmemo, 0x1041)
             return True  # error, but for our service; sent negative reply
         # Acknowledge the datagram

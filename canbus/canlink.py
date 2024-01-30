@@ -52,8 +52,8 @@ class CanLink(LinkLayer):
             case ControlFrame.LinkRestarted:
                 self.handleReceivedLinkRestarted(frame)
             case ControlFrame.LinkCollision, ControlFrame.LinkError:
-                logging.warning("Unexpected error report \(frame.header,"
-                                " format:.hex(minDigits: 8))")
+                logging.warning("Unexpected error report {:08X}"
+                                "".format(frame.header))
             case ControlFrame.LinkDown:
                 self.handleReceivedLinkDown(frame)
             case ControlFrame.CID:
@@ -248,7 +248,10 @@ class CanLink(LinkLayer):
                         logging.warning(
                             "Dropping non-start datagram frame"
                             " without accumulation started:"
-                            " \(frame, privacy: .public)"
+                            " {}".format(frame)
+                            # TODO: ^ more necessary to show same output
+                            #   as Swift? Formerly:
+                            #   " \(frame, privacy: .public)"
                         )
                         return  # early return to stop processing of this frame
 
@@ -397,8 +400,8 @@ class CanLink(LinkLayer):
                         frame = CanFrame(header, content)
                         self.link.sendCanFrame(frame)
                 else:
-                    logging.warning("Don't know alias for destination"
-                                    " = \(msg.destination ?? NodeID(0))")
+                    logging.warning("Don't know alias for destination = {}"
+                                    "".format(msg.destination or NodeID(0)))
             else:
                 #    global still can hold data; assume length is correct by
                 #    protocol send the resulting frame
@@ -551,7 +554,8 @@ class CanLink(LinkLayer):
             if okMTI is not None:
                 return okMTI
             else:
-                logging.warning("unhandled canMTI: \(frame), marked Unknown")
+                logging.warning("unhandled canMTI: {}, marked Unknown"
+                                "".format(frame))
                 return MTI.Unknown
 
         elif (frameType >= 2 and 5 >= frameType):
@@ -559,7 +563,8 @@ class CanLink(LinkLayer):
             return MTI.Datagram
         else:
             #    not handling reserver and stream type except to log
-            logging.warning("unhandled canMTI: \(frame), marked Unknown")
+            logging.warning("unhandled canMTI: {}, marked Unknown"
+                            "".format(frame))
             return MTI.Unknown
 
     class AccumKey:
