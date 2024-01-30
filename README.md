@@ -43,6 +43,9 @@ python3.10 -m pip install --user pytest
 python3.10 -m pytest
 # or to auto-detect test and run with standard log level:
 # python3.10 -m pytest tests
+
+# or to use with only unittest not pytest:
+# python3.10 test_all.py
 ```
 
 
