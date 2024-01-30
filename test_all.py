@@ -2,34 +2,36 @@ import unittest
 
 # WARNING is normal during testing, but ERROR is not
 import logging
-logging.basicConfig(level=logging.ERROR, format='%(name)s %(levelname)s %(message)s')
+logging.basicConfig(level=logging.ERROR,
+                    format='%(name)s %(levelname)s %(message)s')
 
-from eventid_test import *
-from nodeid_test import *
-from node_test import *
+from tests.test_eventid import *
+from tests.test_nodeid import *
+from tests.test_node import *
 
-from canframe_test import *
+from tests.test_canframe import *
 
-from physicallayer_test import *
-from canphysicallayer_test import *
-from canphysicallayergridconnect_test import *
+from tests.test_physicallayer import *
+from tests.test_canphysicallayer import *
+from tests.test_canphysicallayergridconnect import *
 
-from mti_test import *
-from message_test import *
+from tests.test_mti import *
+from tests.test_message import *
 
-from linklayer_test import *
-from canlink_test import *
+from tests.test_linklayer import *
+from tests.test_canlink import *
 
-from datagramservice_test import *
+from tests.test_datagramservice import *
 
-from memoryservice_test import *
+from tests.test_memoryservice import *
 
-from snip_test import *
-from pip_test import *
+from tests.test_snip import *
+from tests.test_pip import *
 
-from processor_test import *
+from tests.test_processor import *
 
-from localnodeprocessor_test import *
+from tests.test_localnodeprocessor import *
+
 
 if __name__ == '__main__':
     unittest.main()
