@@ -140,4 +140,4 @@ class LocalNodeProcessor(Processor):
     # private method
     def errorMessageReceived(self, message, node):
         # these are just logged until we have more complex interactions
-       logging.info("received unexpected {}".format(message))
+        logging.info("received unexpected {}".format(message))

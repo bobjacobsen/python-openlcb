@@ -1,5 +1,11 @@
 '''
 Demo of using the datagram service to send and receive a datagram
+
+Usage:
+python3 example_datagram_transfer.py [ip_address]
+
+Options:
+ip_address            (optional) defaults to a hard-coded test address
 '''
 import threading
 
@@ -17,6 +23,13 @@ from openlcb.datagramservice import (
 # specify connection information
 host = "192.168.16.212"
 port = 12021
+
+if __name__ == "__main__":
+    # global host  # only necessary if this is moved to a main/other function
+    import sys
+    if len(sys.argv) > 1:
+        host = sys.argv[1]
+
 localNodeID = "05.01.01.01.03.01"
 farNodeID = "09.00.99.03.00.35"
 s = TcpSocket()
@@ -40,7 +53,7 @@ canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
 
 def printMessage(message):
-    print("RM: "+str(message)+" from "+str(message.source))
+    print("RM: {} from {}".format(message, message.source))
 
 
 canLink = CanLink(NodeID(localNodeID))
@@ -65,7 +78,7 @@ def datagramReceiver(memo):
     Returns:
         bool: Always True (means we sent the reply to this datagram)
     """
-    print("Datagram receive call back: "+str(memo.data))
+    print("Datagram receive call back: {}".format(memo.data))
     datagramService.positiveReplyToDatagram(memo)
     return True
 
@@ -101,7 +114,7 @@ thread.start()
 
 # process resulting activity
 while True:
-    input = s.receive()
-    print("      RR: "+input)
+    received = s.receive()
+    print("      RR: {}".format(received))
     # pass to link processor
-    canPhysicalLayerGridConnect.receiveString(input)
+    canPhysicalLayerGridConnect.receiveString(received)

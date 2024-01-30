@@ -1,5 +1,11 @@
 '''
 Demo of using the datagram service to send and receive a datagram
+
+Usage:
+python3 example_memory_transfer.py [ip_address]
+
+Options:
+ip_address            (optional) defaults to a hard-coded test address
 '''
 
 
@@ -27,6 +33,12 @@ port = 12021
 localNodeID = "05.01.01.01.03.01"
 farNodeID = "09.00.99.03.00.35"
 
+if __name__ == "__main__":
+    # global host  # only necessary if this is moved to a main/other function
+    import sys
+    if len(sys.argv) > 1:
+        host = sys.argv[1]
+
 s = TcpSocket()
 s.connect(host, port)
 
@@ -35,12 +47,12 @@ print("RR, SR are raw socket interface receive and send;"
 
 
 def sendToSocket(string):
-    print("      SR: "+string)
+    print("      SR: {}".format(string))
     s.send(string)
 
 
 def printFrame(frame):
-    print("   RL: "+str(frame))
+    print("   RL: {}".format(frame))
 
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
@@ -48,7 +60,7 @@ canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
 
 def printMessage(message):
-    print("RM: "+str(message)+" from "+str(message.source))
+    print("RM: {} from {}".format(message, message.source))
 
 
 canLink = CanLink(NodeID(localNodeID))
@@ -69,7 +81,7 @@ def printDatagram(memo):
         bool: Always False (True would mean we sent a reply to this datagram,
             but let MemoryService do that).
     """
-    print("Datagram receive call back: "+str(memo.data))
+    print("Datagram receive call back: {}".format(memo.data))
     return False
 
 
@@ -84,11 +96,11 @@ def memoryReadSuccess(memo):
     Args:
         memo (_type_): _description_
     """
-    print("successful memory read: "+str(memo.data))
+    print("successful memory read: {}".format(memo.data))
 
 
 def memoryReadFail(memo):
-    print("memory read failed: "+str(memo.data))
+    print("memory read failed: {}".format(memo.data))
 
 
 #######################
@@ -119,7 +131,7 @@ thread.start()
 
 # process resulting activity
 while True:
-    input = s.receive()
-    print("      RR: "+input)
+    received = s.receive()
+    print("      RR: {}".format(received))
     # pass to link processor
-    canPhysicalLayerGridConnect.receiveString(input)
+    canPhysicalLayerGridConnect.receiveString(received)

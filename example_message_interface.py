@@ -2,6 +2,12 @@
 demo of access to and from the message layer, i.e. down through the link layer
 
 This is an interface in terms of OpenLCB messages.
+
+Usage:
+python3 example_message_interface.py [ip_address]
+
+Options:
+ip_address            (optional) defaults to a hard-coded test address
 '''
 from openlcb.tcpsocket import TcpSocket
 
@@ -18,6 +24,12 @@ host = "192.168.16.212"
 port = 12021
 localNodeID = "05.01.01.01.03.01"
 
+if __name__ == "__main__":
+    # global host  # only necessary if this is moved to a main/other function
+    import sys
+    if len(sys.argv) > 1:
+        host = sys.argv[1]
+
 s = TcpSocket()
 s.connect(host, port)
 
@@ -26,12 +38,12 @@ print("RR, SR are raw socket interface receive and send; RL,"
 
 
 def sendToSocket(string):
-    print("      SR: "+string)
+    print("      SR: {}".format(string))
     s.send(string)
 
 
 def printFrame(frame):
-    print("   RL: "+str(frame))
+    print("   RL: {}".format(frame))
 
 
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
@@ -39,7 +51,7 @@ canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
 
 def printMessage(msg):
-    print("RM: "+str(msg)+" from "+str(msg.source))
+    print("RM: {} from {}".format(msg, msg.source))
 
 
 canLink = CanLink(NodeID(localNodeID))
@@ -54,12 +66,12 @@ canPhysicalLayerGridConnect.physicalLayerUp()
 
 # send an VerifyNodes message to provoke response
 message = Message(MTI.Verify_NodeID_Number_Global, NodeID(localNodeID), None)
-print("SM: "+str(message))
+print("SM: {}".format(message))
 canLink.sendMessage(message)
 
 # process resulting activity
 while True:
-    input = s.receive()
-    print("      RR: "+input)
+    received = s.receive()
+    print("      RR: {}".format(received))
     # pass to link processor
-    canPhysicalLayerGridConnect.receiveString(input)
+    canPhysicalLayerGridConnect.receiveString(received)
