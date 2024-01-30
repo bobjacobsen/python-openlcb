@@ -1,16 +1,6 @@
-
 A Python implementation of [OpenLCB](http://www.openlcb.org)/[LCC](https://www.nmra.org/lcc) based on the [LccTools](https://apps.apple.com/sr/app/lcctools/id1640295587) app's [Swift implementation](https://github.com/bobjacobsen/OpenlcbLibrary) as of January 2024.
 
 Requires Python 3.10 or later.
-
-Optionally you can create a virtual environment to ensure you evaluate what packages are necessary to run and not interfere with requirements testing of your other Python programs:
-
-Linux:
-```
-mkdir -p ~/.virtualenvs
-python3.10 -m venv ~/.virtualenvs/pytest-env
-source ~/.virtualenvs/pytest-env/bin/activate
-``` 
 
 Windows note: In various instructions in this project's documentation,
 if you are using Windows you must install Python 3.10 or higher from
@@ -20,6 +10,21 @@ install.
   "py -3" (or simply "python" if you only have Python 3 and not 2
   installed).
 
+
+## Optional Virtual Environment
+Optionally you can create a virtual environment. The purpose would be
+to ensure you evaluate what packages are necessary to run this project
+(and not interfere with similar requirements testing of your other
+Python projects).
+
+Linux:
+```
+mkdir -p ~/.virtualenvs
+python3.10 -m venv ~/.virtualenvs/pytest-env
+source ~/.virtualenvs/pytest-env/bin/activate
+``` 
+
+Windows:
 ```
 md %USERPROFILE%\virtualenvs
 py -3 -m venv %USERPROFILE%\virtualenvs\pytest-env
@@ -28,6 +33,7 @@ py -3 -m venv %USERPROFILE%\virtualenvs\pytest-env
 
 On any OS, type "deactivate" or close the command line window to exit
 the virtual environment.
+
 
 ## Testing
 To run the unit test suite:
@@ -51,7 +57,12 @@ python3.10 example_memory_transfer.py
 python3.10 example_node_implementation.py
 ```
 
-These will require editing to have the right host name, port number, and in some cases the right node IDs for your hardware configuration. See the top of the files.
-- You can override the hard-coded IP address by passing it as the first argument on the command line.
+These will require the right host name and port number; and if different Node ID(s) are necessary for your hardware configuration, they would have to be edited manually in the example py file(s) (or parameterized in a program based on the example(s)): See near top of the files, below imports.
 
-For an overview of the structure, see [this diagram](doc/Overview.png) of the example programs
+You can override the hard-coded IP address and port by passing it as the first argument on the command line. Example:
+```
+python3.10 example_node_implementation.py 192.168.1.40
+python3.10 example_node_implementation.py 192.168.1.40:12021
+```
+
+For an overview of the structure, see [this diagram](doc/Overview.png) of the example programs.

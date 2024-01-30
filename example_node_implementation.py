@@ -2,10 +2,12 @@
 Demo of using the datagram service to send and receive a datagram
 
 Usage:
-python3 example_node_implementation.py [ip_address]
+python3 example_node_implementation.py [host|host:port]
 
 Options:
-ip_address            (optional) defaults to a hard-coded test address
+host|host:port            (optional) Set the address (or using a colon,
+                          the address and port). Defaults to a hard-coded test
+                          address and port.
 '''
 from openlcb.tcpsocket import TcpSocket
 
@@ -35,11 +37,38 @@ port = 12021
 localNodeID = "05.01.01.01.03.01"
 farNodeID = "09.00.99.03.00.35"
 
+# region same code as other examples
+
+
+def usage():
+    print(__doc__, file=sys.stderr)
+
+
 if __name__ == "__main__":
     # global host  # only necessary if this is moved to a main/other function
     import sys
-    if len(sys.argv) > 1:
+    if len(sys.argv) == 2:
         host = sys.argv[1]
+        parts = host.split(":")
+        if len(parts) == 2:
+            host = parts[0]
+            try:
+                port = int(parts[1])
+            except ValueError:
+                usage()
+                print("Error: Port {} is not an integer.".format(parts[1]),
+                      file=sys.stderr)
+                sys.exit(1)
+        elif len(parts) > 2:
+            usage()
+            print("Error: blank, address or address:port format was expected.")
+            sys.exit(1)
+    elif len(sys.argv) > 2:
+        usage()
+        print("Error: blank, address or address:port format was expected.")
+        sys.exit(1)
+
+# endregion same code as other examples
 
 s = TcpSocket()
 s.connect(host, port)
