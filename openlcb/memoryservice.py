@@ -260,18 +260,34 @@ class MemoryService:
         self.service.sendDatagram(dgReqMemo)
 
     def arrayToInt(self, data):
-        '''Convert an array in MSB-first order to an integer'''
+        """Convert an array in MSB-first order to an integer
+
+        Args:
+            data (Union[bytes,bytearray,list[int]]): MSB-first order encoded
+                32-bit int
+
+        Returns:
+            int: The converted data as a number.
+        """
         result = 0
-        for index in range(0, length-1):
+        for index in range(0, len(data)):
             result = result << 8
             result = result | data[index]
         return result
 
-    # converts an array in MSB-first order to a 64-bit integer
     def arrayToUInt64(self, data):
-        # FIXME: Python resizes ints automatically based on value. Adjust code:
-        result : UInt64 = 0
-        for index in range(0, length-1):
+        """Parse a MSB-first order 64-bit integer
+
+        Args:
+            data (Union[bytes,bytearray,list[int]]): MSB-first order encoded
+                64-bit int
+
+        Returns:
+            int: The converted data as a number.
+        """
+        # FIXME: Python resizes ints automatically based on value.
+        result = 0
+        for index in range(0, len(data)):
             result = result << 8
             result = result | data[index]
         return result
@@ -307,11 +323,11 @@ class MemoryService:
                         ((value >> 40) & 0xff), ((value >> 32) & 0xff),
                         ((value >> 24) & 0xff), ((value >> 16) & 0xff),
                         ((value >> 8) & 0xff), (value & 0xff)]
-            case _ :
+            case _:
                 return []
 
-    # converts a 64-bit integer into an array of given length
     def uInt64ToArray(self, value, length):
+        '''converts a 64-bit integer into an array of given length'''
         match length:
             case 1:
                 return [(value & 0xff)]
