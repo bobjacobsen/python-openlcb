@@ -1,0 +1,50 @@
+# pyproject.toml: See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+# Testing: see https://docs.pytest.org/en/7.4.x/explanation/goodpractices.html
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# [tool.setuptools.packages.find]
+# exclude = ["tests"]
+[tool.setuptools]
+packages = ["openlcb", "canbus"]
+
+[project]
+name = "openlcb"
+description = "A Python implementation of OpenLCB/LCC based on the LccTools app's Swift implementation as of January 2024."
+readme = "README.md"
+license = {file = "LICENSE"}
+# - packaging.python.org recommends a classifier for license if
+#   well-known, but above is also specified since it has a copyright
+#   notice.
+# List of classifiers: https://pypi.org/classifiers/
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Topic :: System :: Hardware",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.10"
+]
+authors = [
+  {name = "Bob Jacobsen"},
+]
+maintainers = [
+  {name = "Bob Jacobsen"}
+]
+version = "0.0.1"
+requires-python = ">= 3.10"
+# dynamic = ["version"]
+# ^ allows version to be overridden by a git tag using
+#   setuptools_scm, or by a __version__ Python attribute.
+#   See https://packaging.python.org/en/latest/guides/single-sourcing-package-version/#single-sourcing-the-version
+# dependencies = [
+# ]
+
+[project.urls]
+# List of names: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#urls
+Repository = "https://github.com/bobjacobsen/PythonOlcbNode"
+Issues = "https://github.com/bobjacobsen/PythonOlcbNode/issues"
+# Changelog = "https://github.com/bobjacobsen/PythonOlcbNode/blob/master/CHANGELOG.md"
+# ^ TODO: Uncomment this if a changelog is added (& change url to match case).
+#   - For a common way to use markdown for it see: https://keepachangelog.com/en/1.1.0/

@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"rewrap.wrappingColumn": 79,
+		"autoDocstring.docstringFormat": "google"
+	}
+}
