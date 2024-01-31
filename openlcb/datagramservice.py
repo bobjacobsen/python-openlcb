@@ -122,16 +122,18 @@ class DatagramService:
         return message.destination == nodeID
 
     def sendDatagram(self, memo):
-        '''Queue a ``DatagramWriteMemo`` to send a datagram to another node on the network.
+        '''Queue a ``DatagramWriteMemo`` to send a datagram to another node
+        on the network.
         '''
         # Make a record of memo for reply
         self.pendingWriteMemos.append(memo)
 
-        # can only have one outstanding at a time, so check it there was already one there.
+        # can only have one outstanding at a time, so check it there was
+        # already one there.
         if len(self.pendingWriteMemos) == 1:
             self.sendDatagramMessage(memo)
 
-    def sendDatagramMessage(self, memo) :
+    def sendDatagramMessage(self, memo):
         '''Send datagram message'''
         message = Message(MTI.Datagram, self.linkLayer.localNodeID,
                           memo.destID, memo.data)
@@ -164,7 +166,8 @@ class DatagramService:
                 actions brought by that datagram that does.
         '''
         # Check that it's to us or a global (for link layer up)
-        if not (message.isGlobal() or self.checkDestID(message, self.linkLayer.localNodeID)):
+        if not (message.isGlobal()
+                or self.checkDestID(message, self.linkLayer.localNodeID)):
             return False
 
         match message.mti:
@@ -239,7 +242,7 @@ class DatagramService:
             return
         else:
             # are there any queued datagrams? If so, send first
-            if len(self.pendingWriteMemos) > 0 :
+            if len(self.pendingWriteMemos) > 0:
                 self.sendNextDatagramFromQueue()
 
     def matchToWriteMemo(self, message):

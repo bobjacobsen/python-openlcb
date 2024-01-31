@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
-		"rewrap.wrappingColumn": 79
+		"rewrap.wrappingColumn": 79,
+		"autoDocstring.docstringFormat": "google"
 	}
 }

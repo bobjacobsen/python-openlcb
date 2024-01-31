@@ -15,7 +15,8 @@ install.
 Optionally you can create a virtual environment. The purpose would be
 to ensure you evaluate what packages are necessary to run this project
 (and not interfere with similar requirements testing of your other
-Python projects).
+Python projects on the same machine, & same user if running pip in
+userspace).
 
 Linux:
 ```
@@ -35,7 +36,22 @@ On any OS, type "deactivate" or close the command line window to exit
 the virtual environment.
 
 
-## Testing
+## Development
+At this time, all development components listed in this section and subsections are optional, though `pytest` can ensure all tests are run as opposed to ones listed in test_all.py.
+
+Using PEP8 formatting can reduce linter output so that various static analysis tools can identify potential issues without many extra issues related to spacing and line length. Avoiding spaces at the end of lines can be automated and also help keep commits clean since others' IDEs may be set to do that.
+
+If using VSCode (or fully open-source VSCodium):
+- Open the workspace file rather than the directory, to load settings for extensions below.
+  - Potentially other settings can be stored here in the future, but avoid putting computer-specific settings such as Python path in there. Use directory or user tab in VSCode settings for such settings instead to prevent causing problems for others using the project file.
+- Some related extensions:
+  - (optional) **ruff**: realtime linting
+  - (optional) **ReWrap**: To wrap comments, select then press Alt+Q
+  - (recommended, reduces commit diffs) **Trailing Spaces** by Shardul Mahadik
+  - (recommended) **autoDocstring**: Type `"""` below a method or class and it will create a Sphinx-style template for you.
+    - The workspace file has `"autoDocstring.docstringFormat": "google"` set since Google style is widely used and comprehensive (documents types etc).
+
+### Testing
 To run the unit test suite:
 ```
 python3.10 -m pip install --user pytest
@@ -49,7 +65,7 @@ python3.10 -m pytest
 ```
 
 
-## Examples
+#### Examples
 There are examples for using the code at various levels of integration:
 ```
 python3.10 example_string_interface.py

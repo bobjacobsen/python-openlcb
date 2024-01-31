@@ -17,7 +17,8 @@ class ControlFrame(Enum):
     EIR2 = 0x00712
     EIR3 = 0x00713
 
-    # note these two don't code the entire control field value (i.e. there are arguments in the lower bits)
+    # note these two don't code the entire control field value (i.e. there are
+    # arguments in the lower bits)
     CID  =  0x4000
     Data = 0x18000
 
@@ -29,4 +30,3 @@ class ControlFrame(Enum):
     LinkError      = 0x20003
     LinkDown       = 0x20004
     UnknownFormat  = 0x21000
-

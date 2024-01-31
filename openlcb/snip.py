@@ -200,7 +200,7 @@ class SNIP:
         self.index += 1
 
     def returnStrings(self):
-        # copy out until the 6th zero byte
+        '''copy out until the 6th zero byte'''
         stop = self.findString(6)
         retval = [0]*stop
         if (stop == 0):

@@ -14,26 +14,51 @@ from openlcb.nodeid import NodeID
 
 
 class Processor:
-    # abstract method to be implemented belpw
-    # accept a Message, adjust state as needed, possibly reply
-    # Returns: True if the contents of the node changed in a way that should be published, i.e. a PIP, SNIP or event model change
+
     def process(self, message, node=None):
+        """abstract method to be implemented below
+        Accept a Message, adjust state as needed, possibly reply.
+
+        Args:
+            message (_type_): _description_
+            node (Optional[_type_]): _description_. Defaults to None.
+
+        Returns:
+            bool: True if the contents of the node changed in a way that should
+                be published, i.e. a PIP, SNIP or event model change
+        """
         pass
 
-    # check whether a message came from a specific nodeID
-    # arg can be either a Node or NodeID
+    # TODO: so maybe add _ to beginning of method names marked "# internal"
+
     # internal
     def checkSourceID(self, message, arg):
+        """check whether a message came from a specific nodeID
+
+        Args:
+            message (_type_): _description_
+            arg (_type_): Node or NodeID
+
+        Returns:
+            _type_: _description_
+        """
         if isinstance(arg, NodeID):
             return message.source == arg
         else:
             # assuming type is Node
             return message.source == arg.id
 
-    # check whether a message is addressed to a specific nodeID
-    # Global messages return false: Not specifically addressed
     # internal
     def checkDestID(self, message, arg):
+        """check whether a message is addressed to a specific nodeID
+
+        Args:
+            message (_type_): _description_
+            arg (_type_): _description_
+
+        Returns:
+            bool: Global messages return false: Not specifically addressed
+        """
         if isinstance(arg, NodeID):
             return message.destination == arg
         else:  # assuming type is Node

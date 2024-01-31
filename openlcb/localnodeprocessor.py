@@ -67,7 +67,7 @@ class LocalNodeProcessor(Processor):
         return False
 
     # private method
-    def linkUpMessage(self, message, node) :
+    def linkUpMessage(self, message, node):
         node.state = Node.State.Initialized
         msgIC = Message(MTI.Initialization_Complete, node.id,
                         node.id.toArray())
@@ -81,7 +81,7 @@ class LocalNodeProcessor(Processor):
         node.state = Node.State.Uninitialized
 
     # private method
-    def verifyNodeIDNumberGlobal(self, message, node) :
+    def verifyNodeIDNumberGlobal(self, message, node):
         if not (len(message.data) == 0 or node.id == NodeID(message.data)):
             return  # not to us
         msg = Message(MTI.Verified_NodeID, node.id, message.source,
@@ -121,7 +121,7 @@ class LocalNodeProcessor(Processor):
         '''
         return
 
-    def unrecognizedMTI(self, message, node) :
+    def unrecognizedMTI(self, message, node):
         '''Handle a message with an unrecognized MTI
         by returning OptionalInteractionRejected
         '''
