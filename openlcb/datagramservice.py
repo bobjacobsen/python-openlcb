@@ -228,7 +228,7 @@ class DatagramService:
 
     def handleLinkQuiesce(self, message):
         '''Link quiesced before outage: stop operation'''
-        quiesced = true
+        quiesced = True
 
     def handleLinkRestarted(self, message):
         '''Link restarted after outage:
