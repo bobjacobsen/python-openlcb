@@ -34,8 +34,8 @@ class LocalNodeProcessor(Processor):
         if not (self.checkDestID(message, node) or message.isGlobal()):
             return False  # not to us
         # specific message handling
-        # FIXME: change bitwise | to logical or?
         match message.mti:
+            # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
             case MTI.Link_Layer_Up:
                 self.linkUpMessage(message, node)
             case MTI.Link_Layer_Down:

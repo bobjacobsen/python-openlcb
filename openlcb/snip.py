@@ -46,7 +46,7 @@ class SNIP:
         '''
         start = self.findString(n)
         len = 0
-        # FIXME: Does match require logical rather than binary operator here?
+        # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
         match n:
             case 0 | 1:
                 len = 41

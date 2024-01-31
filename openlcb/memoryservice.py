@@ -158,6 +158,7 @@ class MemoryService:
 
         # decode if read, write or some other reply
         match dmemo.data[1]:
+            # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
             case 0x50 | 0x51 | 0x52 | 0x53 | 0x58 | 0x59 | 0x5A | 0x5B:
                 # read or read-error reply
 
