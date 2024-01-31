@@ -31,6 +31,7 @@ class SNIP:
         self.index = 0
 
         self.updateSnipDataFromStrings()
+        self.index = 0
 
     # OLCB Strings are fixed length null terminated.
     # We don't (yet) support later versions with e.g. larger strings, etc.
