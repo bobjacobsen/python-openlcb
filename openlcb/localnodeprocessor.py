@@ -60,7 +60,8 @@ class LocalNodeProcessor(Processor):
                 self.simpleNodeIdentInfoRequest(message, node)
             case MTI.Identify_Events_Addressed:
                 self.identifyEventsAddressed(message, node)
-            case MTI.Terminate_Due_To_Error | MTI.Optional_Interaction_Rejected:
+            case (MTI.Terminate_Due_To_Error
+                  | MTI.Optional_Interaction_Rejected):
                 self.errorMessageReceived(message, node)
             case _:
                 self.unrecognizedMTI(message, node)

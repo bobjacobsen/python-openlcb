@@ -117,7 +117,8 @@ class DatagramService:
     def checkDestID(self, message, nodeID):
         '''check whether a message is addressed to a specific nodeID
 
-        Global messages return false: Not specifically addressed
+        Returns:
+            bool: Global messages return False: Not specifically addressed
         '''
         return message.destination == nodeID
 
@@ -162,7 +163,7 @@ class DatagramService:
         '''Processor entry point.
 
         Returns:
-            bool: Always false; a datagram doesn't mutate the node, it's the
+            bool: Always False; a datagram doesn't mutate the node, it's the
                 actions brought by that datagram that does.
         '''
         # Check that it's to us or a global (for link layer up)
@@ -220,6 +221,7 @@ class DatagramService:
             )
 
         currentOutstandingMemo = None
+        # FIXME: unused currentOutstandingMemo. Is any code incomplete here?
 
         # fire the callback
         memo.rejectedReply(memo)
@@ -229,6 +231,7 @@ class DatagramService:
     def handleLinkQuiesce(self, message):
         '''Link quiesced before outage: stop operation'''
         quiesced = True
+        # FIXME: unused quiesced. Is any code incomplete here?
 
     def handleLinkRestarted(self, message):
         '''Link restarted after outage:

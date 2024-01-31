@@ -571,7 +571,7 @@ class TestCanLinkClass(unittest.TestCase):
     # MARK: - Test Remote Node Alias Tracking
     def testAmdAmrSequence(self):
         canPhysicalLayer = CanPhysicalLayerSimulation()
-        canLink = CanLink( NodeID("05.01.01.01.03.01"))
+        canLink = CanLink(NodeID("05.01.01.01.03.01"))
         ourAlias = canLink.localAlias  # 576 with NodeID(0x05_01_01_01_03_01)
         canLink.linkPhysicalLayer(canPhysicalLayer)
 

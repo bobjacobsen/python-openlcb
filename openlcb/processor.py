@@ -57,7 +57,7 @@ class Processor:
             arg (_type_): _description_
 
         Returns:
-            bool: Global messages return false: Not specifically addressed
+            bool: Global messages return False: Not specifically addressed
         """
         if isinstance(arg, NodeID):
             return message.destination == arg

@@ -12,7 +12,7 @@ from openlcb.message import Message
 
 
 class LinkMockLayer(LinkLayer):
-    sentMessages : [Message] = []
+    sentMessages = []
 
     def sendMessage(self, message):
         LinkMockLayer.sentMessages.append(message)
@@ -148,7 +148,7 @@ class DatagramServiceTest(unittest.TestCase):
 
     def testReceiveDatagramOK(self):
         # set up datagram listener
-        receiver  = self.receiveListener
+        receiver = self.receiveListener
         self.service.registerDatagramReceivedListener(receiver)
 
         # receive a datagram

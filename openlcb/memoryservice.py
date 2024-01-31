@@ -89,10 +89,20 @@ class MemoryService:
             self.datagramReceivedListener
         )
 
-    # convert from a space number to either
-    # (false, 1-3 for in command byte) : spaces 0xFF - 0xFD
-    # (true, space number) : spaces 0 - 0xFC
     def spaceDecode(self, space):
+        """convert from a space number to either
+
+        Args:
+            space (_type_): _description_
+
+        Returns:
+            tuple(bool, byte): (False, 1-3 for in command byte) :
+                spaces 0xFF - 0xFD
+                or (True, space number) : spaces 0 - 0xFC
+                (NOTE: type of space may affect type of output)
+        """
+        # TODO: Maybe check type of space & raise TypeError if not something
+        #   valid, whether byte, int, or whatever is ok.
         if space >= 0xFD:
             return (False, space & 0x03)
         else:

@@ -9,12 +9,12 @@ from openlcb.mti import MTI
 from openlcb.message import Message
 
 
-class TestStruct(Processor) :
-    def process(self, message, node) :
-        return false
+class TestStruct(Processor):
+    def process(self, message, node):
+        return False
 
 
-class TestProcessorClass(unittest.TestCase) :
+class TestProcessorClass(unittest.TestCase):
 
     def testCheckSrcID(self):
         node1 = Node(NodeID(1))

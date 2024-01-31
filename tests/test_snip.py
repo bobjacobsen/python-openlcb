@@ -19,7 +19,7 @@ class TestSnipClass(unittest.TestCase):
         self.assertEqual(s.getString(1, 5), "AAAAA")
 
     def testLoadAndGetShort(self):
-        s = SNIP() # init to all zeros
+        s = SNIP()  # init to all zeros
         s.data = [0x41]*253
 
         s.addData([4, 0x41, 0x42, 0x43, 0])  # version + "ABC"

@@ -7,7 +7,7 @@ from openlcb.mti import MTI
 from openlcb.message import Message
 from openlcb.pip import PIP
 from openlcb.node import Node
-from openlcb.processor import Processor
+# from openlcb.processor import Processor
 
 
 class LinkMockLayer(LinkLayer):
@@ -22,7 +22,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
     def setUp(self):
         self.node21 = Node(NodeID(21))
         LinkMockLayer.sentMessages = []
-        self.processor : Processor = LocalNodeProcessor(LinkMockLayer(NodeID(100)))
+        self.processor = LocalNodeProcessor(LinkMockLayer(NodeID(100)))
 
     def testLinkUp(self):
         self.node21.state = Node.State.Uninitialized
