@@ -418,7 +418,7 @@ class CanLink(LinkLayer):
         Returns:
             _type_: _description_
         """
-        nSegments = int((len(data)+7) / 8)
+        nSegments = (len(data)+7) // 8
         # ^ the +7 is since integer division takes the floor value
         if nSegments == 0:
             return [[]]
@@ -452,7 +452,7 @@ class CanLink(LinkLayer):
         '''
         part0 = (alias >> 8) & 0xF
         part1 = alias & 0xFF
-        nSegments = int((len(data)+5) / 6)  # the +5 is since integer division
+        nSegments = (len(data)+5) // 6  # the +5 is since integer division
         #   takes the floor value
         if nSegments == 0:
             return [[part0, part1]]
