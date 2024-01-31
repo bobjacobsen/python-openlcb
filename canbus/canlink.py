@@ -51,7 +51,7 @@ class CanLink(LinkLayer):
                 self.handleReceivedLinkUp(frame)
             case ControlFrame.LinkRestarted:
                 self.handleReceivedLinkRestarted(frame)
-            case ControlFrame.LinkCollision, ControlFrame.LinkError:
+            case ControlFrame.LinkCollision | ControlFrame.LinkError:
                 logging.warning("Unexpected error report {:08X}"
                                 "".format(frame.header))
             case ControlFrame.LinkDown:
@@ -66,7 +66,7 @@ class CanLink(LinkLayer):
                 self.handleReceivedAME(frame)
             case ControlFrame.AMR:
                 self.handleReceivedAMR(frame)
-            case (ControlFrame.EIR0, ControlFrame.EIR1, ControlFrame.EIR2,
+            case (ControlFrame.EIR0 | ControlFrame.EIR1 | ControlFrame.EIR2,
                   ControlFrame.EIR3):
                 pass   # ignored upon receipt
             case ControlFrame.Data:

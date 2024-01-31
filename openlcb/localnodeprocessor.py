@@ -52,7 +52,7 @@ class LocalNodeProcessor(Processor):
             case MTI.Traction_Control_Command | MTI.Traction_Control_Reply:
                 # these are not relevant here
                 pass
-            case MTI.Datagram, MTI.Datagram_Rejected, MTI.Datagram_Received_OK:
+            case MTI.Datagram | MTI.Datagram_Rejected | MTI.Datagram_Received_OK:
                 # datagrams and datagram replies are handled in the
                 # DatagramService
                 pass
