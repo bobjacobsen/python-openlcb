@@ -23,15 +23,13 @@ class TcpLink(LinkLayer):
 
     def __init__(self, localNodeID):  # a NodeID
         self.localNodeID = localNodeID
-        self.state = LinkLayer.State.Initial
-        self.link = None
+        self.linkCall = None
         self.accumulatedParts = {}
         self.nextInternallyAssignedNodeID = 1
         self.accumulatedData = []  # input accumulated until an entire message is present
 
-    def linkPhysicalLayer(self, lpl):  # usually a socket connection
-        self.link = lpl
- 
+    def linkPhysicalLayer(self, lpl):  # usually a socket connection send() method
+        self.linkCall = lpl
  
  
     def receiveListener(self, inputData):  # [] input
@@ -42,6 +40,7 @@ class TcpLink(LinkLayer):
         Args:
             inputData ([int]) : next chunk of the input stream
         """
+        print("receive listener", inputData)
         self.accumulatedData.extend(inputData)
         # Now check it if has one or more complete message.
         while len(self.accumulatedData) > 0 :
@@ -194,7 +193,7 @@ class TcpLink(LinkLayer):
         
         outputBytes.extend(message.data)
         
-        self.link.send(outputBytes)
+        self.linkCall(outputBytes)
        
         
         

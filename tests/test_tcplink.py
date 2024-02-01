@@ -32,6 +32,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
         
         linkLayer.linkUp()
 
@@ -44,6 +45,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
         
         linkLayer.linkRestarted()
 
@@ -56,6 +58,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
         
         linkLayer.linkDown()
 
@@ -68,6 +71,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
     
         messageText =  [0x80, 0x00,                      # full message
                         0x00, 0x00, 20,
@@ -89,6 +93,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
     
         messageText =  [0x80, 0x00,                      # full message
                         0x00, 0x00, 20,
@@ -112,6 +117,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
     
         messageText =  [0x80, 0x00,                      # full message
                         0x00, 0x00, 20,
@@ -138,7 +144,8 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
-    
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
+     
         messageText =  [0x80, 0x00,                      # full message
                         0x00, 0x00, 20,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
@@ -168,7 +175,8 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
-    
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
+     
         messageText =  [0x80, 0x40,                      # part 1
                         0x00, 0x00, 13,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
@@ -194,7 +202,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
-        linkLayer.linkPhysicalLayer(tcpLayer)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
     
         messageText =  [0x80, 0x40,                      # part 1
                         0x00, 0x00, 13,
@@ -227,7 +235,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
-        linkLayer.linkPhysicalLayer(tcpLayer)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
   
         message = Message(MTI.Verify_NodeID_Number_Global, NodeID(0x123), None, NodeID(0x321).toArray())
         linkLayer.sendMessage(message)
@@ -251,7 +259,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         linkLayer = TcpLink(NodeID(100))
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
-        linkLayer.linkPhysicalLayer(tcpLayer)
+        linkLayer.linkPhysicalLayer(tcpLayer.send)
   
         message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(0x123), NodeID(0x321), NodeID(0x321).toArray())
         linkLayer.sendMessage(message)
