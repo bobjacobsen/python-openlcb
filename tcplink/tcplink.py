@@ -37,7 +37,10 @@ class TcpLink(LinkLayer):
     def receiveListener(self, inputData):  # [] input
         """
         Receives bytes from lower level and 
-        accumulates them into individual message parts
+        accumulates them into individual message parts.
+        
+        Args:
+            inputData ([int]) : next chunk of the input stream
         """
         self.accumulatedData.extend(inputData)
         # Now check it if has one or more complete message.
@@ -68,8 +71,12 @@ class TcpLink(LinkLayer):
 
     def receivedPart(self, messagePart, flags, length): # messagePart is raw message data
         """
-        Receives message parts and groups them into 
-        single messages as needed
+        Receives message parts from receiveListener and groups them into 
+        single OpenLCB messages as needed
+        
+        Args:
+            messagePart ([int]) : a single TCP-level meesage, which 
+                may include all or part of a single OpenLCB message
         """
         # set the source NodeID from the data
         gatewayNodeID = NodeID(messagePart[5:11])
@@ -103,6 +110,14 @@ class TcpLink(LinkLayer):
         return
             
     def forwardMessage(self, messageBytes, gatewayNodeID) : # not sure why gatewayNodeID useful here...
+        """
+        Receives single message from receivedPart, converts
+        it in a Message object, and forwards to listeners
+        
+        Args:
+            messageBytes ([int]) : the bytes making up a 
+                single OpenLCB message, starting with the MTI
+        """
         # extract MTI
         mti = MTI((messageBytes[0] << 8) | messageBytes[1])
         # extract sourceNodeID
@@ -140,6 +155,12 @@ class TcpLink(LinkLayer):
         self.fireListeners(msg)
 
     def sendMessage(self, message):
+        """
+        The message level calls this with an OpenLCB 
+        message.  That is then converted to a byte
+        stream and forwarded to the TCP socket layer.
+        """
+    
         mti = message.mti
 
         outputBytes = [0x80, 0x00] # flags
