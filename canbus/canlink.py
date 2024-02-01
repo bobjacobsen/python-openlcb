@@ -18,7 +18,7 @@ Remote Nodes.
 
 from canbus.canframe import CanFrame
 # from canbus.canphysicallayer import CanPhysicalLayer
-from openlcb.controlframe import ControlFrame
+from canbus.controlframe import ControlFrame
 from openlcb.linklayer import LinkLayer
 from openlcb.message import Message
 from openlcb.mti import MTI

@@ -5,7 +5,7 @@ This is a class because it represents a single physical connection to a layout
 and is subclassed.
 '''
 from canbus.canframe import CanFrame
-from openlcb.controlframe import ControlFrame
+from canbus.controlframe import ControlFrame
 from openlcb.physicallayer import PhysicalLayer
 
 

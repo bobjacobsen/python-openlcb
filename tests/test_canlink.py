@@ -8,7 +8,7 @@ from canbus.canphysicallayersimulation import CanPhysicalLayerSimulation
 from openlcb.message import Message
 from openlcb.mti import MTI
 from openlcb.nodeid import NodeID
-from openlcb.controlframe import ControlFrame
+from canbus.controlframe import ControlFrame
 
 
 class PhyMockLayer(CanPhysicalLayer):
