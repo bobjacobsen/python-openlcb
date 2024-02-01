@@ -19,8 +19,8 @@ from openlcb.message import Message
 from openlcb.mti import MTI
 
 # specify connection information
-host = "192.168.16.212"
-port = 12021
+host = "localhost"
+port = 12022
 localNodeID = "05.01.01.01.03.01"
 
 # region same code as other examples
