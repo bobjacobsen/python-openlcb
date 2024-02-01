@@ -11,10 +11,10 @@ host|host:port            (optional) Set the address (or using a colon,
                           address and port.
 '''
 
-from openlcb.tcpsocket import TcpSocket
+from canbus.tcpsocket import TcpSocket
 from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
 from canbus.canframe import CanFrame
-from openlcb.controlframe import ControlFrame
+from canbus.controlframe import ControlFrame
 
 # specify connection information
 host = "192.168.16.212"

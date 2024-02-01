@@ -27,7 +27,6 @@ from openlcb.mti import MTI
 from openlcb.nodeid import NodeID
 
 import logging
-# from enum import Enum
 
 
 class CanLink(LinkLayer):

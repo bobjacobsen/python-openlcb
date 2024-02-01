@@ -7,7 +7,6 @@ from openlcb.mti import MTI
 from openlcb.message import Message
 from openlcb.pip import PIP
 from openlcb.node import Node
-# from openlcb.processor import Processor
 
 
 class LinkMockLayer(LinkLayer):

@@ -2,10 +2,6 @@ import unittest
 
 from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
 from canbus.canframe import CanFrame
-# from canbus.canphysicallayer import CanPhysicalLayer
-# from canbus.canphysicallayersimulation import CanPhysicalLayerSimulation
-# from openlcb.message import Message
-# from openlcb.mti import MTI
 from openlcb.nodeid import NodeID
 
 
