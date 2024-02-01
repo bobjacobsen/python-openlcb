@@ -16,9 +16,11 @@ Remote Nodes.
  Multi-frame addressed messages are accumulated in parallel
 '''
 
+from enum import Enum
+
 from canbus.canframe import CanFrame
-# from canbus.canphysicallayer import CanPhysicalLayer
 from canbus.controlframe import ControlFrame
+
 from openlcb.linklayer import LinkLayer
 from openlcb.message import Message
 from openlcb.mti import MTI
@@ -34,7 +36,7 @@ class CanLink(LinkLayer):
         self.localAliasSeed = localNodeID.nodeId
         self.localAlias = self.createAlias12(self.localAliasSeed)
         self.localNodeID = localNodeID
-        self.state = LinkLayer.State.Initial
+        self.state = CanLink.State.Initial
         self.link = None
         self.aliasToNodeID = {}
         self.nodeIdToAlias = {}
@@ -44,6 +46,11 @@ class CanLink(LinkLayer):
     def linkPhysicalLayer(self, cpl):  # CanPhysicalLayer
         self.link = cpl
         cpl.registerFrameReceivedListener(self.receiveListener)
+
+    class State(Enum):
+        Initial = 1,  # a special case of .Inhibited where init hasn't started
+        Inhibited = 2,
+        Permitted = 3
 
     def receiveListener(self, frame):  # CanFrame
         match self.decodeControlFrameFormat(frame):
@@ -83,7 +90,7 @@ class CanLink(LinkLayer):
             frame (_type_): _description_
         """
         # start the alias allocation in Inhibited state
-        self.state = LinkLayer.State.Inhibited
+        self.state = CanLink.State.Inhibited
         self.defineAndReserveAlias()
         #    notify upper layers
         self.linkStateChange(self.state)
@@ -107,7 +114,7 @@ class CanLink(LinkLayer):
         self.link.sendCanFrame(CanFrame(ControlFrame.AMD.value,
                                         self.localAlias,
                                         self.localNodeID.toArray()))
-        self.state = LinkLayer.State.Permitted
+        self.state = CanLink.State.Permitted
         # add to map
         self.aliasToNodeID[self.localAlias] = self.localNodeID
         self.nodeIdToAlias[self.localNodeID] = self.localAlias
@@ -126,7 +133,7 @@ class CanLink(LinkLayer):
             frame (_type_): _description_
         """
         # NOTE: since no working link, not sending the AMR frame
-        self.state = LinkLayer.State.Inhibited
+        self.state = CanLink.State.Inhibited
 
         # print("***** received link down")
         # import traceback
@@ -134,6 +141,14 @@ class CanLink(LinkLayer):
 
         #    notify upper levels
         self.linkStateChange(self.state)
+
+    # invoked when the link layer comes up and down
+    def linkStateChange(self, state):  # state is of the State enum
+        if state == CanLink.State.Permitted:
+            msg = Message(MTI.Link_Layer_Up, NodeID(0), None, [])
+        else:
+            msg = Message(MTI.Link_Layer_Down, NodeID(0), None, [])
+        self.fireListeners(msg)
 
     def handleReceivedCID(self, frame):  # CanFrame
         #    Does this carry our alias?
@@ -159,7 +174,7 @@ class CanLink(LinkLayer):
     def handleReceivedAME(self, frame):  # CanFrame
         if self.checkAndHandleAliasCollision(frame):
             return
-        if self.state != LinkLayer.State.Permitted:
+        if self.state != CanLink.State.Permitted:
             return
         #    check node ID
         matchNodeID = self.localNodeID
@@ -475,7 +490,7 @@ class CanLink(LinkLayer):
 
     #    MARK: common code
     def checkAndHandleAliasCollision(self, frame):
-        if self.state != LinkLayer.State.Permitted:
+        if self.state != CanLink.State.Permitted:
             return False
         receivedAlias = frame.header & 0x0000_FFF
         abort = (receivedAlias == self.localAlias)
@@ -487,7 +502,7 @@ class CanLink(LinkLayer):
                                             self.localAlias,
                                             self.localNodeID.toArray()))
             #    Standard 6.2.5
-            self.state = LinkLayer.State.Inhibited
+            self.state = CanLink.State.Inhibited
             #    attempt to get a new alias and go back to .Permitted
             self.localAliasSeed = self.incrementAlias48(self.localAliasSeed)
             self.localAlias = self.createAlias12(self.localAliasSeed)
