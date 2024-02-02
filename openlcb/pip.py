@@ -43,7 +43,7 @@ class PIP(Enum):
         retval = []
         for pip in PIP.list():
             if (pip.value & contents == pip.value):
-                retval.append(pip.name)
+                retval.append(pip.name.replace("_", " ").title())
         return retval
 
     # return an array of strings for all values included in a collection

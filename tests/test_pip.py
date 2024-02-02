@@ -31,9 +31,18 @@ class TestPipClass(unittest.TestCase):
                 PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL])
         )
 
-    def testContentsNameUInt(self):
+    def testContainsFromRaw4(self):
+        array = [0x10, 0x10, 0, 0]
+        result = PIP.setContentsFromList(array)
+        self.assertEqual(
+            result,
+            set([PIP.MEMORY_CONFIGURATION_PROTOCOL,
+                PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL])
+        )
+
+    def testContentsNameUInt1(self):
         result = PIP.contentsNamesFromInt(0x10_00_00)
-        self.assertEqual(result, ["SIMPLE_NODE_IDENTIFICATION_PROTOCOL"])
+        self.assertEqual(result, ["Simple Node Identification Protocol"])
 
     def testContentsNameUSet(self):
         input = set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL])
