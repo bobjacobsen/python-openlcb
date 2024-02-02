@@ -47,7 +47,7 @@ class NodeStore :
     
     # Process a message across all nodes
     def invokeProcessorsOnNodes(self, message) :
-        publish = false  # has any processor returned True?
+        publish = False  # has any processor returned True?
         for processor in self.processors :
             for node in self.byIdMap.values() :
                 publish = processor.process(message, node) or publish # always invoke Processsor on node first

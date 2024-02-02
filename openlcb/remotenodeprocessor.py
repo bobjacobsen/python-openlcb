@@ -111,7 +111,6 @@ class RemoteNodeProcessor(Processor) :
             if len(message.data) > 2 :
                 node.snip.addData(message.data)
                 node.snip.updateStringsFromSnipData()
-                # logger.trace("SNIP data added to \(node, privacy: .public)")
 
     def producedEventIndicated(self, message, node) :
         if self.checkSourceID(message, node) : # produced by this node?

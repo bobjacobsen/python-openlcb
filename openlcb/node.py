@@ -18,10 +18,12 @@ from openlcb.snip import SNIP
 from openlcb.localeventstore import LocalEventStore
 
 class Node:
-    def __init__(self, nodeID, snip=SNIP(), pipSet=set([])):
+    def __init__(self, nodeID, snip=None, pipSet=None):
         self.id = nodeID
         self.snip = snip
+        if snip is None : self.snip = SNIP()
         self.pipSet = pipSet
+        if pipSet is None : self.pipSet = set([])
         self.state = Node.State.Uninitialized
         self.events = LocalEventStore()
 

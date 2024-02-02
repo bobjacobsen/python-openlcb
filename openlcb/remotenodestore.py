@@ -1,5 +1,10 @@
 from openlcb.nodestore import NodeStore
 
+from openlcb.message import Message
+from openlcb.mti import MTI
+from openlcb.node import Node
+from openlcb.nodeid import NodeID
+
 class RemoteNodeStore(NodeStore) :
     '''
        Accumulates Nodes that it sees requested, unless they're already in a given local NodeStore
@@ -14,14 +19,14 @@ class RemoteNodeStore(NodeStore) :
     # return True if the message is to a new node, so that createNewRemoteNode should be called.
     def checkForNewNode(self, message) :
         nodeID = message.source
-        if nodeID == localNodeID :
+        if nodeID == self.localNodeID :
             # present in other store, skip
             return False
         # NodeID(0) is a special case, used for e.g. linkUp, linkDown; don't store
         if (nodeID == NodeID(0)) :
             return False
         # make sure source node is in store if it needs to be
-        if lookup(message.source) is not None :
+        if self.lookup(message.source) is not None :
             return False
         return True
     
@@ -33,9 +38,20 @@ class RemoteNodeStore(NodeStore) :
         nodeID = message.source
         node = Node(nodeID)
         
-        store(node)
+        self.store(node)
         # All nodes process a notification that there's a new node
         newNodeMessage = Message(MTI.New_Node_Seen, nodeID, None)
-        for processor in processors :
+        for processor in self.processors :
             processor.process(newNodeMessage, node)
 
+    # Process an incoming message across all the nodes in the remote node store.
+    # Returns True is any of the nodes indicated a significant change.
+    # - Parameter message: Incoming message to process
+    def processMessageFromLinkLayer(self, message) :
+        publish = False
+        
+        if self.checkForNewNode(message) :
+            self.createNewRemoteNode(message)
+            publish = True
+        publish = self.invokeProcessorsOnNodes(message) or publish # always run invoke Processsors on nodes
+        return publish
