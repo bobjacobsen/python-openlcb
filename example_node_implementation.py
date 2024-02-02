@@ -14,16 +14,9 @@ from canbus.tcpsocket import TcpSocket
 from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
 from canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
-from openlcb.datagramservice import (
-    # DatagramWriteMemo,
-    # DatagramReadMemo,
-    DatagramService,
-)
-from openlcb.memoryservice import (
-    # MemoryReadMemo,
-    # MemoryWriteMemo,
-    MemoryService,
-)
+from openlcb.datagramservice import DatagramService
+from openlcb.memoryservice import MemoryService
+
 from openlcb.localnodeprocessor import LocalNodeProcessor
 from openlcb.pip import PIP
 from openlcb.snip import SNIP
