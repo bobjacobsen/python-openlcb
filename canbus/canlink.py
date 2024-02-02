@@ -392,7 +392,7 @@ class CanLink(LinkLayer):
             #    Remap the mti
             header = 0x19_000_000 | ((msg.mti.value & 0xFFF) << 12)
 
-            alias = self.nodeIdToAlias[msg.source]
+            alias = self.nodeIdToAlias.get(msg.source)
             if alias is not None:  # might not know it if error
                 header |= (alias & 0xFFF)
             else:
@@ -404,7 +404,7 @@ class CanLink(LinkLayer):
                 destt = msg.destination
                 if destt is None:
                     destt = NodeID(0)
-                alias = self.nodeIdToAlias[destt]
+                alias = self.nodeIdToAlias.get(destt)
                 if alias is not None:  # might not know it?
                     #    address and have alias, break up data
                     dataSegments = self.segmentAddressedDataArray(alias,
