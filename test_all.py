@@ -30,9 +30,14 @@ from tests.test_memoryservice import *
 from tests.test_snip import *
 from tests.test_pip import *
 
-from tests.test_processor import *
+from tests.test_nodestore import *
+from tests.test_remotenodestore import *
 
+from tests.test_localeventstore import *
+
+from tests.test_processor import *
 from tests.test_localnodeprocessor import *
+from tests.test_remotenodeprocessor import *
 
 
 if __name__ == '__main__':
