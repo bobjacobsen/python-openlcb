@@ -14,7 +14,6 @@ node elsewhere" a.k.a an image node.
 '''
 
 from enum import Enum
-# from openlcb.nodeid import NodeID
 from openlcb.snip import SNIP
 
 

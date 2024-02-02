@@ -27,7 +27,6 @@ import logging
 
 from openlcb.message import Message
 from openlcb.mti import MTI
-# from openlcb.nodeid import NodeID
 
 
 def defaultIgnoreReply(memo):

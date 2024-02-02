@@ -15,6 +15,8 @@ from tests.test_physicallayer import *
 from tests.test_canphysicallayer import *
 from tests.test_canphysicallayergridconnect import *
 
+from tests.test_tcplink import *
+
 from tests.test_mti import *
 from tests.test_message import *
 
