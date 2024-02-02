@@ -89,7 +89,7 @@ class TcpLink(LinkLayer):
         key = gatewayNodeID   # do we need to have the capture time in here?
         if (flags & 0x00C0) == 0x040 : # first
             # check for error 
-            if self.accumulatedParts.get(key) != None :
+            if self.accumulatedParts.get(key) is not None :
                 # this was a first, but shouldn't have been
                 logging.warn("Found a first part from [] while already accumulating"
                                 .format(nodeId))
