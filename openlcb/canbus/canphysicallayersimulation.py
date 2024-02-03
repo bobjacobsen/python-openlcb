@@ -2,7 +2,7 @@
 Simulated CanPhysicalLayer to record frames requested to be sent.
 '''
 
-from canbus.canphysicallayer import CanPhysicalLayer
+from openlcb.canbus.canphysicallayer import CanPhysicalLayer
 
 
 class CanPhysicalLayerSimulation(CanPhysicalLayer):

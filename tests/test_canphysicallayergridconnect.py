@@ -1,7 +1,7 @@
 import unittest
 
-from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canbus.canframe import CanFrame
+from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canframe import CanFrame
 from openlcb.nodeid import NodeID
 
 

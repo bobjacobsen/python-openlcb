@@ -1,6 +1,6 @@
 import unittest
 
-from canbus.canframe import CanFrame
+from openlcb.canbus.canframe import CanFrame
 from openlcb.nodeid import NodeID
 
 

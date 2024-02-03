@@ -11,7 +11,7 @@ host|host:port            (optional) Set the address (or using a colon,
                           address and port.
 '''
 
-from canbus.tcpsocket import TcpSocket
+from openlcb.canbus.tcpsocket import TcpSocket
 
 # specify connection information
 host = "192.168.16.212"

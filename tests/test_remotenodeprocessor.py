@@ -2,8 +2,7 @@ import unittest
 
 from openlcb.remotenodeprocessor import RemoteNodeProcessor
 
-from canbus.canlink import CanLink
-
+from openlcb.canbus.canlink import CanLink
 from openlcb.eventid import EventID
 from openlcb.node import Node
 from openlcb.nodeid import NodeID

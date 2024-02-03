@@ -18,8 +18,8 @@ Remote Nodes.
 
 from enum import Enum
 
-from canbus.canframe import CanFrame
-from canbus.controlframe import ControlFrame
+from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.controlframe import ControlFrame
 
 from openlcb.linklayer import LinkLayer
 from openlcb.message import Message

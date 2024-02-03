@@ -11,11 +11,11 @@ host|host:port            (optional) Set the address (or using a colon,
                           address and port.
 '''
 
-from canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from canbus.canframe import CanFrame
-from canbus.canlink import CanLink
-from canbus.controlframe import ControlFrame
-from canbus.tcpsocket import TcpSocket
+from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.canlink import CanLink
+from openlcb.canbus.controlframe import ControlFrame
+from openlcb.canbus.tcpsocket import TcpSocket
 
 from openlcb.node import Node
 from openlcb.nodeid import NodeID

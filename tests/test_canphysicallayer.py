@@ -1,7 +1,7 @@
 import unittest
 
-from canbus.canphysicallayer import CanPhysicalLayer
-from canbus.canframe import CanFrame
+from openlcb.canbus.canphysicallayer import CanPhysicalLayer
+from openlcb.canbus.canframe import CanFrame
 
 
 class TestCanPhysicalLayerClass(unittest.TestCase):

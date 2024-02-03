@@ -1,6 +1,6 @@
 import unittest
 
-from tcplink.tcplink import TcpLink
+from openlcb.tcplink.tcplink import TcpLink
 
 from openlcb.message import Message
 from openlcb.mti import MTI
