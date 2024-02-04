@@ -3,7 +3,7 @@
 This uses a CAN link layer to check for an OIR reply to an unknown MTI
 
 Usage:
-python3.10 check_oir.py
+python3.10 check_me40_oir.py
 
 The -h option will display a full list of options.
 '''
@@ -42,7 +42,32 @@ while True :
         # is this a reply from that node?
         if not received.mti == MTI.Optional_Interaction_Rejected : continue # wait for next
         # this is a OIR message, success
-        # TODO - check the received data
+
+        if destination != received.source : # check source in message header
+            print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+            sys.exit(3)
+        
+        if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
+            sys.exit(3)
+        if len(received.data) < 4:
+            print ("Failure - Unexpected length of reply message: {} {}".format(received, received.data))
+            sys.exit(3)
+
+        try :            
+            seenMTI = MTI(0x2000|received.data[2]<<8 | received.data[3])
+        except ValueError :
+            seenMTI = None
+        if seenMTI != received.mti :
+            print ("Failure - MTI not carried in data: {} {}".format(received, received.data, seenMTI))
+            try :
+                earlyMTI = MTI(0x2000|received.data[0]<<8 | received.data[1])
+            except ValueError:
+                earlyMTI = None
+            if earlyMTI != received.mti :
+                print("    Hint: MTI incorrectly found in first two bytes of OIR reply")
+            sys.exit(3)
+            
         break
     except Empty:
         print ("Failure - Did not receive Optional Interaction Rejected reply")

@@ -3,7 +3,7 @@
 This uses a CAN link layer to test Verify message exchange
 
 Usage:
-python3.10 check_verify.py
+python3.10 check_me20_verify.py
 
 The -h option will display a full list of options.
 '''
@@ -47,9 +47,29 @@ while True :
 
         if received.mti != MTI.Verified_NodeID :
             continue # ignore other messages
-        if destination is received.source : 
-            # success
-            break
+
+        if destination != received.source : # check source in message header
+            continue # allow other nodes to reply to this global request
+        
+        if len(received.data) != 6 :
+            print ("Failure - Unexpected length of reply message: {}".format(received))
+            sys.exit(3)
+            
+        if destination != NodeID(received.data) :
+            print ("Failure - Unexpected contents of reply message: {}".format(received))
+            sys.exit(3)
+            
+        # check against PIP
+        if pipSet is not None :
+            simple = PIP.SIMPLE_PROTOCOL in pipSet
+            if simple and received.mti == MTI.Verified_NodeID :
+                print ("Failure - PIP says Simple Node but didn't receive correct MTI")
+                sys.exit(3) 
+            elif (not simple) and received.mti == MTI.Verified_NodeID_Simple :
+                print ("Failure - PIP says not Simple Node but didn't receive correct MTI")
+                sys.exit(3) 
+
+        break
     except Empty:
         print ("Failure - did not get response to global")
         sys.exit(3)
@@ -80,7 +100,7 @@ while True :
             
         # check against PIP
         if pipSet is not None :
-            simple = PIP.SIMPLE_PROTOCOL
+            simple = PIP.SIMPLE_PROTOCOL in pipSet
             if simple and received.mti == MTI.Verified_NodeID :
                 print ("Failure - PIP says Simple Node but didn't receive correct MTI")
                 sys.exit(3) 

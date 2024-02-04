@@ -3,7 +3,7 @@
 This uses a CAN link layer to test PIP message exchange.
 
 Usage:
-python3.10 check_pip.py
+python3.10 check_me30_pip.py
 
 The -h option will display a full list of options.
 '''
@@ -42,6 +42,14 @@ while True :
         received = conformance.getMessage(timeout) # timeout if no entries
         # is this a pip reply?
         if not received.mti == MTI.Protocol_Support_Reply : continue # wait for next
+        
+        if destination != received.source : # check source in message header
+            print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+            sys.exit(3)
+        
+        if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
+            sys.exit(3)
         
         result = received.data[0] << 24 | \
                     received.data[1] << 16 | \
