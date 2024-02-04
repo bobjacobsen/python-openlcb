@@ -8,6 +8,7 @@ class MTI(Enum):
     Verify_NodeID_Number_Addressed     = 0x0488
     Verify_NodeID_Number_Global        = 0x0490
     Verified_NodeID                    = 0x0170
+    Verified_NodeID_Simple             = 0x0171
     Optional_Interaction_Rejected      = 0x0068
     Terminate_Due_To_Error             = 0x00A8
 
