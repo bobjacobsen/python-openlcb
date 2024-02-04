@@ -4,8 +4,8 @@ Generalize a CAN physical layer, real or simulated.
 This is a class because it represents a single physical connection to a layout
 and is subclassed.
 '''
-from canbus.canframe import CanFrame
-from canbus.controlframe import ControlFrame
+from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.controlframe import ControlFrame
 from openlcb.physicallayer import PhysicalLayer
 
 

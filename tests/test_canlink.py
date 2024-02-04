@@ -1,14 +1,14 @@
 import unittest
 
-from canbus.canlink import CanLink
+from openlcb.canbus.canlink import CanLink
 
-from canbus.canframe import CanFrame
-from canbus.canphysicallayer import CanPhysicalLayer
-from canbus.canphysicallayersimulation import CanPhysicalLayerSimulation
+from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.canphysicallayer import CanPhysicalLayer
+from openlcb.canbus.canphysicallayersimulation import CanPhysicalLayerSimulation
 from openlcb.message import Message
 from openlcb.mti import MTI
 from openlcb.nodeid import NodeID
-from canbus.controlframe import ControlFrame
+from openlcb.canbus.controlframe import ControlFrame
 
 
 class PhyMockLayer(CanPhysicalLayer):

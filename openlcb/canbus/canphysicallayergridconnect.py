@@ -10,8 +10,8 @@ Works with frames like
 - :X19170365N020112FE056C;
 '''
 
-from canbus.canphysicallayer import CanPhysicalLayer
-from canbus.canframe import CanFrame
+from openlcb.canbus.canphysicallayer import CanPhysicalLayer
+from openlcb.canbus.canframe import CanFrame
 
 
 class CanPhysicalLayerGridConnect(CanPhysicalLayer):

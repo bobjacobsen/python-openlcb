@@ -11,8 +11,8 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
-from tcplink.tcpsocket import TcpSocket
-from tcplink.tcplink import TcpLink
+from openlcb.tcplink.tcpsocket import TcpSocket
+from openlcb.tcplink.tcplink import TcpLink
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
