@@ -1,0 +1,175 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{OpenLCB test plan for the Message Network Standard}
+\author{The OpenLCB Group}
+%\date{}                                         % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+\section{Introduction}
+
+This note documents the procedure for testing an OpenLCB implementation against the
+\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/MessageNetworkS.pdf}
+    {OpenLCB Message Network Standard}.
+
+The tests are traceable to specific sections of the Standard.
+
+The testing assumes that the Device Under Test (DUT) is being exercised by other
+nodes on the message network, 
+e.g. is responding to enquiries from other parts of the message network.
+
+\section{Required Equipment}
+
+See the separate ``Installing the OpenLCB Test Software" document for initial installation 
+and set up of the test program.
+
+If a direct CAN connection will be used,
+a supported USB-CAN adapter
+    \footnote{See ``Installing the OpenLCB Test Software"}
+is required. 
+Connect the adapter to the DUT using a single UTP cable and connect two CAN terminators.
+
+Provide power to the DUT using its recommended method.
+
+\section{Set Up}
+The following steps need to be done once to configure the test program:.
+\begin{enumerate}
+\item Start the test configuration program. 
+\item Select ``Set Up DUT".
+\item Get the Node ID from the DUT\footnote{Where do we require this to be marked on a node?} 
+\item Enter that Node ID into the program.
+\item Configure the test program for the USB-CAN adapter's device address
+        or the TCP hostname and port.
+\item Quit the test program and reply ``Y" to "Save configuration?" when prompted.
+\end{enumerate}
+
+The following steps need to be done at the start of each testing session.
+\begin{enumerate}
+\item Check that the DUT is ready for operation.
+\item Start the test program.
+\end{enumerate}
+
+\section{Message Network Procedure}
+
+Select ``Message Network testing" in the test program, 
+then select each section below in turn.  Follow the prompts
+for when to reset/restart the node and when to check 
+outputs against the node documentation.
+
+\subsection{Node Initialized testing}
+
+This section tests the interaction in Standard section 3.4.1 Node Initialization.
+
+It does this by having the test operator reset/restart the DUT and then
+checking that a Node Initialized message is received and
+    \begin{enumerate}
+    \item The Node Initialized message is the first message received.
+            \footnote{See Section 3.2 of the Standard}
+    \item The message indicates its source is the DUT.
+    \item The message uses the appropriate MTI
+            \footnote{See Section 3.3.1 of the Standard}
+            for whether PIP indicates the node 
+            uses the Simple Protocol or not.
+    \end{enumerate}
+
+
+\subsection{Verify Node testing}
+
+This section tests the interaction in Standard section 3.4.2 Node ID Detection.
+
+It does this by
+
+\begin{enumerate}
+\item Sending a global Verify Node ID message and checking the reply.
+    \begin{enumerate}
+    \item The reply message indicates its source is the DUT.
+    \item The reply message contains the Node ID of the DUT in its data field.
+    \item The reply message uses the appropriate MTI
+            \footnote{See Section 3.3.3 fo the Standard}
+            for whether PIP indicates the node 
+            uses the Simple Protocol or not.
+    \end{enumerate}
+
+\item Sending a Verify Node ID message addressed to the DUT and checking the reply.
+    \begin{enumerate}
+    \item The reply message indicates its source is the DUT.
+    \item The reply message contains the Node ID of the DUT in its data field.
+    \item The reply messages uses the appropriate MTI for whether PIP indicates the node 
+            uses the Simple Protocol or not.
+    \end{enumerate}
+
+\item Sending a Verify Node ID message addressed to a different address from the DUT
+        and checking for the absence of a reply.
+\end{enumerate}
+
+\subsection{Protocol Support Inquiry testing}
+
+This section tests the interaction in Standard section 3.4.3 Protocol Support Inquiry and Response.
+
+It does this by 
+\begin{enumerate}
+\item Sending a Protocol Support Inquiry message to the node, 
+and checking for the resulting Protocol Support Response message.  
+    \begin{enumerate}
+    \item The reply message is addressed to the testing node.
+    \item The reply message indicates its source is the DUT.
+    \end{enumerate}
+The test displays the resulting list of supported protocols for checking against the 
+DUT's documentation.
+
+\item Sending a Protocol Support Inquiry message addressed to a different address from the DUT
+        and checking for the absence of a reply.
+\end{enumerate}
+
+
+\subsection{Optional Interaction Rejected testing}
+
+This section tests the interaction in Standard section 3.5.1 Reject Addressed Optional Interaction.
+
+It does this by sending an unallocated MTI
+\footnote{Initially 0x048. Others may be added in the future for an eventual
+    test of all possible unallocated MTIs}
+addressed to the DUT and checking for the Optional Interaction Rejected 
+message in reply.
+
+    \begin{enumerate}
+    \item The reply message is addressed to the testing node.
+    \item The reply message indicates its source is the DUT.
+    \item The reply message carries at least four bytes of content, with the 
+            third and fourth bytes carrying the original MTI.
+    \end{enumerate}
+
+\subsection{Duplicate Node ID Discovery testing}
+
+This section tests the interaction in Standard section 3.5.4 Duplicate Node ID Discovery.
+
+It does this by sending a global Verify Node message with the source ID set to the DUT's ID.
+
+It then checks for the well-known global event.  If it finds that, the test passes.
+If not, it prompts the operator to confirm that indication has been made 
+"using whatever indication technology is available", e.g. via LEDs.
+
+\subsection{Reserved field handling}
+
+This section discusses the reserved bit fields described in Standard section 3.1.1.
+
+The CAN implementation does not carry bits 15-14 nor bit 12 of the MTI. 
+The full 12 bit sof the rest of the MTI are tested in other sections of this test plan.
+
+There is nothing to test here via a CAN implementation.
+
+
+
+\end{document}  
