@@ -17,7 +17,7 @@ def sendMessage(message) :
 def getMessage(timeout=0.8) :
     return setup.readQueue.get(True, timeout)
 
-def purgeMessages(timeout=0.8):
+def purgeMessages(timeout=1.0):
     while True :
         try :
             received = getMessage(timeout) # timeout if no entries
@@ -44,6 +44,7 @@ def getTargetID(timeout=0.8) :
     # Make sure we have a valid node ID for the device under test (DUT).
     # This is somewhat redundant with what we're trying to test in some cases.
     if targetnodeid() is None:
+
         # send an VerifyNodes message to provoke response
         message = Message(MTI.Verify_NodeID_Number_Global, NodeID(ownnodeid()), None)
         sendMessage(message)
