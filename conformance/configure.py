@@ -13,6 +13,8 @@ The sequence of operations is:
 
 '''
 
+import os
+
 def options() :
     print ("")
     #   TODO finish this up
@@ -53,19 +55,21 @@ checkpip = defaults.checkpip
 trace = defaults.trace
 
 # Next override with local definitions.
-try:
-    import localoverrides
-except:
-    pass  # no local overrides is a normal condition
+if os.path.isfile("./localoverrides.py") :
+    try:
+        import localoverrides
+        
+        #   TODO: Make the following into a loop over dir(localoverrides)
+        if 'hostname' in dir(localoverrides) :      hostname = localoverrides.hostname
+        if 'portnumber' in dir(localoverrides) :    portnumber = localoverrides.portnumber
+        if 'devicename' in dir(localoverrides) :    devicename = localoverrides.devicename
+        if 'targetnodeid' in dir(localoverrides) :  targetnodeid = localoverrides.targetnodeid
+        if 'ownnodeid' in dir(localoverrides) :     ownnodeid = localoverrides.ownnodeid
+        if 'checkpip' in dir(localoverrides) :      checkpip = localoverrides.checkpip
+        if 'trace' in dir(localoverrides) :         trace = localoverrides.trace
 
-#   TODO: Make the following into a loop over dir(localoverrides)
-if 'hostname' in dir(localoverrides) :      hostname = localoverrides.hostname
-if 'portnumber' in dir(localoverrides) :    portnumber = localoverrides.portnumber
-if 'devicename' in dir(localoverrides) :    devicename = localoverrides.devicename
-if 'targetnodeid' in dir(localoverrides) :  targetnodeid = localoverrides.targetnodeid
-if 'ownnodeid' in dir(localoverrides) :     ownnodeid = localoverrides.ownnodeid
-if 'checkpip' in dir(localoverrides) :      checkpip = localoverrides.checkpip
-if 'trace' in dir(localoverrides) :         trace = localoverrides.trace
+    except:
+        pass  # no local overrides is a normal condition
 
 # Next process command line options
 

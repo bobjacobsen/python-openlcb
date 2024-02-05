@@ -69,6 +69,9 @@ def test():
 
     # now check the reply
 
+    if not len(results) >=0 :
+        print("Failure - only {} bytes received".format(len(results)))
+        return(3)
     if not(results[0] ==1 or results[0] == 4) :
         print("Failure - unexpected value in 1st byte: 0x{:02X}".format(results[0]))
         return(3)

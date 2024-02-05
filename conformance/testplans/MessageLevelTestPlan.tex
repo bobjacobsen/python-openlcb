@@ -161,4 +161,15 @@ It then checks for the well-known global event.  If it finds that, the test pass
 If not, it prompts the operator to confirm that indication has been made 
 "using whatever indication technology is available", e.g. via LEDs.
 
+\subsection{Reserved field handling}
+
+This section discusses the reserved bit fields described in Standard section 3.1.1.
+
+The CAN implementation does not carry bits 15-14 nor bit 12 of the MTI. 
+The full 12 bit sof the rest of the MTI are tested in other sections of this test plan.
+
+There is nothing to test here via a CAN implementation.
+
+
+
 \end{document}  
