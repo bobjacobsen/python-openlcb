@@ -43,7 +43,7 @@ class MTI(Enum):
     Datagram_Received_OK               = 0x0A28
     Datagram_Rejected                  = 0x0A48
 
-    Unknown                            = 0x0000
+    Unknown                            = 0x0008   # make this addressed so that it;s individually processed
 
     # These are used for internal signalling and are not present in the MTI
     # specification.
