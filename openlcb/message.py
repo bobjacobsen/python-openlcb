@@ -45,3 +45,6 @@ class Message:
         if rhs.data != lhs.data:
             return False
         return True
+
+    def __hash__(self) :
+        return self.mti.__hash__() + self.source.__hash__()
