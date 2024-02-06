@@ -1,0 +1,200 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Installing the OpenLCB Test Software\linebreak{}Basic Version}
+\author{The OpenLCB Group}
+%\date{}                                         % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+\section{Introduction}
+
+This document describes how to obtain and run a set of basic conformance checks for 
+OpenLCB nodes.  
+
+The checks are based on the Python `openlch' module.
+More information on that can be obtains from its
+\href{https://github.com/bobjacobsen/PythonOlcbNode}{GitHub project site.}
+
+For more information on the conformance checks, see the
+\href{https://github.com/bobjacobsen/PythonOlcbNode/blob/main/conformance/README.md}{package documentation}
+or the 
+\href{https://github.com/bobjacobsen/PythonOlcbNode/tree/main/conformance/testplans/}{directory of test plans}.
+
+\section{Obtaining the Software}
+
+The software is distributed as a set of inter-connected Python source files.
+
+\subsection{Obtaining and Using via Git}
+
+If you're using Git, 
+\begin{verbatim}
+git clone https://github.com/bobjacobsen/PythonOlcbNode.git
+\end{verbatim}
+will create a PythonOlcbNode directory containing the most recent version of the software.
+This also contains git tags for the released versions.
+
+\subsection{Obtaining by Downloading a .zip File}
+
+You can get a download of the most recent released version by going to the project's 
+\href{https://github.com/bobjacobsen/PythonOlcbNode/tags}{Github releases web page tag section}
+\footnote{Linked above or see \href{https://github.com/bobjacobsen/PythonOlcbNode/tags}{https://github.com/bobjacobsen/PythonOlcbNode/tags}}
+and clicking the .zip or .tgz icon on the most recent release.
+
+To get the very most recent version,
+\footnote{But if you want to stay current with development of the tools, you should probably be using Git.}
+go to the project's
+\href{https://github.com/bobjacobsen/PythonOlcbNode}{Github main web page tag section},
+click the green Code button, and select "Download Zip".
+
+Expand the downloaded file in a suitable place.
+
+
+\section{Configuring for Running}
+
+You need to have Python 3.10 installed to run the program. Consult your
+computer's documentation for how to install that.  Many computers already
+have it installed.
+
+You need to have PYTHONPATH defined to include the main directory.
+\footnote{Eventually, this will no longer be necessary, but not quite yet.}
+In the Linux and macOS
+terminals, you can do this with
+
+\begin{verbatim}
+export PYTHONPATH=$PWD
+\end{verbatim}
+while in the distribution directory (where you installed the code)
+or you can place the same line at the end of your startup configuration file.
+
+If you don't add this to your startup configuration file, you'll have to do 
+this each time you start a terminal session.
+
+Next
+\begin{verbatim}
+cd conformance
+\end{verbatim}
+to get to the right directory for running the code. 
+
+To start the program:
+\begin{verbatim}
+python3.10 control_master.py
+\end{verbatim}
+
+Depending on your Python installation, this simpler form may also work:
+\begin{verbatim}
+./control_master.py
+\end{verbatim}
+
+
+\section{Configuring the Test Setup}
+
+When you first start the program, you'll be shown a basic menu:
+
+\begin{verbatim}
+OpenLCB test program
+ 0 Setup
+ 1 Message Network testing
+ 2 SNIP testing
+  
+ q  Quit
+>> 
+\end{verbatim}
+
+Type 0 and hit return to get the setup menu:
+
+\begin{verbatim}
+The current settings are:
+  hostname = None
+  portnumber = 12021
+  devicename = None
+  targetnodeid = None
+  ownnodeid = 03.00.00.00.00.01
+  checkpip = True
+  trace = 10
+
+c change setting
+h help
+r return
+>> 
+\end{verbatim}
+
+At a minimum, you should define how to connect to your OpenLCB network,
+and the Node ID of the device you want to test.  
+
+To change the Node ID, select the``change setting" option and work through the prompts:
+
+\begin{verbatim}
+>> c
+enter variable name
+>> targetnodeid
+enter new value
+>> 02.01.57.00.04.9A
+The current settings are:
+  hostname = None
+  portnumber = 12021
+  devicename = None
+  targetnodeid = 02.01.57.00.04.9A
+  ownnodeid = 03.00.00.00.00.01
+  checkpip = True
+  trace = 10
+
+c change setting
+h help
+r return
+
+>> 
+\end{verbatim}
+
+Get the proper value from either a label on the device, or from its documentation.
+\footnote{Some tests, but not all, can determine the node ID themselves if you leave
+    the value as None.}
+    
+There are currently two ways to connect to your OpenLCB network:
+\begin{enumerate}
+\item Via a USB-CAN adapter, or
+\item Via a GridConnect-format TCP/IP connection.
+\end{enumerate}
+
+For a USB-CAN connector, define the devicename to be the address of the device in your computer, 
+e.g. /dev/cu.usbmodemCC570001B1 or COM7.
+
+For a TCP/IP link, define the hostname to be the IP address or host name to be used 
+for connecting.
+
+You must specify one or the other of hostname and device name, but not both.
+When you enter one, the other will be set to None.
+
+When done with setup, select return.  You'll be asked if you want to save changes.  
+Select y to save and n to skip saving.
+
+\begin{verbatim}
+>> r
+
+Do you want to save the new settings? (y/n)
+ >> y
+Stored
+Quit and restart the program to put them into effect
+
+OpenLCB test program
+ 0 Setup
+ 1 Message Network testing
+ 2 SNIP testing
+  
+ q  Quit
+>> 
+\end{verbatim}
+
+
+\end{document}  

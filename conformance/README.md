@@ -11,4 +11,9 @@ The main program is "control_master.py"
 
 Files whose names start with "check_" are the individual section checks.
 
-Files whose names start with "control_" form a simple line-oriented user interface.
+Files whose names start with "control_" form a basic line-oriented user interface.
+
+An installation document is available as [testplans/InstallingBasicTester.pdf](testplans/InstallingBasicTester.pdf)
+
+Test plans describing the various tests and procedures are available as PDF files in the [testplans/](testplans/) directory.
+
