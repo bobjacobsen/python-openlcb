@@ -76,6 +76,9 @@ datagram transfer will be deemed to have passed these tests.
 \subsection{Datagram Reception}
 
 This tests the messages in Standard sections 4.1 and 4.2 or 4.3, 
+including the error code constraints in Standard section 4.3.1
+\footnote{This section references the Message Transport Standard, 
+section 3.5.5}
 and the interactions in sections 6.1 or 6.2.
 
 The tester will send a datagram to the DUT. The DUT in turn will 
@@ -88,19 +91,22 @@ This section's tests cover:
 \item If the datagram is accepted,
     \begin{enumerate}
     \item That the Datagram OK message is received,
+    \item That the Datagram OK message has proper source and destination node IDs, 
     \item that the Datagram OK message contains exactly 1 byte of flags,
     \item that the 0x70 bits of the flags are zeros.
     \end{enumerate}
 \item if the datagram is rejected, 
     \begin{enumerate}
     \item That the Datagram Rejected message is received,
+    \item That the Datagram Rejected message has proper source and destination node IDs, 
     \item that the Datagram Rejected message contains at least two bytes of error code,
     \item that the 0xF000 bits of the error code are either 0x1000 or 0x2000,
     \item that the 0x0F00 bits of the error code are zeros.
     \end{enumerate}
 \end{enumerate}
 
-
+This process is repeated for datagrams of length 1, 10 and 72 bytes to exercise the full
+range of datagram framing.
 
 
 \end{document}  

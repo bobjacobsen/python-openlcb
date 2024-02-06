@@ -8,6 +8,7 @@ import control_setup
 import control_message
 import control_snip
 import control_events
+import control_datagram
 
 def prompt() :
     print("\nOpenLCB test program")
@@ -15,6 +16,7 @@ def prompt() :
     print(" 1 Message Network testing")
     print(" 2 SNIP testing")
     print(" 3 Event testing")
+    print(" 4 Datagram testing")
     print("  ")
     print(" q  Quit")
     
@@ -37,6 +39,9 @@ def main() :
                        
             case "3" : 
                 control_events.main()
+                       
+            case "4" : 
+                control_datagram.main()
                        
             case "q" | "Q" : return
                    

@@ -7,10 +7,6 @@ OUTPUTS = $(patsubst %.tex,%.pdf,$(INPUTS))
 .PHONY: all
 all: $(OUTPUTS)
 
-# Force Latex to run again to ger cross-references right
-.PHONY: rerun
-rerun: cleanpdf all
-
 .PHONY: clean
 clean:
 	-rm -f *.aux
@@ -19,9 +15,6 @@ clean:
 	-rm -f *.bbl
 	-rm -f *.blg
 	-rm -f *.out
-
-cleanpdf:
-	-rm -f *.pdf
 	
 %.pdf : %.tex
 	pdflatex $<  
