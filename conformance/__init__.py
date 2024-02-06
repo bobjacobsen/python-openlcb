@@ -17,7 +17,7 @@ def sendMessage(message) :
 def getMessage(timeout=0.8) :
     return setup.readQueue.get(True, timeout)
 
-def purgeMessages(timeout=1.0):
+def purgeMessages(timeout=0.3):
     while True :
         try :
             received = getMessage(timeout) # timeout if no entries
@@ -30,7 +30,7 @@ def ownnodeid() :
 def targetnodeid() :
     return setup.configure.targetnodeid
     
-def getTargetID(timeout=0.8) :
+def getTargetID(timeout=0.3) :
     '''
     If it hasn't already been specified, use a
     Verify Node cycle to get the NodeID of the DUT
@@ -73,7 +73,7 @@ def isCheckPip() :
     '''
     return setup.configure.checkpip
     
-def gatherPIP(destination, timeout=0.8) :
+def gatherPIP(destination, timeout=0.3) :
     '''
     Get the PIP information from the DUT.
     If the result is None, the PIP values should not be checked.

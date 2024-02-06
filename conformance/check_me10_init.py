@@ -22,13 +22,12 @@ def test():
 
     import conformance.setup
     trace = conformance.trace() # just to be shorter
-    timeout = 0.8
 
     # pull any early received messages
     conformance.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID(timeout)
+    destination = conformance.getTargetID()
 
     ###########################
     # test sequence starts here
@@ -39,7 +38,7 @@ def test():
 
     while True :
         try :
-            received = conformance.getMessage(15) # long reset timeout if no entries
+            received = conformance.getMessage(15) # long reset timeout to wait for manual restart
             # is this a reply from that node?
             if received.mti == MTI.Initialization_Complete or received.mti == MTI.Initialization_Complete_Simple :
                 # this is an init message, check source
