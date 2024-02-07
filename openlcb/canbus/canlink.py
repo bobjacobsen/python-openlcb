@@ -323,6 +323,10 @@ class CanLink(LinkLayer):
                 if frame.data[0] & 0x10 == 0:
                     # is end, ship and remove accumulation
                     msg = Message(mti, sourceID, destID, self.accumulator[key])
+                    # This includes the special case of MTI.Unknown, which needs
+                    # to carry its original MTI value
+                    if mti is MTI.Unknown :
+                        msg.originalMTI = ((frame.header >> 12) & 0xFFF)
                     self.fireListeners(msg)
 
                     # remove accumulution
@@ -333,6 +337,10 @@ class CanLink(LinkLayer):
         else:
             # forward global message
             msg = Message(mti, sourceID, destID, frame.data)
+            # This includes the special case of MTI.Unknown, which needs
+            # to carry its original MTI value
+            if mti is MTI.Unknown :
+                message.originalMTI = ((frame.header >> 12) & 0xFFF)
             self.fireListeners(msg)
 
     def sendMessage(self, msg):
@@ -564,13 +572,13 @@ class CanLink(LinkLayer):
         canMTI = ((frame.header >> 12) & 0xFFF)
 
         if frameType == 1:
-            okMTI = MTI(canMTI)
-            if okMTI is not None:
-                return okMTI
-            else:
+            try :
+                okMTI = MTI(canMTI)
+            except ValueError:
                 logging.warning("unhandled canMTI: {}, marked Unknown"
                                 "".format(frame))
                 return MTI.Unknown
+            return okMTI
 
         elif (frameType >= 2 and 5 >= frameType):
             #    datagram type - we don't address the subtypes here

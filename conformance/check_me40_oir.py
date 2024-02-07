@@ -21,13 +21,12 @@ def test() :
 
     import conformance.setup
     trace = conformance.trace() # just to be shorter
-    timeout = 0.8
 
     # pull any early received messages
     conformance.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID(timeout)
+    destination = conformance.getTargetID()
 
     ###########################
     # test sequence starts here
@@ -39,7 +38,7 @@ def test() :
 
     while True :
         try :
-            received = conformance.getMessage(timeout) # timeout if no entries
+            received = conformance.getMessage() # timeout if no entries
             # is this a reply from that node?
             if not received.mti == MTI.Optional_Interaction_Rejected : continue # wait for next
             # this is a OIR message, success
@@ -59,13 +58,13 @@ def test() :
                 seenMTI = MTI(0x2000|received.data[2]<<8 | received.data[3])
             except ValueError :
                 seenMTI = None
-            if seenMTI != received.mti :
+            if seenMTI != MTI.New_Node_Seen :
                 print ("Failure - MTI not carried in data: {} {}".format(received, received.data, seenMTI))
                 try :
                     earlyMTI = MTI(0x2000|received.data[0]<<8 | received.data[1])
                 except ValueError:
                     earlyMTI = None
-                if earlyMTI != received.mti :
+                if earlyMTI == MTI.New_Node_Seen :
                     print("    Hint: MTI incorrectly found in first two bytes of OIR reply")
                 return(3)
             

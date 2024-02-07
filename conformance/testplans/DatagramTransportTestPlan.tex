@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB Test plan for (Sample) Protocol}
+\title{OpenLCB Test plan for the Datagram Transport Protocol}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -21,7 +21,7 @@
 \section{Introduction}
 
 This note documents the procedure for testing an OpenLCB implementation against the 
-\href{url}{(Standard name here) Standard}.
+\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/DatagramTransportS.pdf}{Datagram Transport Standard}.
 
 The tests are traceable to specific sections of the Standard.
 
@@ -60,29 +60,53 @@ The following steps need to be done at the start of each testing session.
 \item Start the test program.
 \end{enumerate}
 
-\section{(specific content) Procedure}
+\section{Datagram Transport Procedure}
 
-Select ``(something) testing" in the test program, 
+Select ``Datagram testing" in the test program, 
 then select each section below in turn.  Follow the prompts
-for when to reset/restart the node and when to check 
-outputs against the node documentation.
+for when to check outputs against the node documentation.
 
-\subsection{Alias Acquisition}
-Select the "Alias Acquisition Test" option in the test program. 
-This will test the sequences used by the DUT to acquire an OpenLCB node alias on the CAN link. 
-The program will wait until it sees the DUT start communicating after the next step.
+Note that this process is unable to test datagrams from the DUT to the tester.
+There is no standard way to elicit those.  They will be tested as part of the 
+Memory Configuration Protocol testing, if applicable.
 
-Follow the prompts when asked to reset or otherwise initialize the DUT.
+A node which does not self-identify in PIP that it supports
+datagram transfer will be deemed to have passed these tests.
+
+\subsection{Datagram Reception}
+
+This tests the messages in Standard sections 4.1 and 4.2 or 4.3, 
+including the error code constraints in Standard section 4.3.1
+\footnote{This section references the Message Transport Standard, 
+section 3.5.5}
+and the interactions in sections 6.1 or 6.2.
+
+The tester will send a datagram to the DUT. The DUT in turn will 
+either accept the datagram (sections 4.2 and 6.1) or 
+reject it (sections 4.3 and 6.2). Either response is acceptable.
 
 This section's tests cover:
 
 \begin{enumerate}
-\item Part A tests the initial sequence used at start up in the absence of a collision\footnote{SSS Standard, line 321}
-\item Part B tests the regeneration of an alias when there's a collision during the CID process\footnote{SSS Standard, line 321}
-\item Part C ...
-	\end{enumerate}
+\item If the datagram is accepted,
+    \begin{enumerate}
+    \item That the Datagram OK message is received,
+    \item That the Datagram OK message has proper source and destination node IDs, 
+    \item that the Datagram OK message contains exactly 1 byte of flags,
+    \item that the 0x70 bits of the flags are zeros.
+    \end{enumerate}
+\item if the datagram is rejected, 
+    \begin{enumerate}
+    \item That the Datagram Rejected message is received,
+    \item That the Datagram Rejected message has proper source and destination node IDs, 
+    \item that the Datagram Rejected message contains at least two bytes of error code,
+    \item that the 0xF000 bits of the error code are either 0x1000 or 0x2000,
+    \item that the 0x0F00 bits of the error code are zeros.
+    \end{enumerate}
+\end{enumerate}
 
-
+This process is repeated for datagrams of length 1, 10 and 72 bytes to exercise the full
+range of datagram framing.
 
 
 \end{document}  

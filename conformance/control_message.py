@@ -43,6 +43,8 @@ def testAll() :
         print("\nSuccess - all passed")
     else:
         print("\nAt least one test failed")
+
+    return result
     
 def main() :
     '''

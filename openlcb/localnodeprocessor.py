@@ -127,15 +127,26 @@ class LocalNodeProcessor(Processor):
         by returning OptionalInteractionRejected
         '''
         # FIXME: should be private method. Add _ to start of method name.
-        if message.isGlobal():
+        
+        # special case of unknown MTI from lower level
+        unknownAddressed = False
+        originalMTI = 0xFFFF
+        if message.mti == MTI.Unknown :
+            if hasattr(message, "originalMTI") :
+                originalMTI = message.originalMTI
+            else : 
+                logging.error("MTI.Unknown without originalMTI")
+            unknownAddressed = (originalMTI & 0x008 ) != 0
+            print ("original MTI {:04X}".format(originalMTI))
+        if not (message.mti.addressPresent() or unknownAddressed) :
             return  # unrecognized global messages are ignored
 
         # addressed messages get an OptionalInteractionRejected
         logging.info("received unexpected {}, send OIR".format(message))
         msg = Message(MTI.Optional_Interaction_Rejected,  node.id,
                       message.source,
-                      [0x10, 0x43, ((message.mti.value >> 8) & 0xFF),
-                       (message.mti.value & 0xFF)])  # permanent error
+                      [0x10, 0x43, ((originalMTI >> 8) & 0xFF),
+                       (originalMTI & 0xFF)])  # permanent error
         self.linkLayer.sendMessage(msg)
 
     # private method

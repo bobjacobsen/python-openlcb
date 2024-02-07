@@ -22,13 +22,12 @@ def test():
 
     import conformance.setup
     trace = conformance.trace() # just to be shorter
-    timeout = 0.8
 
     # pull any early received messages
     conformance.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID(timeout)
+    destination = conformance.getTargetID()
 
     # Will we be checking PIP?
     pipSet = conformance.gatherPIP(destination)
@@ -44,7 +43,7 @@ def test():
     # pull the received frames and get the source ID from first as remote NodeID
     while True :
         try :
-            received = conformance.getMessage(timeout) # timeout if no entries
+            received = conformance.getMessage() # timeout if no entries
 
             if received.mti != MTI.Verified_NodeID :
                 continue # ignore other messages
@@ -83,7 +82,7 @@ def test():
 
     while True :
         try :
-            received = conformance.getMessage(timeout) # timeout if no entries
+            received = conformance.getMessage() # timeout if no entries
             # is this a valid reply?
             if received.mti != MTI.Verified_NodeID and received.mti != MTI.Verified_NodeID_Simple: continue # wait for next
         
@@ -118,7 +117,7 @@ def test():
     conformance.sendMessage(message)
 
     try :
-        received = conformance.getMessage(timeout) # timeout if no entries
+        received = conformance.getMessage() # timeout if no entries
         # is this a pip reply?
         if received.mti == MTI.Verified_NodeID: # wait for next
             print ("Failure - Should not have gotten a reply {}".format(received))
