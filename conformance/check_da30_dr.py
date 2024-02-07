@@ -41,7 +41,7 @@ def test():
     if not PIP.DATAGRAM_PROTOCOL in pipSet :
         if trace >= 10 : 
             print("Passed - due to Datagram protocol not in PIP")
-        #return(0)
+        return(0)
 
     sampleLengths = [ 1, 10, 72]
     
