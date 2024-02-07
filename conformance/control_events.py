@@ -43,7 +43,7 @@ def testAll() :
     
 def main() :
     '''
-    loop to test against Message Network Standard
+    loop to test against Event Transport Standard
     '''
     while True :
         prompt()

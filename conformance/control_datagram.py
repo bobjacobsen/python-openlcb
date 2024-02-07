@@ -28,7 +28,7 @@ def testAll() :
     
 def main() :
     '''
-    loop to test against SNIP Standard
+    loop to test against Datagram Standard
     '''
     while True :
         prompt()
