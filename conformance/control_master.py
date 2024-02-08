@@ -10,7 +10,9 @@ Top level of testing suite
 
 def prompt() :
     print("\nOpenLCB test program")
-    print(" 0 Setup")
+    print(" s Setup")
+    print("")
+    print(" 0 Frame Transport testing")
     print(" 1 Message Network testing")
     print(" 2 SNIP testing")
     print(" 3 Event Transport testing")
@@ -27,9 +29,13 @@ def main() :
         prompt()
         selection = input(">> ")
         match selection :
-            case "0" : 
+            case "s" : 
                 import control_setup
                 control_setup.main()
+
+            case "0" : 
+                import control_frame
+                control_frame.main()
 
             case "1" : 
                 import control_message
