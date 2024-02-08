@@ -1,3 +1,10 @@
+'''
+Set up the Message level infrastructure, including 
+an underlying CAN serial or TCP GridConnect layer
+
+This runs when imported.
+'''
+
 from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
 from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.canlink import CanLink
@@ -14,7 +21,7 @@ from queue import Empty
 # get and process options
 import configure
 
-# define common interface for conformance checks
+# define common interface for message-level conformance checks
 
 trace = configure.trace # just to be shorter
 
