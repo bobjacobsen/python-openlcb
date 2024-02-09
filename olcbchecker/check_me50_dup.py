@@ -20,14 +20,14 @@ from queue import Empty
 def check() :
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
@@ -35,11 +35,11 @@ def check() :
     
     # send a message with bogus MTI to provoke response
     message = Message(MTI.Verified_NodeID, destination, None) # send from destination node
-    conformance.sendMessage(message)
+    olcbchecker.sendMessage(message)
 
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a reply from that node?
             if not received.mti == MTI.Producer_Consumer_Event_Report : continue # wait for next
             # this is a PCER message, success

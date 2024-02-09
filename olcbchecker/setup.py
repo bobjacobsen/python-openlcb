@@ -21,7 +21,7 @@ from queue import Empty
 # get and process options
 import configure
 
-# define common interface for message-level conformance checks
+# define common interface for message-level compatibility checks
 
 trace = configure.trace # just to be shorter
 

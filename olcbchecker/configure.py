@@ -1,5 +1,5 @@
 '''
-Initial configuration for a conformance check.
+Initial configuration for a compatibility check.
 
 This runs at the start of each check to 
 load configuration values into the "default"

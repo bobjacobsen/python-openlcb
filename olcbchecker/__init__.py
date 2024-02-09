@@ -1,5 +1,5 @@
 '''
-Define common interface for conformance checks.
+Define common interface for compatibility checks.
 
 This is a set of convenience methods wrapping
 the setup and configure modules

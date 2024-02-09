@@ -14,10 +14,10 @@ from openlcb.nodeid import NodeID
 
 from queue import Empty
 
-import conformance.framelayer
+import olcbchecker.framelayer
 
 def getFrame(timeout=0.3) :
-    return conformance.framelayer.readQueue.get(True, timeout)
+    return olcbchecker.framelayer.readQueue.get(True, timeout)
 
 def purgeFrames(timeout=0.3):
     while True :
@@ -29,7 +29,7 @@ def purgeFrames(timeout=0.3):
 def check():
     # set up the infrastructure
 
-    trace = conformance.framelayer.trace # just to be shorter
+    trace = olcbchecker.framelayer.trace # just to be shorter
 
     timeout = 0.3
 

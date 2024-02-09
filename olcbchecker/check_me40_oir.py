@@ -19,26 +19,26 @@ from queue import Empty
 def check() :
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
     ###############################
     
     # send a message with bogus MTI to provoke response
-    message = Message(MTI.New_Node_Seen, NodeID(conformance.ownnodeid()), destination) # MTI selected to be addressed
-    conformance.sendMessage(message)
+    message = Message(MTI.New_Node_Seen, NodeID(olcbchecker.ownnodeid()), destination) # MTI selected to be addressed
+    olcbchecker.sendMessage(message)
 
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a reply from that node?
             if not received.mti == MTI.Optional_Interaction_Rejected : continue # wait for next
             # this is a OIR message, success
@@ -47,7 +47,7 @@ def check() :
                 print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
-            if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
                 print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
             if len(received.data) < 4:

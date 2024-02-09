@@ -15,10 +15,10 @@ from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.controlframe import ControlFrame
 from queue import Empty
 
-import conformance.framelayer
+import olcbchecker.framelayer
 
 def getFrame(timeout=0.3) :
-    return conformance.framelayer.readQueue.get(True, timeout)
+    return olcbchecker.framelayer.readQueue.get(True, timeout)
 
 def purgeFrames(timeout=0.3):
     while True :
@@ -30,7 +30,7 @@ def purgeFrames(timeout=0.3):
 def check():
     # set up the infrastructure
 
-    trace = conformance.framelayer.trace # just to be shorter
+    trace = olcbchecker.framelayer.trace # just to be shorter
 
     timeout = 0.3
     
@@ -42,7 +42,7 @@ def check():
 
     # send the AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-    conformance.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
+    olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
     
     try :
         # check for AMD frame
@@ -60,7 +60,7 @@ def check():
         
         # get that node ID, create and send an AMD using it
         frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
-        conformance.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
+        olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
 
         # check for AMD frame
         frame = getFrame(1.0)

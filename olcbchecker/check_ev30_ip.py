@@ -21,22 +21,22 @@ from queue import Empty
 def check():
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
     ###############################
 
     # check if PIP says this is present
-    if conformance.isCheckPip() : 
-        pipSet = conformance.gatherPIP(destination)
+    if olcbchecker.isCheckPip() : 
+        pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
             print ("Failed in setup, no PIP information received")
             return (2)
@@ -46,8 +46,8 @@ def check():
             return(0)
 
     # send an Identify Events Addressed  message to accumulate producers to check
-    message = Message(MTI.Identify_Events_Addressed , NodeID(conformance.ownnodeid()), destination)
-    conformance.sendMessage(message)
+    message = Message(MTI.Identify_Events_Addressed , NodeID(olcbchecker.ownnodeid()), destination)
+    olcbchecker.sendMessage(message)
 
     # does not include range replies
     producerIdMTIs = [MTI.Producer_Identified_Unknown, MTI.Producer_Identified_Active, MTI.Producer_Identified_Inactive]
@@ -56,7 +56,7 @@ def check():
     
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a reply?
             if received.mti not in producerIdMTIs :
                     continue # just skip
@@ -74,12 +74,12 @@ def check():
 
     # have the set to check, proceed to check each one
     for event in producedEvents :
-        message = Message(MTI.Identify_Producer, NodeID(conformance.ownnodeid()), None, event.toArray())
-        conformance.sendMessage(message)
+        message = Message(MTI.Identify_Producer, NodeID(olcbchecker.ownnodeid()), None, event.toArray())
+        olcbchecker.sendMessage(message)
 
         try:
             while True : # in case we need to skip PCER messages
-                received = conformance.getMessage() # timeout if no entries
+                received = olcbchecker.getMessage() # timeout if no entries
                 # is this a reply? Some nodes emit PCER after verify
                 if received.mti not in producerIdMTIs :
                     continue 

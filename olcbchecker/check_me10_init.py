@@ -20,14 +20,14 @@ from queue import Empty
 def check():
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
@@ -38,7 +38,7 @@ def check():
 
     while True :
         try :
-            received = conformance.getMessage(15) # long reset timeout to wait for manual restart
+            received = olcbchecker.getMessage(15) # long reset timeout to wait for manual restart
             # is this a reply from that node?
             if received.mti == MTI.Initialization_Complete or received.mti == MTI.Initialization_Complete_Simple :
                 # this is an init message, check source

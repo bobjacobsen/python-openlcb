@@ -20,26 +20,26 @@ from queue import Empty
 def check():
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
     ###############################
     
     # send an PIP message to provoke response
-    message = Message(MTI.Protocol_Support_Inquiry, NodeID(conformance.ownnodeid()), destination)
-    conformance.sendMessage(message)
+    message = Message(MTI.Protocol_Support_Inquiry, NodeID(olcbchecker.ownnodeid()), destination)
+    olcbchecker.sendMessage(message)
 
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a pip reply?
             if not received.mti == MTI.Protocol_Support_Reply : continue # wait for next
         
@@ -47,7 +47,7 @@ def check():
                 print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
-            if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
                 print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
         

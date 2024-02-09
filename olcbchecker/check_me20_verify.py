@@ -20,30 +20,30 @@ from queue import Empty
 def check():
     # set up the infrastructure
 
-    import conformance.setup
-    trace = conformance.trace() # just to be shorter
+    import olcbchecker.setup
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     # Will we be checking PIP?
-    pipSet = conformance.gatherPIP(destination)
+    pipSet = olcbchecker.gatherPIP(destination)
 
     ###############################
     # checking sequence starts here
     ###############################
 
     # send a Verify Nodes Global message
-    message = Message(MTI.Verify_NodeID_Number_Global, NodeID(conformance.ownnodeid()), None)
-    conformance.sendMessage(message)
+    message = Message(MTI.Verify_NodeID_Number_Global, NodeID(olcbchecker.ownnodeid()), None)
+    olcbchecker.sendMessage(message)
 
     # pull the received frames and get the source ID from first as remote NodeID
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
 
             if received.mti != MTI.Verified_NodeID :
                 continue # ignore other messages
@@ -74,15 +74,15 @@ def check():
             print ("Failure - did not get response to global")
             return(3)
 
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # send an addressed verify to this node and check for answer
-    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(conformance.ownnodeid()), destination)
-    conformance.sendMessage(message)
+    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(olcbchecker.ownnodeid()), destination)
+    olcbchecker.sendMessage(message)
 
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a valid reply?
             if received.mti != MTI.Verified_NodeID and received.mti != MTI.Verified_NodeID_Simple: continue # wait for next
         
@@ -113,11 +113,11 @@ def check():
             return(3) 
 
     # send an addressed verify to a different node (the origin node) and check for lack of answer
-    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(conformance.ownnodeid()), NodeID(conformance.ownnodeid()))
-    conformance.sendMessage(message)
+    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()))
+    olcbchecker.sendMessage(message)
 
     try :
-        received = conformance.getMessage() # timeout if no entries
+        received = olcbchecker.getMessage() # timeout if no entries
         # is this a pip reply?
         if received.mti == MTI.Verified_NodeID: # wait for next
             print ("Failure - Should not have gotten a reply {}".format(received))

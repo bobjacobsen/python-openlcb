@@ -18,7 +18,7 @@ from queue import Empty
 # get and process options
 import configure
 
-# define common interface for conformance checks
+# define common interface for compatibility checks
 
 trace = configure.trace # just to be shorter
 

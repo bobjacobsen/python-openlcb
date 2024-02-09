@@ -17,7 +17,7 @@ from openlcb.pip import PIP
 
 from queue import Empty
 
-import conformance.setup
+import olcbchecker.setup
 
 def getReplyDatagram(destination) :
     '''
@@ -30,7 +30,7 @@ def getReplyDatagram(destination) :
     # first, wait for the reply
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a datagram reply, OK or not?
             if not (received.mti == MTI.Datagram_Received_OK or received.mti == MTI.Datagram_Rejected) : 
                 continue # wait for next
@@ -38,7 +38,7 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
                 continue
     
             if received.mti == MTI.Datagram_Received_OK :
@@ -54,7 +54,7 @@ def getReplyDatagram(destination) :
     # now wait for the reply datagram
     while True :
         try :
-            received = conformance.getMessage() # timeout if no entries
+            received = olcbchecker.getMessage() # timeout if no entries
             # is this a datagram reply, OK or not?
             if not (received.mti == MTI.Datagram) : 
                 continue # wait for next
@@ -62,13 +62,13 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(conformance.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
                 continue
 
             # here we've received the reply datagram
             # send the reply
-            message = Message(MTI.Datagram_Received_OK, NodeID(conformance.ownnodeid()), destination, [0])
-            conformance.sendMessage(message)
+            message = Message(MTI.Datagram_Received_OK, NodeID(olcbchecker.ownnodeid()), destination, [0])
+            olcbchecker.sendMessage(message)
 
             return received
             
@@ -80,21 +80,21 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    trace = conformance.trace() # just to be shorter
+    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
-    conformance.purgeMessages()
+    olcbchecker.purgeMessages()
 
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
-    destination = conformance.getTargetID()
+    destination = olcbchecker.getTargetID()
 
     ###############################
     # checking sequence starts here
     ###############################
     
     # check if PIP says this is present
-    if conformance.isCheckPip() : 
-        pipSet = conformance.gatherPIP(destination)
+    if olcbchecker.isCheckPip() : 
+        pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
             print ("Failed in setup, no PIP information received")
             return (2)
@@ -109,8 +109,8 @@ def check():
     for space in spaces: 
 
         # send a "Get Address Space Information Command" datagram to provoke response
-        message = Message(MTI.Datagram, NodeID(conformance.ownnodeid()), destination, [0x20, 0x84, space])
-        conformance.sendMessage(message)
+        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, space])
+        olcbchecker.sendMessage(message)
 
         try :
             reply = getReplyDatagram(destination)
