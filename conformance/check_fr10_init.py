@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test CAN frame parsing
+This uses a CAN link layer to test CAN alias reservation at startup
 
 Usage:
 python3.10 check_fr10_init.py
@@ -35,7 +35,7 @@ def test():
 
     try :
         # check for four CID
-        frame = getFrame(30)
+        frame = getFrame(30)  # wait for operator to start test
         if (frame.header & 0xFF_000_000) != 0x170_00_000 :
             print ("Failure - frame was not 1st CID frame")
             return 3
@@ -74,7 +74,7 @@ def test():
         cid4 = (frame.header & 0xFFF000) >> 12
     
         # check for RID frame
-        frame = getFrame()
+        frame = getFrame(0.7)  # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_700_000 :
             print ("Failure - frame was not RID frame")
             return 3
@@ -83,7 +83,7 @@ def test():
             return 3
     
         # check for AMD frame
-        frame = getFrame()
+        frame = getFrame(0.7) # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
             print ("Failure - frame was not AMD frame")
             return 3

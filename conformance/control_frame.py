@@ -5,11 +5,13 @@ Simple runner for frame transport suite
 '''
 
 import check_fr10_init
+import check_fr20_ame
 
 def prompt() :
     print("\nFrame Transport Standard testing")
     print(" 0 Run all in sequence")
     print(" 1 Initialization testing")
+    print(" 2 AME testing")
     print("  ")
     print(" q go back")
 
@@ -18,6 +20,9 @@ def testAll() :
  
     print("\nInitialization testing")
     result += check_fr10_init.test()
+
+    print("\nAME testing")
+    result += check_fr20_ame.test()
 
     if result == 0 :
         print("\nSuccess - all passed")
@@ -37,6 +42,10 @@ def main() :
             case "1" : 
                 print("\nInitialization testing")
                 check_fr10_init.test()
+
+            case "2" : 
+                print("\nAME testing")
+                check_fr20_ame.test()
            
             case  "0" :
                 testAll()
