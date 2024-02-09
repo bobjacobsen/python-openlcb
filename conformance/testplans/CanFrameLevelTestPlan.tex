@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB Test plan for (Sample) Protocol}
+\title{OpenLCB Test plan for CAN Frame Level Protocols}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -20,8 +20,9 @@
 
 \section{Introduction}
 
-This note documents the procedure for testing an OpenLCB implementation against the 
-\href{url}{(Standard name here) Standard}.
+This note documents the procedure for testing an OpenLCB implementation
+against the
+\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/CanFrameTransferS.pdf}{CAN Frame Transfer Standard}.
 
 The tests are traceable to specific sections of the Standard.
 
@@ -60,41 +61,102 @@ The following steps need to be done at the start of each testing session.
 \item Start the test program.
 \end{enumerate}
 
-\section{CAN Frame Level Procedure}
+\section{Frame Level Procedure}
 
-Select ``CAN Frame Layer testing" in the test program, 
+Select ``Frame Layer testing" in the test program, 
 then select each section below in turn.  Follow the prompts
 for when to reset/restart the node and when to check 
 outputs against the node documentation.
 
-\subsection{Alias Acquisition}
-Select the "Alias Acquisition Test" option in the test program. 
-This will test the sequences used by the DUT to acquire an OpenLCB node alias on the CAN link. 
-The program will wait until it sees the DUT start communicating after the next step.
+\subsection{Initialization}
+
+This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.1.
+
+The tests assume that the node reserves a single alias at startup.
 
 Follow the prompts when asked to reset or otherwise initialize the DUT.
 
-This section's tests cover:
+The tester waits up to 30 seconds for the node to restart and 
+go through a node reservation sequence.
 
 \begin{enumerate}
-\item ...
+\item All frames carry the same source alias
+\item The sequence of four RID frames, a CID frame, and AMD frame are sent
+\item The Node ID in the RID frames matches the Node ID in the AMD frame
+\item That the Node ID matches that of the node under test
+\item Neither the alias\footnote{See section 6.3 of the Standard} 
+nor the Node ID\footnote{See section 5.12 of the Unique Identifiers Standard.}
+is zero.
 \end{enumerate}
 
 
 \subsection{AME Sequences}
 
-...
+This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3.
+
+The tests assume that the node has previously reserved at least one alias
+and is in the Permitted state.
+
+The tester sends an AME frame with no NodeID and checks for:
+\begin{enumerate}
+\item An AMD frame in response
+\item That carries the Node ID of the DUT
+\end{enumerate}
+
+The tester sends an AME frame with the Node ID of the DUT and checks the response for:
+\begin{enumerate}
+\item An AMD frame in response
+\item That carries the Node ID of the DUT
+\end{enumerate}
+
+The tester sends an AME frame with a Node ID different from the Node ID of the DUT 
+and checks for no response.
+
 
 \subsection{Alias Conflict}
 
-...
+This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.5.
 
-\subsection{Zero or Repeated Alias}
+The tests assume that the node has previously reserved at least one alias
+and is in the Permitted state.
 
-...
+The tester sends an AME frame to acquire the DUT's current alias from the AMD
+response.
 
-\subsection{Reserved Bits}
+The tester sends an CID frame with the DUT's alias and checks for
+\begin{enumerate}
+\item An RID frame in response
+\item That carries the source alias of the DUT.
+\end{enumerate}
 
-...
+The tester sends an AMD frame with the DUT's alias and checks for
+\begin{enumerate}
+\item An AMR frame in response
+\item That carries the source alias of the DUT.
+\end{enumerate}
+
+At this point, Frame Transfer Standard section 6.2.5 specifies that the node must stop
+using that alias.  Most nodes will reserve a different one at this point.
+
+If an initialization sequence is not started, the node passes.
+
+If an initialization sequence does start, it will be checked as in the 
+Initialization check above.  In addition, the tester will check that the 
+newly reserved alias is different from the original one.
+
+\subsection{Reserved Frame Bit}
+
+This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3., 
+specifically that the 0x1000\_0000 bit in the CAN header is properly
+ignored.
+
+The tester sends an AME frame with zero in the 0x1000\_0000 bit
+and with no NodeID and checks for:
+\begin{enumerate}
+\item An AMD frame in response,
+\item That carries the Node ID of the DUT,
+\item With the 0x1000\_0000 bit set to one.
+\end{enumerate}
+
 
 \end{document}  
