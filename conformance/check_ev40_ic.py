@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test Identify Consumers messages
+This uses a CAN link layer to check Identify Consumers messages
 
 Usage:
 python3.10 check_ev30_ic.py 
@@ -18,7 +18,7 @@ from openlcb.eventid import EventID
 
 from queue import Empty
 
-def test():
+def check():
     # set up the infrastructure
 
     import conformance.setup
@@ -30,9 +30,9 @@ def test():
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
 
     # check if PIP says this is present
     if conformance.isCheckPip() : 
@@ -45,7 +45,7 @@ def test():
                 print("Passed - due to Event Exchange not in PIP")
             return(0)
 
-    # send an Identify Events Addressed  message to accumulate producers to test
+    # send an Identify Events Addressed  message to accumulate producers to check
     message = Message(MTI.Identify_Events_Addressed , NodeID(conformance.ownnodeid()), destination)
     conformance.sendMessage(message)
 
@@ -96,4 +96,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

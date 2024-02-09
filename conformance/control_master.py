@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.10
 
 '''
-Top level of testing suite
+Top level of checking suite
 '''
 
 # We only import each specific option as it's 
@@ -9,21 +9,21 @@ Top level of testing suite
 # during development
 
 def prompt() :
-    print("\nOpenLCB test program")
+    print("\nOpenLCB checking program")
     print(" s Setup")
     print("")
-    print(" 0 Frame Transport testing")
-    print(" 1 Message Network testing")
-    print(" 2 SNIP testing")
-    print(" 3 Event Transport testing")
-    print(" 4 Datagram Transport testing")
-    print(" 5 Memory Configuration testing")
+    print(" 0 Frame Transport checking")
+    print(" 1 Message Network checking")
+    print(" 2 SNIP checking")
+    print(" 3 Event Transport checking")
+    print(" 4 Datagram Transport checking")
+    print(" 5 Memory Configuration checking")
     print("  ")
     print(" q  Quit")
     
 def main() :
     '''
-    loop to test against SNIP Standard
+    loop to check against SNIP Standard
     '''
     while True :
         prompt()

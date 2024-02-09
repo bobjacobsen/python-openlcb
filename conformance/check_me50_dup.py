@@ -17,7 +17,7 @@ from openlcb.eventid import EventID
 
 from queue import Empty
 
-def test() :
+def check() :
     # set up the infrastructure
 
     import conformance.setup
@@ -29,9 +29,9 @@ def test() :
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
     
     # send a message with bogus MTI to provoke response
     message = Message(MTI.Verified_NodeID, destination, None) # send from destination node
@@ -58,4 +58,4 @@ def test() :
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

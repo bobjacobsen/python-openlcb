@@ -13,7 +13,9 @@ Files whose names start with "check_" are the individual section checks.
 
 Files whose names start with "control_" form a basic line-oriented user interface.
 
-An installation document is available as [testplans/InstallingBasicTester.pdf](testplans/InstallingBasicTester.pdf)
+All of those can be individually run from the command line.
 
-Test plans describing the various tests and procedures are available as PDF files in the [testplans/](testplans/) directory.
+An installation document is available as [plans/InstallingBasicChecker.pdf](plans/InstallingBasicChecker.pdf)
+
+Plans describing the various checks and procedures are available as PDF files in the [plans/](plans/) directory.
 

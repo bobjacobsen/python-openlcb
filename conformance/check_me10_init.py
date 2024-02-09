@@ -17,7 +17,7 @@ from openlcb.eventid import EventID
 
 from queue import Empty
 
-def test():
+def check():
     # set up the infrastructure
 
     import conformance.setup
@@ -29,9 +29,9 @@ def test():
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
     
     #prompt operator to restart node
     print("Please reset/restart the DUT now")
@@ -58,4 +58,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

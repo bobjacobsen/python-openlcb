@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test Verify message exchange
+This uses a CAN link layer to check Verify message exchange
 
 Usage:
 python3.10 check_me20_verify.py
@@ -17,7 +17,7 @@ from openlcb.pip import PIP
 
 from queue import Empty
 
-def test():
+def check():
     # set up the infrastructure
 
     import conformance.setup
@@ -32,9 +32,9 @@ def test():
     # Will we be checking PIP?
     pipSet = conformance.gatherPIP(destination)
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
 
     # send a Verify Nodes Global message
     message = Message(MTI.Verify_NodeID_Number_Global, NodeID(conformance.ownnodeid()), None)
@@ -132,4 +132,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

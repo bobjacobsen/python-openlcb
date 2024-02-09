@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test memmory configuration options command
+This uses a CAN link layer to check memmory configuration options command
 
 Usage:
 python3.10 check_mc10_co.py
@@ -78,7 +78,7 @@ def getReplyDatagram(destination) :
     
 
 
-def test():
+def check():
     # set up the infrastructure
 
     trace = conformance.trace() # just to be shorter
@@ -89,9 +89,9 @@ def test():
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
     
     # check if PIP says this is present
     if conformance.isCheckPip() : 
@@ -131,4 +131,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

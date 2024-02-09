@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test Identify Events Global
+This uses a CAN link layer to check Identify Events Global
 
 Usage:
 python3.10 check_ev20_idg.py
@@ -18,7 +18,7 @@ from openlcb.eventid import EventID
 
 from queue import Empty
 
-def test():
+def check():
     # set up the infrastructure
 
     import conformance.setup
@@ -30,9 +30,9 @@ def test():
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
 
     # check if PIP says this is present
     if conformance.isCheckPip() : 
@@ -90,7 +90,7 @@ def test():
         return(3)
         
     # now check if addressed gets the same as global. First, get addressed.
-    # this was checked by a previous test
+    # this was checked by a previous check
     message = Message(MTI.Identify_Events_Addressed , NodeID(conformance.ownnodeid()), destination)
     conformance.sendMessage(message)
     
@@ -133,4 +133,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

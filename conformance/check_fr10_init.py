@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test CAN alias reservation at startup
+This uses a CAN link layer to check CAN alias reservation at startup
 
 Usage:
 python3.10 check_fr10_init.py
@@ -18,24 +18,33 @@ import conformance.framelayer
 
 def getFrame(timeout=0.3) :
     return conformance.framelayer.readQueue.get(True, timeout)
-    
-def test():
+
+def purgeFrames(timeout=0.3):
+    while True :
+        try :
+            received = getFrame(timeout) # timeout if no entries
+        except Empty:
+             break
+
+def check():
     # set up the infrastructure
 
     trace = conformance.framelayer.trace # just to be shorter
 
     timeout = 0.3
-    
-    ###########################
-    # test sequence starts here
-    ###########################
+
+    purgeFrames()
+  
+    ###############################
+    # checking sequence starts here
+    ###############################
 
     # prompt operator to restart node to start process
     print("Please reset/restart the DUT now")
 
     try :
         # check for four CID
-        frame = getFrame(30)  # wait for operator to start test
+        frame = getFrame(30)  # wait for operator to start check
         if (frame.header & 0xFF_000_000) != 0x170_00_000 :
             print ("Failure - frame was not 1st CID frame")
             return 3
@@ -108,5 +117,5 @@ def test():
     return 0
  
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())
     

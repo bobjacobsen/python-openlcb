@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test response to an AME frame
+This uses a CAN link layer to check response to an AME frame
 
 Usage:
 python3.10 check_fr20_ame.py
@@ -27,16 +27,18 @@ def purgeFrames(timeout=0.3):
         except Empty:
              break
 
-def test():
+def check():
     # set up the infrastructure
 
     trace = conformance.framelayer.trace # just to be shorter
 
     timeout = 0.3
     
-    ###########################
-    # test sequence starts here
-    ###########################
+    purgeFrames()
+
+    ###############################
+    # checking sequence starts here
+    ###############################
 
     # send the AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
@@ -80,5 +82,5 @@ def test():
     return 0
  
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())
     

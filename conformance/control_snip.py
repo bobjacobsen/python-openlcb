@@ -7,39 +7,39 @@ Simple runner for SNIP suite
 import check_sn10_snip
 
 def prompt() :
-    print("\nSNIP Standard testing")
+    print("\nSNIP Standard checking")
     print(" 0 Run all in sequence")
-    print(" 1 SNIP reply testing")
+    print(" 1 SNIP reply checking")
     print("  ")
     print(" q go back")
 
-def testAll() :
+def checkAll() :
     result = 0
  
-    print("\nSNIP reply testing")
-    result += check_sn10_snip.test()
+    print("\nSNIP reply checking")
+    result += check_sn10_snip.check()
 
     if result == 0 :
         print("\nSuccess - all passed")
     else:
-        print("\nAt least one test failed")
+        print("\nAt least one check failed")
         
     return result
     
 def main() :
     '''
-    loop to test against SNIP Standard
+    loop to check against SNIP Standard
     '''
     while True :
         prompt()
         selection = input(">> ")
         match selection :
             case "1" : 
-                print("\nSNIP reply testing")
-                check_sn10_snip.test()
+                print("\nSNIP reply checking")
+                check_sn10_snip.check()
            
             case  "0" :
-                testAll()
+                checkAll()
             
             case "q" | "Q" : return
             

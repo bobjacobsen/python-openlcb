@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.10
 
 '''
-Simple runner for SNIP suite
+Simple setup  for the checking suite
 '''
 
 import os
@@ -71,7 +71,7 @@ def main() :
                 print('      hostname can be accompanied by portnumber, which defaults to 12021')
                 print('   devicename e.g. /dev/cu-USBserial specifies a serial port connection')
                 print('')
-                print('targetnodeid is the ID of the node to be tested.')
+                print('targetnodeid is the ID of the node to be checked.')
                 print('    A value of None means get it from the node itself; this only works for single nodes')
                 print('    ')
                 print('trace defines the level of output. Higher numbers are more output:')

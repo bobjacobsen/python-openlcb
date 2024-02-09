@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to test PIP message exchange.
+This uses a CAN link layer to check PIP message exchange.
 
 Usage:
 python3.10 check_me30_pip.py
@@ -17,7 +17,7 @@ from openlcb.pip import PIP
 
 from queue import Empty
 
-def test():
+def check():
     # set up the infrastructure
 
     import conformance.setup
@@ -29,9 +29,9 @@ def test():
     # get configured DUT node ID - this uses Verify Global in some cases, but not all
     destination = conformance.getTargetID()
 
-    ###########################
-    # test sequence starts here
-    ###########################
+    ###############################
+    # checking sequence starts here
+    ###############################
     
     # send an PIP message to provoke response
     message = Message(MTI.Protocol_Support_Inquiry, NodeID(conformance.ownnodeid()), destination)
@@ -72,4 +72,4 @@ def test():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(test())
+    sys.exit(check())

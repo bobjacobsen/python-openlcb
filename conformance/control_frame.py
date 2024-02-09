@@ -8,47 +8,47 @@ import check_fr10_init
 import check_fr20_ame
 
 def prompt() :
-    print("\nFrame Transport Standard testing")
+    print("\nFrame Transport Standard checking")
     print(" 0 Run all in sequence")
-    print(" 1 Initialization testing")
-    print(" 2 AME testing")
+    print(" 1 Initialization checking")
+    print(" 2 AME checking")
     print("  ")
     print(" q go back")
 
-def testAll() :
+def checkAll() :
     result = 0
  
-    print("\nInitialization testing")
-    result += check_fr10_init.test()
+    print("\nInitialization checking")
+    result += check_fr10_init.check()
 
-    print("\nAME testing")
-    result += check_fr20_ame.test()
+    print("\nAME checking")
+    result += check_fr20_ame.check()
 
     if result == 0 :
         print("\nSuccess - all passed")
     else:
-        print("\nAt least one test failed")
+        print("\nAt least one check failed")
         
     return result
     
 def main() :
     '''
-    loop to test against Frame Transport Standard
+    loop to check against Frame Transport Standard
     '''
     while True :
         prompt()
         selection = input(">> ")
         match selection :
             case "1" : 
-                print("\nInitialization testing")
-                check_fr10_init.test()
+                print("\nInitialization checking")
+                check_fr10_init.check()
 
             case "2" : 
-                print("\nAME testing")
-                check_fr20_ame.test()
+                print("\nAME checking")
+                check_fr20_ame.check()
            
             case  "0" :
-                testAll()
+                checkAll()
             
             case "q" | "Q" : return
             
