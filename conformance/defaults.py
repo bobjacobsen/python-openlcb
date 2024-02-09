@@ -14,8 +14,8 @@ ownnodeid = "03.00.00.00.00.01"
 # taken from NMRA user zero, for now
 
 checkpip = True
-# True means tests are not run and are marked passed if PIP does not include the Stahdard under test
-# False means the tests are run regardless of whether the protocol is included in PIP or not
+# True means checks are not run and are marked passed if PIP does not include the Standard being checked.
+# False means the checks are run regardless of whether the protocol is included in PIP or not
 
 trace = 10
 # higher numbers are more output:

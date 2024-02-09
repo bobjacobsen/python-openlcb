@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB Test plan for CAN Frame Level Protocols}
+\title{Checking the OpenLCB CAN Frame Level Protocols}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -20,70 +20,70 @@
 
 \section{Introduction}
 
-This note documents the procedure for testing an OpenLCB implementation
+This note documents the procedure for checking an OpenLCB implementation against the 
 against the
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/CanFrameTransferS.pdf}{CAN Frame Transfer Standard}.
 
-The tests are traceable to specific sections of the Standard.
+The checks are traceable to specific sections of the Standard.
 
-The testing assumes that the Device Under Test (DUT) is being exercised by other
+The checking assumes that the Device Being Checked (DBC) is being exercised by other
 nodes on the message network, 
 e.g. is responding to enquiries from other parts of the message network.
 
 \subsection{Required Equipment}
 
-See the separate ``Installing the OpenLCB Test Software" document for initial installation 
-and set up of the test program.
+See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
+and set up of the checker program.
 
 If a direct CAN connection will be used,
 a supported USB-CAN adapter
-    \footnote{See ``Installing the OpenLCB Test Software"}
+    \footnote{See ``Installing the OpenLCB Checker Software"}
 is required. 
-Connect the adapter to the DUT using a single UTP cable and connect two CAN terminators.
+Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
 
-Provide power to the DUT using its recommended method.
+Provide power to the DBC using its recommended method.
 
 \section{Set Up}
-The following steps need to be done once to configure the test program:.
+The following steps need to be done once to configure the checker program:.
 \begin{enumerate}
-\item Start the test configuration program. 
-\item Select ``Set Up DUT".
-\item Get the Node ID from the DUT\footnote{Where do we require this to be marked on a node?} 
+\item Start the checker configuration program. 
+\item Select ``Set Up".
+\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
 \item Enter that Node ID into the program.
-\item Configure the test program for the USB-CAN adapter's device address
+\item Configure the checker program for the USB-CAN adapter's device address
         or the TCP hostname and port.
-\item Quit the test program and reply ``Y" to "Save configuration?" when prompted.
+\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
 \end{enumerate}
 
-The following steps need to be done at the start of each testing session.
+The following steps need to be done at the start of each checking session.
 \begin{enumerate}
-\item Check that the DUT is ready for operation.
-\item Start the test program.
+\item Check that the DBC is ready for operation.
+\item Start the checker program.
 \end{enumerate}
 
 \section{Frame Level Procedure}
 
-Select ``Frame Layer testing" in the test program, 
+Select ``Frame Layer checking" in the check program, 
 then select each section below in turn.  Follow the prompts
 for when to reset/restart the node and when to check 
 outputs against the node documentation.
 
 \subsection{Initialization}
 
-This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.1.
+This section's checks cover Frame Transfer Standard sections 4, 6.1 and section 6.2.1.
 
-The tests assume that the node reserves a single alias at startup.
+The checks assume that the node reserves a single alias at startup.
 
-Follow the prompts when asked to reset or otherwise initialize the DUT.
+Follow the prompts when asked to reset or otherwise initialize the DBC.
 
-The tester waits up to 30 seconds for the node to restart and 
+The checker waits up to 30 seconds for the node to restart and 
 go through a node reservation sequence.
 
 \begin{enumerate}
 \item All frames carry the same source alias
 \item The sequence of four RID frames, a CID frame, and AMD frame are sent
 \item The Node ID in the RID frames matches the Node ID in the AMD frame
-\item That the Node ID matches that of the node under test
+\item That the Node ID matches that of the node being checked
 \item Neither the alias\footnote{See section 6.3 of the Standard} 
 nor the Node ID\footnote{See section 5.12 of the Unique Identifiers Standard.}
 is zero.
@@ -92,47 +92,47 @@ is zero.
 
 \subsection{AME Sequences}
 
-This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3.
+This section's checks cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3.
 
-The tests assume that the node has previously reserved at least one alias
+The checks assume that the node has previously reserved at least one alias
 and is in the Permitted state.
 
-The tester sends an AME frame with no NodeID and checks for:
+The checker sends an AME frame with no NodeID and checks for:
 \begin{enumerate}
 \item An AMD frame in response
-\item That carries the Node ID of the DUT
+\item That carries the Node ID of the DBC
 \end{enumerate}
 
-The tester sends an AME frame with the Node ID of the DUT and checks the response for:
+The checker sends an AME frame with the Node ID of the DBC and checks the response for:
 \begin{enumerate}
 \item An AMD frame in response
-\item That carries the Node ID of the DUT
+\item That carries the Node ID of the DBC
 \end{enumerate}
 
-The tester sends an AME frame with a Node ID different from the Node ID of the DUT 
+The checker sends an AME frame with a Node ID different from the Node ID of the DBC 
 and checks for no response.
 
 
 \subsection{Alias Conflict}
 
-This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.5.
+This section's checks cover Frame Transfer Standard sections 4, 6.1 and section 6.2.5.
 
-The tests assume that the node has previously reserved at least one alias
+The checks assume that the node has previously reserved at least one alias
 and is in the Permitted state.
 
-The tester sends an AME frame to acquire the DUT's current alias from the AMD
+The checker sends an AME frame to acquire the DBC's current alias from the AMD
 response.
 
-The tester sends an CID frame with the DUT's alias and checks for
+The checker sends an CID frame with the DBC's alias and checks for
 \begin{enumerate}
 \item An RID frame in response
-\item That carries the source alias of the DUT.
+\item That carries the source alias of the DBC.
 \end{enumerate}
 
-The tester sends an AMD frame with the DUT's alias and checks for
+The checker sends an AMD frame with the DBC's alias and checks for
 \begin{enumerate}
 \item An AMR frame in response
-\item That carries the source alias of the DUT.
+\item That carries the source alias of the DBC.
 \end{enumerate}
 
 At this point, Frame Transfer Standard section 6.2.5 specifies that the node must stop
@@ -141,20 +141,20 @@ using that alias.  Most nodes will reserve a different one at this point.
 If an initialization sequence is not started, the node passes.
 
 If an initialization sequence does start, it will be checked as in the 
-Initialization check above.  In addition, the tester will check that the 
+Initialization check above.  In addition, the checker will check that the 
 newly reserved alias is different from the original one.
 
 \subsection{Reserved Frame Bit}
 
-This section's tests cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3., 
+This section's checks cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3., 
 specifically that the 0x1000\_0000 bit in the CAN header is properly
 ignored.
 
-The tester sends an AME frame with zero in the 0x1000\_0000 bit
+The checker sends an AME frame with zero in the 0x1000\_0000 bit
 and with no NodeID and checks for:
 \begin{enumerate}
 \item An AMD frame in response,
-\item That carries the Node ID of the DUT,
+\item That carries the Node ID of the DBC,
 \item With the 0x1000\_0000 bit set to one.
 \end{enumerate}
 

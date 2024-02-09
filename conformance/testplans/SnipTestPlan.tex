@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB test plan for the Simple Node Information Protocol Standard}
+\title{Checking the OpenLCB Simple Node Information Protocol Standard}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -20,67 +20,67 @@
 
 \section{Introduction}
 
-This note documents the procedure for testing an OpenLCB implementation against the
+This note documents the procedure for checking an OpenLCB implementation against the 
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/SimpleNodeInformationS.pdf}
     {Simple Node Information Protocol Standard}.
 
-The tests are traceable to specific sections of the Standard.
+The checks are traceable to specific sections of the Standard.
 
-The testing assumes that the Device Under Test (DUT) is being exercised by other
+The checking assumes that the Device Being Checked (DBC) is being exercised by other
 nodes on the message network, 
 e.g. is responding to enquiries from other parts of the message network.
 
-\section{Required Equipment}
+\subsection{Required Equipment}
 
-See the separate ``Installing the OpenLCB Test Software" document for initial installation 
-and set up of the test program.
+See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
+and set up of the checker program.
 
 If a direct CAN connection will be used,
 a supported USB-CAN adapter
-    \footnote{See ``Installing the OpenLCB Test Software"}
+    \footnote{See ``Installing the OpenLCB Checker Software"}
 is required. 
-Connect the adapter to the DUT using a single UTP cable and connect two CAN terminators.
+Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
 
-Provide power to the DUT using its recommended method.
+Provide power to the DBC using its recommended method.
 
 \section{Set Up}
-The following steps need to be done once to configure the test program:.
+The following steps need to be done once to configure the checker program:.
 \begin{enumerate}
-\item Start the test configuration program. 
-\item Select ``Set Up DUT".
-\item Get the Node ID from the DUT\footnote{Where do we require this to be marked on a node?} 
+\item Start the checker configuration program. 
+\item Select ``Set Up".
+\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
 \item Enter that Node ID into the program.
-\item Configure the test program for the USB-CAN adapter's device address
+\item Configure the checker program for the USB-CAN adapter's device address
         or the TCP hostname and port.
-\item Quit the test program and reply ``Y" to "Save configuration?" when prompted.
+\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
 \end{enumerate}
 
-The following steps need to be done at the start of each testing session.
+The following steps need to be done at the start of each checking session.
 \begin{enumerate}
-\item Check that the DUT is ready for operation.
-\item Start the test program.
+\item Check that the DBC is ready for operation.
+\item Start the checker program.
 \end{enumerate}
 
 \section{Simple Node Information Protocol Procedure}
 
-Select ``SNIP testing" in the test program, 
+Select ``SNIP Checking" in the program, 
 then select each section below in turn.  Follow the prompts
 for when to reset/restart the node and when to check 
 outputs against the node documentation.
 
 A node which does not self-identify in PIP that it supports
-the Simple Node Information Protocol will be deemed to have passed these tests.
+the Simple Node Information Protocol will be deemed to have passed these checks.
 \footnote{Using the -p option or setting the checkpip default value False will skip this check.}
 
-\subsection{SNIP reply testing}
+\subsection{SNIP reply checking}
 
-This section tests the format of the reply message in Sections 4.2 and 5.1 of the Standard.
+This section checks the format of the reply message in Sections 4.2 and 5.1 of the Standard.
 
 It does this by issuing a Simple Node Information Request message, 
 accumulating the reply(s), and then checking:
     \begin{enumerate}
-    \item The message indicates its source is the DUT.
-    \item The message indicates its destination is the testing node.
+    \item The message indicates its source is the DBC.
+    \item The message indicates its destination is the checking node.
     \item The version byte at the start of the first section is either 1 or 4.
     \item The version byte at the start of the second section is either 1 or 2.
     \item There are exactly six zero bytes.

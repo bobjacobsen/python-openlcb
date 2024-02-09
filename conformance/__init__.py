@@ -41,8 +41,8 @@ def getTargetID(timeout=0.3) :
 
     from queue import Empty
 
-    # Make sure we have a valid node ID for the device under test (DUT).
-    # This is somewhat redundant with what we're trying to test in some cases.
+    # Make sure we have a valid node ID for the device being checked (DBC).
+    # This is somewhat redundant with what we're trying to check in some cases.
     if targetnodeid() is None:
 
         # send an VerifyNodes message to provoke response
@@ -69,7 +69,7 @@ def getTargetID(timeout=0.3) :
 
 def isCheckPip() :
     '''
-    Should the tests check against the PIP values?
+    Should this check against the PIP values?
     '''
     return setup.configure.checkpip
     
@@ -90,7 +90,7 @@ def gatherPIP(destination, timeout=0.3) :
     if not isCheckPip() : return None
     
     # Get the PIP information from the destination.
-    # This is somewhat redundant with what we're trying to test in some cases.
+    # This is somewhat redundant with what we're trying to check in some cases.
 
     # Send a PIP Request 
     message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownnodeid()), destination)

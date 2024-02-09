@@ -71,7 +71,7 @@ def receiveLoop() :
 import threading
 thread = threading.Thread(daemon=True, target=receiveLoop)
 
-# define a routine for checking tests
+# define a routine for checking results
 def result(arg1, arg2=None, arg3=None, result=True) :
     # returns True if OK, False if failed
     # If arg1 and arg2 provided

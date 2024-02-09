@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB test plan for the Memory Configuration Standard}
+\title{Checking the OpenLCB Memory Configuration Standard}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -20,56 +20,56 @@
 
 \section{Introduction}
 
-This note documents the procedure for testing an OpenLCB implementation against the
+This note documents the procedure for checking an OpenLCB implementation against the 
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/MemoryConfigurationS.pdf}
     {Memory Configuration Standard}.
 
-The tests are traceable to specific sections of the Standard.
+The checks are traceable to specific sections of the Standard.
 
-The testing assumes that the Device Under Test (DUT) is being exercised by other
+The checking assumes that the Device Being Checked (DBC) is being exercised by other
 nodes on the message network, 
 e.g. is responding to enquiries from other parts of the message network.
 
-\section{Required Equipment}
+\subsection{Required Equipment}
 
-See the separate ``Installing the OpenLCB Test Software" document for initial installation 
-and set up of the test program.
+See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
+and set up of the checker program.
 
 If a direct CAN connection will be used,
 a supported USB-CAN adapter
-    \footnote{See ``Installing the OpenLCB Test Software"}
+    \footnote{See ``Installing the OpenLCB Checker Software"}
 is required. 
-Connect the adapter to the DUT using a single UTP cable and connect two CAN terminators.
+Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
 
-Provide power to the DUT using its recommended method.
+Provide power to the DBC using its recommended method.
 
 \section{Set Up}
-The following steps need to be done once to configure the test program:.
+The following steps need to be done once to configure the checker program:.
 \begin{enumerate}
-\item Start the test configuration program. 
-\item Select ``Set Up DUT".
-\item Get the Node ID from the DUT\footnote{Where do we require this to be marked on a node?} 
+\item Start the checker configuration program. 
+\item Select ``Set Up".
+\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
 \item Enter that Node ID into the program.
-\item Configure the test program for the USB-CAN adapter's device address
+\item Configure the checker program for the USB-CAN adapter's device address
         or the TCP hostname and port.
-\item Quit the test program and reply ``Y" to "Save configuration?" when prompted.
+\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
 \end{enumerate}
 
-The following steps need to be done at the start of each testing session.
+The following steps need to be done at the start of each checking session.
 \begin{enumerate}
-\item Check that the DUT is ready for operation.
-\item Start the test program.
+\item Check that the DBC is ready for operation.
+\item Start the checker program.
 \end{enumerate}
 
 \section{Memory Configuration Procedure}
 
-Select ``Memory testing" in the test program, 
+Select ``Memory checking" in the program, 
 then select each section below in turn.  Follow the prompts
 for when to reset/restart the node and when to check 
 outputs against the node documentation.
 
 A node which does not self-identify in PIP that it supports
-Memory Configuration will be deemed to have passed these tests.
+Memory Configuration will be deemed to have passed these checks.
 \footnote{Using the -p option or setting the checkpip default value False will skip this check.}
 
 This plan does not check:
@@ -79,14 +79,14 @@ This plan does not check:
 You can't even assume that a read / write / read sequence will return you to the original
 state, because nodes may react when information is written to them.
 \item The Reinitialize/Factory Reset Command and the Get Unique ID Command and reply
-because these permanently change the state of the node under test.
+because these permanently change the state of the node being checked.
 \end{enumerate}
 
-\subsection{Configuration Options testing}
+\subsection{Configuration Options checking}
 
-This section tests the messages and interaction in Standard sections 4.13 and 4.14.
+This section checks the messages and interaction in Standard sections 4.13 and 4.14.
 
-The tester sends a Get Configuration Options Command datagram.  It then checks:
+The checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
 \item That the datagram reply is received.
 \item That a Get Configurations Options Reply datagram is received,
@@ -94,13 +94,13 @@ The tester sends a Get Configuration Options Command datagram.  It then checks:
 \item That the reserved bits in bytes 2, 3 and 4 are zero.
 \end{enumerate}
 
-\subsection{Address Space Information testing}
+\subsection{Address Space Information checking}
 
-This section tests the messages and interaction in Standard sections 4.15 and 4.16.
+This section checks the messages and interaction in Standard sections 4.15 and 4.16.
 
 For each of the required\footnote{See section 4.2}
 0xFF, 0xFE and 0xFD memory spaces, the
-tester sends a Get Configuration Options Command datagram.  It then checks:
+checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
 \item That the datagram reply is received.
 \item That a Get Address Space Information Reply datagram is received,
@@ -110,11 +110,11 @@ tester sends a Get Configuration Options Command datagram.  It then checks:
 \item That the reserved bits in byte 7 are zero.
 \end{enumerate}
 
-\subsection{Read Operations testing}
+\subsection{Read Operations checking}
 
-This section tests the messages and interaction in Standard sections 4.4 and 4.5.
+This section checks the messages and interaction in Standard sections 4.4 and 4.5.
 
-The tester sends Read Commands to space 0XFD, the memory configuration space.
+The checker sends Read Commands to space 0XFD, the memory configuration space.
 
 \begin{enumerate}
 \item A read of 64 bytes from address 0,
@@ -125,7 +125,7 @@ The tester sends Read Commands to space 0XFD, the memory configuration space.
 Each of these are done once with the address space in byte 1 
 and once with the address space in byte 6.
 
-For each, the tester checks:
+For each, the checker checks:
 \begin{enumerate}
 \item The datagram reply has the Reply Pending bit set,
 \item The reply datagram is long enough to be checked,
@@ -136,11 +136,11 @@ For each, the tester checks:
 \item The right number of data bytes are returned.
 \end{enumerate}
 
-\subsection{Lock/Reserve testing}
+\subsection{Lock/Reserve checking}
 
-This section tests the messages and interaction in Standard section 4.17 and 4.18.
+This section checks the messages and interaction in Standard section 4.17 and 4.18.
 
-The tester requests that the node be reset/restarted then 
+The checker requests that the node be reset/restarted then 
 
 \begin{enumerate}
 \item Sends a Lock/Reserve Command with node id A
@@ -164,11 +164,11 @@ The tester requests that the node be reset/restarted then
 
 \end{enumerate}
 
-\subsection{Reset/Reboot testing}
+\subsection{Reset/Reboot checking}
 
-This section tests the message and interaction in Standard section 4.24 Reset/Reboot Command.
+This section checks the message and interaction in Standard section 4.24 Reset/Reboot Command.
 
-The tester sends a Reset/Reboot Command and then checks that a Node Initialization 
+The checker sends a Reset/Reboot Command and then checks that a Node Initialization 
 Complete message is received to indicate a reboot.  This may or may not have been
 preceded by a Datagram Received OK response.
 

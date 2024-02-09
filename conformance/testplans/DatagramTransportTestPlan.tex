@@ -10,7 +10,7 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-\title{OpenLCB Test plan for the Datagram Transport Protocol}
+\title{Checking the OpenLCB Datagram Transport Protocol}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
@@ -20,73 +20,73 @@
 
 \section{Introduction}
 
-This note documents the procedure for testing an OpenLCB implementation against the 
+This note documents the procedure for checking an OpenLCB implementation against the 
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/DatagramTransportS.pdf}{Datagram Transport Standard}.
 
-The tests are traceable to specific sections of the Standard.
+The checks are traceable to specific sections of the Standard.
 
-The testing assumes that the Device Under Test (DUT) is being exercised by other
+The checking assumes that the Device Being Checked (DBC) is being exercised by other
 nodes on the message network, 
 e.g. is responding to enquiries from other parts of the message network.
 
 \subsection{Required Equipment}
 
-See the separate ``Installing the OpenLCB Test Software" document for initial installation 
-and set up of the test program.
+See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
+and set up of the checker program.
 
 If a direct CAN connection will be used,
 a supported USB-CAN adapter
-    \footnote{See ``Installing the OpenLCB Test Software"}
+    \footnote{See ``Installing the OpenLCB Checker Software"}
 is required. 
-Connect the adapter to the DUT using a single UTP cable and connect two CAN terminators.
+Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
 
-Provide power to the DUT using its recommended method.
+Provide power to the DBC using its recommended method.
 
 \section{Set Up}
-The following steps need to be done once to configure the test program:.
+The following steps need to be done once to configure the checker program:.
 \begin{enumerate}
-\item Start the test configuration program. 
-\item Select ``Set Up DUT".
-\item Get the Node ID from the DUT\footnote{Where do we require this to be marked on a node?} 
+\item Start the checker configuration program. 
+\item Select ``Set Up".
+\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
 \item Enter that Node ID into the program.
-\item Configure the test program for the USB-CAN adapter's device address
+\item Configure the checker program for the USB-CAN adapter's device address
         or the TCP hostname and port.
-\item Quit the test program and reply ``Y" to "Save configuration?" when prompted.
+\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
 \end{enumerate}
 
-The following steps need to be done at the start of each testing session.
+The following steps need to be done at the start of each checking session.
 \begin{enumerate}
-\item Check that the DUT is ready for operation.
-\item Start the test program.
+\item Check that the DBC is ready for operation.
+\item Start the checker program.
 \end{enumerate}
 
 \section{Datagram Transport Procedure}
 
-Select ``Datagram testing" in the test program, 
+Select ``Datagram checking" in the checkere program, 
 then select each section below in turn.  Follow the prompts
 for when to check outputs against the node documentation.
 
-Note that this process is unable to test datagrams from the DUT to the tester.
-There is no standard way to elicit those.  They will be tested as part of the 
-Memory Configuration Protocol testing, if applicable.
+Note that this process is unable to check datagrams from the DBC to the checker.
+There is no standard way to elicit those.  They will be checked as part of the 
+Memory Configuration Protocol checking, if applicable.
 
 A node which does not self-identify in PIP that it supports
-datagram transfer will be deemed to have passed these tests.
+datagram transfer will be deemed to have passed these checks.
 \footnote{Using the -p option or setting the checkpip default value False will skip this check.}
 
 \subsection{Datagram Reception}
 
-This tests the messages in Standard sections 4.1 and 4.2 or 4.3, 
+This checks the messages in Standard sections 4.1 and 4.2 or 4.3, 
 including the error code constraints in Standard section 4.3.1
 \footnote{This section references the Message Transport Standard, 
 section 3.5.5}
 and the interactions in sections 6.1 or 6.2.
 
-The tester will send a datagram to the DUT. The DUT in turn will 
+The checker will send a datagram to the DBC. The DBC in turn will 
 either accept the datagram (sections 4.2 and 6.1) or 
 reject it (sections 4.3 and 6.2). Either response is acceptable.
 
-This section's tests cover:
+This section's checks cover:
 
 \begin{enumerate}
 \item If the datagram is accepted,
