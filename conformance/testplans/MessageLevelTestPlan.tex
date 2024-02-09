@@ -163,14 +163,36 @@ It then checks for the well-known global event.  If it finds that, the test pass
 If not, it prompts the operator to confirm that indication has been made 
 "using whatever indication technology is available", e.g. via LEDs.
 
-\subsection{Reserved field handling}
+\section{Frame Level Procedure}
+
+This section is only applicable to implementations what use a CAN-format link layer
+implementation, e.g. via a USB-CAN adapter or by using Grid Connect coding
+over a TCP/IP link. See Standard section 7.
+
+All tests in the prior section are assumed to have passed before these
+tests are run, as they depend on message-layer behaviors.
+
+In general, proper operation of the frame level is checked by 
+exercising it through the message level in the tests above and in subsequent 
+documents.  We limit ourselves here to testing atypical behaviors.
+
+\subsection{Reserved Field Handling}
 
 This section discusses the reserved bit fields described in Standard section 3.1.1.
 
 The CAN implementation does not carry bits 15-14 nor bit 12 of the MTI. 
 The full 12 bit sof the rest of the MTI are tested in other sections of this test plan.
 
-There is nothing to test here via a CAN implementation.
+However, in a CAN implementation, the 0x1\_0000\_0000 bit is reserved, send as 1, 
+don't check on receipt.
+
+To check this, the tester sends a Verify Node ID Global with zero in the 0x1\_0000\_0000
+bit. It then checks:
+
+\begin{enumerate}
+\item That a Verified Node ID message frame is received from the DUT under test,
+\item That the 1\_0000\_0000 bit in that frame is a one.
+\end{enumerate}
 
 
 
