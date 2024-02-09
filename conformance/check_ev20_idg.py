@@ -36,7 +36,7 @@ def test():
 
     # check if PIP says this is present
     if conformance.isCheckPip() : 
-    pipSet = conformance.gatherPIP(destination)
+        pipSet = conformance.gatherPIP(destination)
         if pipSet is None:
             print ("Failed in setup, no PIP information received")
             return (2)
