@@ -6,13 +6,18 @@ Simple runner for SNIP suite
 
 import os
 
-literals = ["portnumber", "trace"]
+literals = ["portnumber", "trace", "checkpip"] # store without quotes, e.g. store the literal value
+
 def main() :
     # start by getting the current defaults
     # note that 'import' only works the first time; after that, we keep these in variables.
     exec(compile(open("./defaults.py").read(), "./defaults.py", 'exec'))
     if os.path.isfile("./localoverrides.py") :
-        exec(compile(open("./localoverrides.py").read(), "./localoverrides.py", 'exec'))
+        try :
+            exec(compile(open("./localoverrides.py").read(), "./localoverrides.py", 'exec'))
+        except :
+            print("*** Unable to read the local override configuration from the localoverrides.py file.  ***")
+            print("*** Continuing without your local configuration.  Please reconfigure to resolve this. ***\n")
     local_variables = {}
     temp_list = locals()
     for temp_item in temp_list.keys():
