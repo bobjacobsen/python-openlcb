@@ -93,14 +93,15 @@ def test():
     ###########################
     
     # check if PIP says this is present
-    pipSet = conformance.gatherPIP(destination)
-    if pipSet is None:
-        print ("Failed in setup, no PIP information received")
-        return (2)
-    if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-        if trace >= 10 : 
-            print("Passed - due to Memory Configuration protocol not in PIP")
-        return(0)
+    if conformance.isCheckPip() : 
+        pipSet = conformance.gatherPIP(destination)
+        if pipSet is None:
+            print ("Failed in setup, no PIP information received")
+            return (2)
+        if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
+            if trace >= 10 : 
+                print("Passed - due to Memory Configuration protocol not in PIP")
+            return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
     spaces = [0xFF,0xFD, 0xFE]  # spaces required by standard

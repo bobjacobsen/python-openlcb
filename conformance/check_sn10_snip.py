@@ -33,14 +33,15 @@ def test():
     # test sequence starts here
     ###########################
     # check if PIP says this is present
-    pipSet = conformance.gatherPIP(destination)
-    if pipSet is None:
-        print ("Failed in setup, no PIP information received")
-        return (2)
-    if not PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL in pipSet :
-        if trace >= 10 : 
-            print("Passed - due to SNIP not in PIP")
-        return(0)
+    if conformance.isCheckPip() : 
+        pipSet = conformance.gatherPIP(destination)
+        if pipSet is None:
+            print ("Failed in setup, no PIP information received")
+            return (2)
+        if not PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL in pipSet :
+            if trace >= 10 : 
+                print("Passed - due to SNIP not in PIP")
+            return(0)
     
     # send an SNIP request message to provoke response
     message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(conformance.ownnodeid()), destination)

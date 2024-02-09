@@ -35,14 +35,15 @@ def test():
     ###########################
 
     # check if PIP says this is present
+    if conformance.isCheckPip() : 
     pipSet = conformance.gatherPIP(destination)
-    if pipSet is None:
-        print ("Failed in setup, no PIP information received")
-        return (2)
-    if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-        if trace >= 10 : 
-            print("Passed - due to Event Exchange not in PIP")
-        return(0)
+        if pipSet is None:
+            print ("Failed in setup, no PIP information received")
+            return (2)
+        if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
+            if trace >= 10 : 
+                print("Passed - due to Event Exchange not in PIP")
+            return(0)
 
     # send an Identify Events Global  message to provoke response
     message = Message(MTI.Identify_Events_Global , NodeID(conformance.ownnodeid()), None)

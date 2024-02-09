@@ -36,7 +36,7 @@ def test():
     # test sequence starts here
     ###########################
 
-    # send an Verify Nodes Global message
+    # send a Verify Nodes Global message
     message = Message(MTI.Verify_NodeID_Number_Global, NodeID(conformance.ownnodeid()), None)
     conformance.sendMessage(message)
 

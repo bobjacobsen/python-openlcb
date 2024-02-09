@@ -34,14 +34,15 @@ def test():
     ###########################
     
     # check if PIP says this is present
-    pipSet = conformance.gatherPIP(destination)
-    if pipSet is None:
-        print ("Failed in setup, no PIP information received")
-        return (2)
-    if not PIP.DATAGRAM_PROTOCOL in pipSet :
-        if trace >= 10 : 
-            print("Passed - due to Datagram protocol not in PIP")
-        return(0)
+    if conformance.isCheckPip() : 
+        pipSet = conformance.gatherPIP(destination)
+        if pipSet is None:
+            print ("Failed in setup, no PIP information received")
+            return (2)
+        if not PIP.DATAGRAM_PROTOCOL in pipSet :
+            if trace >= 10 : 
+                print("Passed - due to Datagram protocol not in PIP")
+            return(0)
 
     sampleLengths = [ 1, 10, 72]
     

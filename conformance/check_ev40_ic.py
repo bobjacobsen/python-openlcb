@@ -35,14 +35,15 @@ def test():
     ###########################
 
     # check if PIP says this is present
-    pipSet = conformance.gatherPIP(destination)
-    if pipSet is None:
-        print ("Failed in setup, no PIP information received")
-        return (2)
-    if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-        if trace >= 10 : 
-            print("Passed - due to Event Exchange not in PIP")
-        return(0)
+    if conformance.isCheckPip() : 
+        pipSet = conformance.gatherPIP(destination)
+        if pipSet is None:
+            print ("Failed in setup, no PIP information received")
+            return (2)
+        if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
+            if trace >= 10 : 
+                print("Passed - due to Event Exchange not in PIP")
+            return(0)
 
     # send an Identify Events Addressed  message to accumulate producers to test
     message = Message(MTI.Identify_Events_Addressed , NodeID(conformance.ownnodeid()), destination)
