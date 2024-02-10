@@ -39,6 +39,10 @@ def sendToSocket(string) :
     if trace >= 40 : print("   SR: "+string)
     s.send(string)
 
+def sendCanFrame(frame) :
+    if trace >= 30 : print("SL: "+str(frame) )
+    canPhysicalLayerGridConnect.sendCanFrame(frame)
+    
 def receiveFrame(frame) : 
     if trace >= 30 : print("RL: "+str(frame) )
     readQueue.put(frame)
