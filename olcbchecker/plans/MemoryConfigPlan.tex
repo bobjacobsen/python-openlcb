@@ -40,10 +40,11 @@ Memory Configuration will be deemed to have passed these checks.
 This plan does not check:
 \begin{enumerate}
 \item Stream-based memory configuration operations
-\item Writes to configuration memory.  THere's no generally-compatible way to do that.
+\item Write and Write Under Mask to configuration memory.  
+There's no generally-compatible way to do that.
 You can't even assume that a read / write / read sequence will return you to the original
 state, because nodes may react when information is written to them.
-\item The Reinitialize/Factory Reset Command and the Get Unique ID Command and reply
+\item The Reinitialize/Factory Reset Command and the Get Unique ID Command
 because these permanently change the state of the node being checked.
 \end{enumerate}
 
@@ -83,8 +84,8 @@ The checker sends Read Commands to space 0xFD, the memory configuration space.
 
 \begin{enumerate}
 \item A read of 64 bytes from address 0,
+\item A read of 10 bytes from address 0,
 \item A read of 2 bytes from address 0,
-\item A read of 64 bytes from address (Space Length - 4), which should return four bytes.
 \end{enumerate}
 
 Each of these are done once with the address space in byte 1 
