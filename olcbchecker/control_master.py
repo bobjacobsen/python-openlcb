@@ -18,12 +18,13 @@ def prompt() :
     print(" 3 Event Transport checking")
     print(" 4 Datagram Transport checking")
     print(" 5 Memory Configuration checking")
+    print(" 6 CDI checking")
     print("  ")
     print(" q  Quit")
     
 def main() :
     '''
-    loop to check against SNIP Standard
+    loop to check against individual standards
     '''
     while True :
         prompt()
@@ -56,6 +57,10 @@ def main() :
             case "5" : 
                 import control_memory
                 control_memory.main()
+                       
+            case "6" : 
+                import control_cdi
+                control_cdi.main()
                        
             case "q" | "Q" : return
                    

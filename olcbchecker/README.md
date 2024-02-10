@@ -19,3 +19,7 @@ An installation document is available as [plans/InstallingBasicChecker.pdf](plan
 
 Plans describing the various checks and procedures are available as PDF files in the [plans/](plans/) directory.
 
+The CDI check requires the xmlschema moddule,  If you don't have that already, so
+```
+python3 -m pip install xmlschema
+```
