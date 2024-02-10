@@ -1,7 +1,7 @@
 Run these from this directory with e.g.
 ```
 export PYTHONPATH=$PWD
-cd conformance
+cd olcbchecker
 
 python3.10 control_master.py
 ```
