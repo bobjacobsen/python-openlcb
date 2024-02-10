@@ -20,17 +20,17 @@
 
 \section{Introduction}
 
-This document describes how to obtain and run a set of basic conformance checks for 
+This document describes how to obtain and run a set of basic checks for 
 OpenLCB nodes.  
 
 The checks are based on the Python `openlch' module.
 More information on that can be obtains from its
 \href{https://github.com/bobjacobsen/PythonOlcbNode}{GitHub project site.}
 
-For more information on the conformance checks, see the
-\href{https://github.com/bobjacobsen/PythonOlcbNode/blob/main/conformance/README.md}{package documentation}
+For more information on the checks, see the
+\href{https://github.com/bobjacobsen/PythonOlcbNode/blob/main/olcbchecker/README.md}{package documentation}
 or the 
-\href{https://github.com/bobjacobsen/PythonOlcbNode/tree/main/conformance/checkerplans/}{directory of checking plans}.
+\href{https://github.com/bobjacobsen/PythonOlcbNode/tree/main/olcbchecker/plans/}{directory of checking plans}.
 
 \section{Obtaining the Software}
 
@@ -60,12 +60,20 @@ click the green Code button, and select "Download Zip".
 
 Expand the downloaded file in a suitable place.
 
-
-\section{Configuring for Running}
+\subsection{Prerequisites}
 
 You need to have Python 3.10 installed to run the program. Consult your
 computer's documentation for how to install that.  Many computers already
 have it installed.
+
+To run the CDI checks, the `xmlschema' Python module must be installed. To do that, 
+enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
+
+\begin{verbatim}
+python3 -m pip install xmlschema
+\end{verbatim}
+
+\section{Configuring for Running}
 
 You need to have PYTHONPATH defined to include the main directory.
 \footnote{Eventually, this will no longer be necessary, but not quite yet.}
