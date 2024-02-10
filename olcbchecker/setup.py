@@ -64,10 +64,16 @@ def receiveLoop() :
     # print("      SL : link up")
     canPhysicalLayerGridConnect.physicalLayerUp()
     while True:
-        input = s.receive()
+        try : 
+            input = s.receive()
+        except (ConnectionResetError, RuntimeError) :
+            # connection broken, have to stop processing
+            print("\nLCC Connection Broken\n")
+            break
         if trace >= 40 : print("   RR: "+input)
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
+
 import threading
 thread = threading.Thread(daemon=True, target=receiveLoop)
 

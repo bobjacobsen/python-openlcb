@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to check response to an AME frame
+This uses a CAN link layer to check response to an AME frame with a zaero high bit
 
 Usage:
 python3.10 check_fr20_ame.py
@@ -42,6 +42,9 @@ def check():
 
     # send the AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
+    # remove the high bit from the header
+    frame.header = frame.header &0xF_FFF_FFF
+    # and send the modified frame
     olcbchecker.framelayer.sendCanFrame(frame)
     
     try :
@@ -55,24 +58,7 @@ def check():
         if len(frame.data) < 6 :
             print ("Failure - first AMD frame did not carry node ID")
             return 3
-        
-        purgeFrames()
-        
-        # get that node ID, create and send an AMD using it
-        frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
-        olcbchecker.framelayer.sendCanFrame(frame)
-
-        # check for AMD frame
-        frame = getFrame(1.0)
-        if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
-            print ("Failure - frame was not AMD frame in second part")
-            return 3
-        
-        # check it carries a node ID
-        if len(frame.data) < 6 :
-            print ("Failure - second AMD frame did not carry node ID")
-            return 3
-        
+                
         
     except Empty:
         print ("Failure - did not receive expected frame")

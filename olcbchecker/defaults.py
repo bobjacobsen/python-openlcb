@@ -1,5 +1,5 @@
 # Exactly one of hostname or deviceanme must be provided.
-# hostname e.g. "localhost" or "192.168.21.3" specifies a GridConnect TCP connection
+# hostname e.g. "localhost" or "192.168.16.212" specifies a GridConnect TCP connection
 # devicename e.g. "/dev/cu-USBserial" specifies a serial port connection
 
 hostname = None

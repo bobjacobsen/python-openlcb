@@ -45,6 +45,15 @@ def check():
                 if destination != received.source : 
                     print("Failure - source address not correct")
                     return(3)
+                # check that it's carrying enough data to be a node ID
+                if len(received.data) != 6 :
+                    print("Failure - not correct data length, not carrying a Node ID")
+                    return 3
+                # check that the data is the source node ID
+                nodeID = NodeID(received.data)
+                if nodeID != received.source :
+                    print("Failure - Node ID in data does not match source ID")
+                    return 3                
                 # success
                 break                
        

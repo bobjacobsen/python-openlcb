@@ -39,6 +39,10 @@ def sendToSocket(string) :
     if trace >= 40 : print("   SR: "+string)
     s.send(string)
 
+def sendCanFrame(frame) :
+    if trace >= 30 : print("SL: "+str(frame) )
+    canPhysicalLayerGridConnect.sendCanFrame(frame)
+    
 def receiveFrame(frame) : 
     if trace >= 30 : print("RL: "+str(frame) )
     readQueue.put(frame)
@@ -51,7 +55,12 @@ readQueue = Queue()
 # put the read on a separate thread
 def receiveLoop() :
     while True:
-        input = s.receive()
+        try : 
+            input = s.receive()
+        except (ConnectionResetError, RuntimeError) :
+            # connection broken, have to stop processing
+            print("\nLCC Connection Broken\n")
+            break
         if trace >= 40 : print("   RR: "+input)
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)

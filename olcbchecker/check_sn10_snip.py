@@ -69,7 +69,7 @@ def check():
 
     # now check the reply
 
-    if not len(results) >=0 :
+    if not len(results) >=6 :
         print("Failure - only {} bytes received".format(len(results)))
         return(3)
     if not(results[0] ==1 or results[0] == 4) :

@@ -24,42 +24,7 @@ This note documents the procedure for checking an OpenLCB implementation against
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/MemoryConfigurationS.pdf}
     {Memory Configuration Standard}.
 
-The checks are traceable to specific sections of the Standard.
-
-The checking assumes that the Device Being Checked (DBC) is being exercised by other
-nodes on the message network, 
-e.g. is responding to enquiries from other parts of the message network.
-
-\subsection{Required Equipment}
-
-See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
-and set up of the checker program.
-
-If a direct CAN connection will be used,
-a supported USB-CAN adapter
-    \footnote{See ``Installing the OpenLCB Checker Software"}
-is required. 
-Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
-
-Provide power to the DBC using its recommended method.
-
-\section{Set Up}
-The following steps need to be done once to configure the checker program:.
-\begin{enumerate}
-\item Start the checker configuration program. 
-\item Select ``Set Up".
-\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
-\item Enter that Node ID into the program.
-\item Configure the checker program for the USB-CAN adapter's device address
-        or the TCP hostname and port.
-\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
-\end{enumerate}
-
-The following steps need to be done at the start of each checking session.
-\begin{enumerate}
-\item Check that the DBC is ready for operation.
-\item Start the checker program.
-\end{enumerate}
+\input{includeHeader}
 
 \section{Memory Configuration Procedure}
 
@@ -75,10 +40,11 @@ Memory Configuration will be deemed to have passed these checks.
 This plan does not check:
 \begin{enumerate}
 \item Stream-based memory configuration operations
-\item Writes to configuration memory.  THere's no generally-compatible way to do that.
+\item Write and Write Under Mask to configuration memory.  
+There's no generally-compatible way to do that.
 You can't even assume that a read / write / read sequence will return you to the original
 state, because nodes may react when information is written to them.
-\item The Reinitialize/Factory Reset Command and the Get Unique ID Command and reply
+\item The Reinitialize/Factory Reset Command and the Get Unique ID Command
 because these permanently change the state of the node being checked.
 \end{enumerate}
 
@@ -114,12 +80,12 @@ checker sends a Get Configuration Options Command datagram.  It then checks:
 
 This section checks the messages and interaction in Standard sections 4.4 and 4.5.
 
-The checker sends Read Commands to space 0XFD, the memory configuration space.
+The checker sends Read Commands to space 0xFD, the memory configuration space.
 
 \begin{enumerate}
 \item A read of 64 bytes from address 0,
+\item A read of 10 bytes from address 0,
 \item A read of 2 bytes from address 0,
-\item A read of 64 bytes from address (Space Length - 4), which should return four bytes.
 \end{enumerate}
 
 Each of these are done once with the address space in byte 1 

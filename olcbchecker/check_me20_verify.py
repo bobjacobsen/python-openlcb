@@ -112,6 +112,9 @@ def check():
             print ("Failure - no reply to Verify Node Addressed request")
             return(3) 
 
+    # pull any early received messages
+    olcbchecker.purgeMessages()
+
     # send an addressed verify to a different node (the origin node) and check for lack of answer
     message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()))
     olcbchecker.sendMessage(message)
