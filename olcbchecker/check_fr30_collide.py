@@ -45,18 +45,27 @@ def check():
     olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(ame)
     
     try :
-        # check for AMD frame
-        reply1 = getFrame(1.0)
-        if (reply1.header & 0xFF_FFF_000) != 0x10_701_000 :
-            print ("Failure - frame was not AMD frame in first part")
-            return 3
+        # check for AMD frame from expected node (might be more than one AMD frame)
+        while True: 
+            reply1 = getFrame()
+            if (reply1.header & 0xFF_FFF_000) != 0x10_701_000 :
+                print ("Failure - frame was not AMD frame in first part")
+                return 3
         
-        # check it carries a node ID
-        if len(reply1.data) < 6 :
-            print ("Failure - first AMD frame did not carry node ID")
-            return 3
+            # check it carries a node ID
+            if len(reply1.data) < 6 :
+                print ("Failure - first AMD frame did not carry node ID")
+                return 3
         
-        alias = reply1.header&0xFFF
+            # and it's the right node ID
+            targetnodeid = olcbchecker.framelayer.configure.targetnodeid
+            if targetnodeid == None : break  # take what we get
+            if NodeID(targetnodeid) != NodeID(reply1.data) :
+                # but this wasn't the right one
+                continue
+                
+            alias = reply1.header&0xFFF
+            break
  
         purgeFrames()
         
@@ -65,7 +74,7 @@ def check():
         olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(cid)
 
         # check for RID frame
-        reply = getFrame(1.0)
+        reply = getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_700_000 :
             print ("Failure - frame was not RID frame in second part")
             return 3
@@ -75,11 +84,25 @@ def check():
         olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(amd)
 
         # check for AMR frame
-        reply = getFrame(1.0)
+        reply = getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_703_000 :
             print ("Failure - frame was not AMR frame in second part")
             return 3
         
+        # check for _optional_ CID 7 frame with different alias
+        try :
+            replyCIDp = getFrame()
+            if (replyCIDp.header & 0xFF_000_000) != 0x17_000_000 :
+                print ("Failure - frame was not CID frame in second part")
+                return 3
+            # check for _different_ alias
+            if (replyCIDp.header & 0x00_000_FFF) == alias :
+                print ("Failure - did not receive different alias on CID")
+                return 3
+
+        except Empty : 
+            # this is an OK case too
+            pass
         
         
     except Empty:

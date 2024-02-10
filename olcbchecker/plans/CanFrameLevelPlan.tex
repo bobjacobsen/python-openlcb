@@ -140,8 +140,8 @@ using that alias.  Most nodes will reserve a different one at this point.
 
 If an initialization sequence is not started, the node passes.
 
-If an initialization sequence does start, it will be checked as in the 
-Initialization check above.  In addition, the checker will check that the 
+If an initialization sequence does start, the first frame will be checked for a proper CID frame.  
+In addition, the checker will check that the 
 newly reserved alias is different from the original one.
 
 \subsection{Reserved Frame Bit}
