@@ -1,0 +1,175 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Checking the OpenLCB Memory Configuration Standard}
+\author{The OpenLCB Group}
+%\date{}                                         % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+
+\section{Introduction}
+
+This note documents the procedure for checking an OpenLCB implementation against the 
+\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/MemoryConfigurationS.pdf}
+    {Memory Configuration Standard}.
+
+The checks are traceable to specific sections of the Standard.
+
+The checking assumes that the Device Being Checked (DBC) is being exercised by other
+nodes on the message network, 
+e.g. is responding to enquiries from other parts of the message network.
+
+\subsection{Required Equipment}
+
+See the separate ``Installing the OpenLCB Checker Software" document for initial installation 
+and set up of the checker program.
+
+If a direct CAN connection will be used,
+a supported USB-CAN adapter
+    \footnote{See ``Installing the OpenLCB Checker Software"}
+is required. 
+Connect the adapter to the DBC using a single UTP cable and connect two CAN terminators.
+
+Provide power to the DBC using its recommended method.
+
+\section{Set Up}
+The following steps need to be done once to configure the checker program:.
+\begin{enumerate}
+\item Start the checker configuration program. 
+\item Select ``Set Up".
+\item Get the Node ID from the DBC\footnote{Where do we require this to be marked on a node?} 
+\item Enter that Node ID into the program.
+\item Configure the checker program for the USB-CAN adapter's device address
+        or the TCP hostname and port.
+\item Quit the checker program and reply ``Y" to "Save configuration?" when prompted.
+\end{enumerate}
+
+The following steps need to be done at the start of each checking session.
+\begin{enumerate}
+\item Check that the DBC is ready for operation.
+\item Start the checker program.
+\end{enumerate}
+
+\section{Memory Configuration Procedure}
+
+Select ``Memory checking" in the program, 
+then select each section below in turn.  Follow the prompts
+for when to reset/restart the node and when to check 
+outputs against the node documentation.
+
+A node which does not self-identify in PIP that it supports
+Memory Configuration will be deemed to have passed these checks.
+\footnote{Using the -p option or setting the checkpip default value False will skip this check.}
+
+This plan does not check:
+\begin{enumerate}
+\item Stream-based memory configuration operations
+\item Writes to configuration memory.  THere's no generally-compatible way to do that.
+You can't even assume that a read / write / read sequence will return you to the original
+state, because nodes may react when information is written to them.
+\item The Reinitialize/Factory Reset Command and the Get Unique ID Command and reply
+because these permanently change the state of the node being checked.
+\end{enumerate}
+
+\subsection{Configuration Options checking}
+
+This section checks the messages and interaction in Standard sections 4.13 and 4.14.
+
+The checker sends a Get Configuration Options Command datagram.  It then checks:
+\begin{enumerate}
+\item That the datagram reply is received.
+\item That a Get Configurations Options Reply datagram is received,
+\item The reply datagram i sat least six bytes long,
+\item That the reserved bits in bytes 2, 3 and 4 are zero.
+\end{enumerate}
+
+\subsection{Address Space Information checking}
+
+This section checks the messages and interaction in Standard sections 4.15 and 4.16.
+
+For each of the required\footnote{See section 4.2}
+0xFF, 0xFE and 0xFD memory spaces, the
+checker sends a Get Configuration Options Command datagram.  It then checks:
+\begin{enumerate}
+\item That the datagram reply is received.
+\item That a Get Address Space Information Reply datagram is received,
+\item The reply datagram i sat least eight bytes long,
+\item That the reply datagram refers to the same memory space as the request,
+\item That the reply datagram shows the space is present,
+\item That the reserved bits in byte 7 are zero.
+\end{enumerate}
+
+\subsection{Read Operations checking}
+
+This section checks the messages and interaction in Standard sections 4.4 and 4.5.
+
+The checker sends Read Commands to space 0XFD, the memory configuration space.
+
+\begin{enumerate}
+\item A read of 64 bytes from address 0,
+\item A read of 2 bytes from address 0,
+\item A read of 64 bytes from address (Space Length - 4), which should return four bytes.
+\end{enumerate}
+
+Each of these are done once with the address space in byte 1 
+and once with the address space in byte 6.
+
+For each, the checker checks:
+\begin{enumerate}
+\item The datagram reply has the Reply Pending bit set,
+\item The reply datagram is long enough to be checked,
+\item It's a Read Reply datagram,
+\item The error bit is not set,
+\item The space matches (in either form),
+\item The starting address matches,
+\item The right number of data bytes are returned.
+\end{enumerate}
+
+\subsection{Lock/Reserve checking}
+
+This section checks the messages and interaction in Standard section 4.17 and 4.18.
+
+The checker requests that the node be reset/restarted then 
+
+\begin{enumerate}
+\item Sends a Lock/Reserve Command with node id A
+    and checks that a Lock/Reserve Reply is received with contents zero.
+\item Sends a Lock/Reserve Command with node id B
+    and checks that a Lock/Reserve Reply is received with contents A.
+\item Sends a Lock/Reserve Command with node id B
+    and checks that a Lock/Reserve Reply is received with contents A.
+\item Sends a Lock/Reserve Command with zero 
+    and checks that a Lock/Reserve Reply is received with contents A.
+\item Sends a Lock/Reserve Command with node id B
+    and checks that a Lock/Reserve Reply is received with contents zero.
+\item Sends a Lock/Reserve Command with node id A
+    and checks that a Lock/Reserve Reply is received with contents B.
+\item Sends a Lock/Reserve Command with node id A
+    and checks that a Lock/Reserve Reply is received with contents B.
+\item Sends a Lock/Reserve Command with zero 
+    and checks that a Lock/Reserve Reply is received with contents B.
+\item Sends a Lock/Reserve Command with zero 
+    and checks that a Lock/Reserve Reply is received with contents zero.
+
+\end{enumerate}
+
+\subsection{Reset/Reboot checking}
+
+This section checks the message and interaction in Standard section 4.24 Reset/Reboot Command.
+
+The checker sends a Reset/Reboot Command and then checks that a Node Initialization 
+Complete message is received to indicate a reboot.  This may or may not have been
+preceded by a Datagram Received OK response.
+
+\end{document}  
