@@ -45,7 +45,7 @@ def check():
     # remove the high bit from the header
     frame.header = frame.header &0xF_FFF_FFF
     # and send the modified frame
-    olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
+    olcbchecker.framelayer.sendCanFrame(frame)
     
     try :
         # check for AMD frame

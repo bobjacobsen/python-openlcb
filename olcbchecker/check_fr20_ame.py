@@ -42,7 +42,7 @@ def check():
 
     # send the AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-    olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
+    olcbchecker.framelayer.sendCanFrame(frame)
     
     try :
         # check for AMD frame
@@ -60,7 +60,7 @@ def check():
         
         # get that node ID, create and send an AMD using it
         frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
-        olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(frame)
+        olcbchecker.framelayer.sendCanFrame(frame)
 
         # check for AMD frame
         frame = getFrame(1.0)

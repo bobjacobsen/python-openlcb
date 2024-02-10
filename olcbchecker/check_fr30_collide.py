@@ -42,7 +42,7 @@ def check():
 
     # send the AME frame to start the exchange
     ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-    olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(ame)
+    olcbchecker.framelayer.sendCanFrame(ame)
     
     try :
         # check for AMD frame from expected node (might be more than one AMD frame)
@@ -59,7 +59,11 @@ def check():
         
             # and it's the right node ID
             targetnodeid = olcbchecker.framelayer.configure.targetnodeid
-            if targetnodeid == None : break  # take what we get
+            if targetnodeid == None :
+                # take first one we get 
+                targetnodeid = str(NodeID(reply1.data))
+                alias = reply1.header&0xFFF
+                break  
             if NodeID(targetnodeid) != NodeID(reply1.data) :
                 # but this wasn't the right one
                 continue
@@ -71,7 +75,7 @@ def check():
         
         # Send a CID using that alias
         cid = CanFrame(ControlFrame.CID.value, alias, [])
-        olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(cid)
+        olcbchecker.framelayer.sendCanFrame(cid)
 
         # check for RID frame
         reply = getFrame()
@@ -80,8 +84,8 @@ def check():
             return 3
 
         # collision in CID properly responded to, lets try an AMD collision
-        amd = CanFrame(ControlFrame.AMD.value, alias)
-        olcbchecker.framelayer.canPhysicalLayerGridConnect.sendCanFrame(amd)
+        amd = CanFrame(ControlFrame.AMD.value, alias, NodeID(targetnodeid).toArray())
+        olcbchecker.framelayer.sendCanFrame(amd)
 
         # check for AMR frame
         reply = getFrame()
