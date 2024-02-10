@@ -71,7 +71,7 @@ class LocalNodeProcessor(Processor):
     def linkUpMessage(self, message, node):
         node.state = Node.State.Initialized
         msgIC = Message(MTI.Initialization_Complete, node.id,
-                        node.id.toArray())
+                        None, node.id.toArray())
         self.linkLayer.sendMessage(msgIC)
         # ask all nodes to identify themselves
         # msgVN = Message( MTI.Verify_NodeID_Number_Global,  node.id)
