@@ -118,8 +118,11 @@ def check():
             print (e)
             return (3)
         
-        if len(reply.data) < 8 :
-            print ("Failure - reply was too short")
+        if len(reply.data) < 8 and len(reply.data) > 2 :
+            print ("Failure - space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
+            return (3)
+        elif len(reply.data) < 8 :
+            print ("Failure - space 0x{:02X} reply was too short: {}".format(len(space, reply.data)) )
             return (3)
         
         # check that the reply says the space is present
