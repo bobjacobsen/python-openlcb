@@ -172,9 +172,11 @@ r return
 
 Get the proper value from either a label on the device, or from its documentation.
 \footnote{Some checks, but not all, can determine the node ID themselves if you leave
-    the value as None.}
+    the value as None. This is only reliable if there's just one node on your OpenLCB
+    network.  Note that some OpenLCB hubs add a node of their own to the node
+    being checked.}
     
-There are currently two ways to connect to your OpenLCB network:
+There are currently two ways to connect the program to your OpenLCB network:
 \begin{enumerate}
 \item Via a USB-CAN adapter, or
 \item Via a GridConnect-format TCP/IP connection.
@@ -214,7 +216,33 @@ OpenLCB checking program
 >> 
 \end{verbatim}
 
+Quit and restart the program to put your changes into effect.
+
 \section{Running Checks}
+
+\subsection{Required Equipment}
+
+It's generally best to have the device being checked (DBC) 
+as the only device on the OpenLCB network. 
+
+If a direct CAN connection will be used,
+a supported USB-CAN adapter is required
+\footnote{The checker has been checked with the
+\href{https://www.rr-cirkits.com/description/LCC-usb-flyer.pdf}{RR-CirKits LCC buffer-USB},
+but others with similar operation characteristics will probably work.
+}. 
+Connect the adapter to your computer as indicated in its instructions.
+Connect the adapter to the DBC using a single UTP cable
+and attach two CAN terminators.
+
+If a TCP/IP GridConnect connection will be used, 
+configure the DBC to connect to the TCP/IP hub when restarted. Note that if 
+the DBC is providing the hub for the connection and restarting the DBC
+breaks connections to that hub, several restarting checks will indicate problems
+when the connection breaks.
+
+Provide power to the DBC using its recommended equipment and connections.
+
 
 \section{Technical Information}
 
