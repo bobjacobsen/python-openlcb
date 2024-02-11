@@ -43,7 +43,7 @@ def check():
     # send the AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
     # remove the high bit from the header
-    frame.header = frame.header &0xF_FFF_FFF
+    frame.header = frame.header & 0xF_FFF_FFF
     # and send the modified frame
     olcbchecker.framelayer.sendCanFrame(frame)
     
