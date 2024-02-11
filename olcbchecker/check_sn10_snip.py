@@ -82,6 +82,10 @@ def check():
 
     zeroIndex = [i for i, n in enumerate(results) if n == 0]
 
+    if not(results[zeroIndex[3]+1] ==1 or results[zeroIndex[3]+1] == 2) :
+        print("Failure - unexpected value in 2nd version byte: 0x{:02X}".format(results[0]))
+        return(3)
+
     if results[zeroIndex[3]+1] != 1 and results[zeroIndex[3]+1] != 2 :
         print("Failure - unexpected 2nd version number: {}".format(results[zeroIndex[3]+1]))
         return(3)
@@ -114,9 +118,25 @@ def check():
         print ("Failure - data after the sixth zero byte")
         return(3)
     
+    if trace >= 10 :
+        #  print results
+        print("Contents received:")
+        display(1, zeroIndex[0], results)
+        display(zeroIndex[0]+1, zeroIndex[1], results)
+        display(zeroIndex[1]+1, zeroIndex[2], results)
+        display(zeroIndex[2]+1, zeroIndex[3], results)
+        display(zeroIndex[3]+2, zeroIndex[4], results)
+        display(zeroIndex[4]+1, zeroIndex[5], results)
+    
     if trace >= 10 : print("Passed")
     return 0
 
+def display(startIndex, endIndex, results) :
+    output = ""
+    for letter in results[startIndex:endIndex] :
+        output = output+chr(letter)
+    print ("  ", output)
+    
 if __name__ == "__main__":
     sys.exit(check())
     
