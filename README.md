@@ -86,8 +86,3 @@ python3.10 example_node_implementation.py 192.168.1.40:12021
 
 For an overview of the structure, see [this diagram](doc/Overview.png) of the example programs.
 
-#### Checking Implementations
-
-The "olcbchecker" directory contains the beginning of an implementation checking package.
-For more information, see the [README.md](olcbchecker/README.md) file there.
-
