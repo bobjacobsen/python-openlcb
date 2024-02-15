@@ -76,7 +76,7 @@ if trace :
     print("RR, SR are raw socket interface receive and send; RL, SL are link (frame) interface")
 
 def sendToSocket(string) :
-    if trace : print("   SR: "+string)
+    if trace : print("   SR: "+string.strip())
     s.send(string)
 
 def receiveFrame(frame) : 
@@ -122,7 +122,7 @@ def receiveLoop() :
     canPhysicalLayerGridConnect.physicalLayerUp()
     while True:
         input = s.receive()
-        if trace : print("   RR: "+input)
+        if trace : print("   RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
 import threading

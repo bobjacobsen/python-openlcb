@@ -64,7 +64,7 @@ print("RR, SR are raw socket interface receive and send; "
 
 
 def sendToSocket(data):
-    print("      SR: {}".format(data))
+    print("      SR: {}".format(data.strip()))
     s.send(data)
 
 def printMessage(msg):
@@ -88,6 +88,6 @@ tcpLinklayer.sendMessage(message)
 # process resulting activity
 while True:
     received = s.receive()
-    print("      RR: {}".format(received))
+    print("      RR: {}".format(received.strip()))
     # pass to link processor
     tcpLinklayer.receiveListener(received)

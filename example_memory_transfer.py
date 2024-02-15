@@ -74,7 +74,7 @@ print("RR, SR are raw socket interface receive and send;"
 
 
 def sendToSocket(string):
-    print("      SR: {}".format(string))
+    print("      SR: {}".format(string.strip()))
     s.send(string)
 
 
@@ -159,6 +159,6 @@ thread.start()
 # process resulting activity
 while True:
     received = s.receive()
-    print("      RR: {}".format(received))
+    print("      RR: {}".format(received.strip()))
     # pass to link processor
     canPhysicalLayerGridConnect.receiveString(received)
