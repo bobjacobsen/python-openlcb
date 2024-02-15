@@ -164,8 +164,14 @@ class CanLink(LinkLayer):
     def handleReceivedAMD(self, frame):  # CanFrame
         if (self.checkAndHandleAliasCollision(frame)):
             return
-        #    This defines an alias, so store it
+        # check for matching node ID, which is a collision
         nodeID = NodeID(frame.data)
+        if nodeID == self.localNodeID :
+            print ("collide")
+            # collision, restart 
+            self.processCollision(frame)
+            return
+        #    This defines an alias, so store it
         alias = frame.header & 0xFFF
         self.aliasToNodeID[alias] = nodeID
         self.nodeIdToAlias[nodeID] = alias
@@ -502,21 +508,24 @@ class CanLink(LinkLayer):
         receivedAlias = frame.header & 0x0000_FFF
         abort = (receivedAlias == self.localAlias)
         if abort:
-            #    Collision!
-            logging.warning("alias collision in {}, we restart with AMR"
-                            " and attempt to get new alias".format(frame))
-            self.link.sendCanFrame(CanFrame(ControlFrame.AMR.value,
-                                            self.localAlias,
-                                            self.localNodeID.toArray()))
-            #    Standard 6.2.5
-            self.state = CanLink.State.Inhibited
-            #    attempt to get a new alias and go back to .Permitted
-            self.localAliasSeed = self.incrementAlias48(self.localAliasSeed)
-            self.localAlias = self.createAlias12(self.localAliasSeed)
-            self.defineAndReserveAlias()
-
+            self.processCollision(frame)
         return abort
 
+    def processCollision(self, frame) :
+        #    Collision!
+        logging.warning("alias collision in {}, we restart with AMR"
+                        " and attempt to get new alias".format(frame))
+        self.link.sendCanFrame(CanFrame(ControlFrame.AMR.value,
+                                        self.localAlias,
+                                        self.localNodeID.toArray()))
+        #    Standard 6.2.5
+        self.state = CanLink.State.Inhibited
+        #    attempt to get a new alias and go back to .Permitted
+        self.localAliasSeed = self.incrementAlias48(self.localAliasSeed)
+        self.localAlias = self.createAlias12(self.localAliasSeed)
+        self.defineAndReserveAlias()
+
+    
     def sendAliasAllocationSequence(self):
         '''Send the alias allocation sequence'''
         self.link.sendCanFrame(CanFrame(7, self.localNodeID, self.localAlias))
