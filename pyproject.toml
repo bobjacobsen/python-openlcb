@@ -33,7 +33,7 @@ maintainers = [
   {name = "Bob Jacobsen"}
 ]
 version = "0.0.1"
-requires-python = ">= 3.10"
+requires-python = ">= 3.8"
 # dynamic = ["version"]
 # ^ allows version to be overridden by a git tag using
 #   setuptools_scm, or by a __version__ Python attribute.
