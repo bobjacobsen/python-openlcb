@@ -52,34 +52,41 @@ class CanLink(LinkLayer):
         Permitted = 3
 
     def receiveListener(self, frame):  # CanFrame
-        match self.decodeControlFrameFormat(frame):
-            case ControlFrame.LinkUp:
-                self.handleReceivedLinkUp(frame)
-            case ControlFrame.LinkRestarted:
-                self.handleReceivedLinkRestarted(frame)
-            case ControlFrame.LinkCollision | ControlFrame.LinkError:
-                logging.warning("Unexpected error report {:08X}"
-                                "".format(frame.header))
-            case ControlFrame.LinkDown:
-                self.handleReceivedLinkDown(frame)
-            case ControlFrame.CID:
-                self.handleReceivedCID(frame)
-            case ControlFrame.RID:
-                self.handleReceivedRID(frame)
-            case ControlFrame.AMD:
-                self.handleReceivedAMD(frame)
-            case ControlFrame.AME:
-                self.handleReceivedAME(frame)
-            case ControlFrame.AMR:
-                self.handleReceivedAMR(frame)
-            case (ControlFrame.EIR0 | ControlFrame.EIR1 | ControlFrame.EIR2,
-                  ControlFrame.EIR3):
-                pass   # ignored upon receipt
-            case ControlFrame.Data:
-                self.handleReceivedData(frame)
-            case ControlFrame.UnknownFormat:
-                logging.warning("Unexpected CAN header 0x{:08X}"
-                                "".format(frame.header))
+
+        if self.decodeControlFrameFormat(frame) == ControlFrame.LinkUp:
+            self.handleReceivedLinkUp(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkRestarted:
+            self.handleReceivedLinkRestarted(frame)
+        elif self.decodeControlFrameFormat(frame) in (ControlFrame.LinkCollision,
+                                                      ControlFrame.LinkError):
+            logging.warning("Unexpected error report {:08X}"
+                            "".format(frame.header))
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkDown:
+            self.handleReceivedLinkDown(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.CID:
+            self.handleReceivedCID(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.RID:
+            self.handleReceivedRID(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.AMD:
+            self.handleReceivedAMD(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.AME:
+            self.handleReceivedAME(frame)
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.AMR:
+            self.handleReceivedAMR(frame)
+        elif self.decodeControlFrameFormat(frame) in (ControlFrame.EIR0,
+                                                      ControlFrame.EIR1,
+                                                      ControlFrame.EIR2,
+                                                      ControlFrame.EIR3):
+            pass   # ignored upon receipt
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.Data:
+            self.handleReceivedData(frame)
+        elif (self.decodeControlFrameFormat(frame)
+              == ControlFrame.UnknownFormat):
+            logging.warning("Unexpected CAN header 0x{:08X}"
+                            "".format(frame.header))
+        else:
+            logging.warning("Invalid control frame format 0x{:08X}"
+                            "".format(self.decodeControlFrameFormat(frame)))
 
     def handleReceivedLinkUp(self, frame):  # CanFrame
         """Link started, update state, start process to create alias.

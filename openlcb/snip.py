@@ -42,21 +42,19 @@ class SNIP:
                 byte
         '''
         start = self.findString(n)
-        len = 0
-        # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
-        match n:
-            case 0 | 1:
-                len = 41
-            case 2 | 3:
-                len = 21
-            case 4:
-                len = 63
-            case 5:
-                len = 64
-            case _:
-                logging.error("Unexpected string request: {}".format(n))
-                return ""
-        return self.getString(start, len)
+        length = 0
+        if n in (0, 1):
+            length = 41
+        elif n in (2, 3):
+            length = 21
+        elif n == 4:
+            length = 63
+        elif n == 5:
+            length = 64
+        else:
+            logging.error("Unexpected string request: {}".format(n))
+            return ""
+        return self.getString(start, length)
 
     #  FInd start index of the nth string.
     #
