@@ -3,7 +3,7 @@ Development demo of a testing skeleton.
 This uses a CAN link layer to gather remote node info
 
 Usage:
-python3.10 example_pip_test.py [host|host:port]
+python3 example_pip_test.py [host|host:port]
 
 Options:
 host|host:port            (optional) Set the address (or using a colon,
