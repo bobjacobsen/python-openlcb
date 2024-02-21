@@ -1,0 +1,16 @@
+# This workflow checks that the unit tests still run OK
+
+name: Unit Test Check
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit_tests:
+    name: unit_tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: check tests run
+      run: |
+        python3 test_all.py

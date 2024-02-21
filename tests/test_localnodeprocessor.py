@@ -32,7 +32,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
         self.assertEqual(self.node21.state, Node.State.Initialized)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         self.assertEqual(LinkMockLayer.sentMessages[0],
-                         Message(MTI.Initialization_Complete, self.node21.id,
+                         Message(MTI.Initialization_Complete, self.node21.id, None,
                                  self.node21.id.toArray()))
         # self.assertEqual(LinkMockLayer.sentMessages[1],
         #     Message(MTI.Verify_NodeID_Number_Global, self.node21.id))
@@ -140,7 +140,8 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
 
     def testUnsupportedMessageAddressed(self):
         # addressed to node, testing with an MTI we don't understand
-        msg2 = Message(MTI.Remote_Button_Request, NodeID(13), NodeID(21))
+        msg2 = Message(MTI.Unknown, NodeID(13), NodeID(21))
+        msg2.originalMTI = 0x948
         self.processor.process(msg2, self.node21)
 
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)

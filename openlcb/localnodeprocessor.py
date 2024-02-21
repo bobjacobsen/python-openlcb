@@ -138,7 +138,6 @@ class LocalNodeProcessor(Processor):
             else : 
                 logging.error("MTI.Unknown without originalMTI")
             unknownAddressed = (originalMTI & 0x008 ) != 0
-            print ("original MTI {:04X}".format(originalMTI))
         if not (message.mti.addressPresent() or unknownAddressed) :
             return  # unrecognized global messages are ignored
 
