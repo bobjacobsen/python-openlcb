@@ -40,7 +40,6 @@ class TcpLink(LinkLayer):
         Args:
             inputData ([int]) : next chunk of the input stream
         """
-        print("receive listener", inputData)
         self.accumulatedData.extend(inputData)
         # Now check it if has one or more complete message.
         while len(self.accumulatedData) > 0 :
