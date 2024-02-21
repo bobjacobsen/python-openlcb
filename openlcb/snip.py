@@ -9,7 +9,7 @@ class SNIP:
     when the underlying connection resets, a new SNIP struct should be installed in
     the node.
     '''
-    
+
     def __init__(self, mfgName="",
                  model="",
                  hVersion="",
@@ -33,7 +33,8 @@ class SNIP:
     # We don't (yet) support later versions with e.g. larger strings, etc.
 
     def getStringN(self, n):
-        '''Get the desired string by string number in the data.
+        '''
+        Get the desired string by string number in the data.
 
         Args:
             n (int):  0-based number of the String
@@ -56,12 +57,15 @@ class SNIP:
             return ""
         return self.getString(start, length)
 
-    #  FInd start index of the nth string.
-    #
-    #  Zero indexed.
-    #  Is aware of the 2nd version code byte.
-    #  Logs and returns -1 if the string isn't found withn the buffer
     def findString(self, n):
+        '''
+        Find start index of the nth string.
+
+        Zero indexed.
+        Is aware of the 2nd version code byte.
+        Logs and returns -1 if the string isn't found withn the buffer
+        '''
+
         if n == 0:
             return 1  # first one is automatic
         retval = 1
@@ -89,19 +93,20 @@ class SNIP:
     #   The `maxLength` parameter prevents overflow
     def getString(self, first, maxLength):
         last = first
-        while (last < first+maxLength):
-            if (self.data[last]) == 0:
+        while last < first+maxLength :
+            if self.data[last] == 0:
                 break
-            else:
-                last += 1
+            last += 1
         # last should point at the first zero or last location
-        if (first == last):
+        if first == last:
             return ""
         retval = ''.join([chr(i) for i in self.data[first:last]])
         return retval
 
-    # Add additional bytes of SNIP data
     def addData(self, indata):
+        '''
+        Add additional bytes of SNIP data
+        '''
         for i in range(0, len(indata)):
             # protect against overlapping requests causing an overflow
             if (i+self.index) >= 253:
@@ -111,8 +116,10 @@ class SNIP:
         self.index += len(indata)
         self.updateStringsFromSnipData()
 
-    # load strings from current SNIP accumulated data
     def updateStringsFromSnipData(self):
+        '''
+        Load strings from current SNIP accumulated data
+        '''
         self.manufacturerName = self.getStringN(0)
         self.modelName = self.getStringN(1)
         self.hardwareVersion = self.getStringN(2)
@@ -121,8 +128,10 @@ class SNIP:
         self.userProvidedNodeName = self.getStringN(4)
         self.userProvidedDescription = self.getStringN(5)
 
-    # store strings into SNIP accumulated data
     def updateSnipDataFromStrings(self):
+        '''
+        Store strings into SNIP accumulated data
+        '''
         # clear string
         self.data = [0]*253
 
@@ -132,7 +141,7 @@ class SNIP:
         # mfgArray = Data(manufacturerName.utf8.prefix(40))
         # ^ leave one space for zero
         mfgArray = '{:.40}'.format(self.manufacturerName).encode('ascii')
-        if (len(mfgArray) > 0):
+        if len(mfgArray) > 0 :
             for i in range(0, len(mfgArray)):
                 self.data[self.index] = mfgArray[i]
                 self.index += 1
@@ -142,7 +151,7 @@ class SNIP:
 
         # mdlArray = Data(modelName.utf8.prefix(40))
         mdlArray = '{:.40}'.format(self.modelName).encode('ascii')
-        if (len(mdlArray) > 0):
+        if len(mdlArray) > 0:
             for i in range(0, len(mdlArray)):
                 self.data[self.index] = mdlArray[i]
                 self.index += 1
@@ -152,7 +161,7 @@ class SNIP:
 
         # hdvArray = Data(hardwareVersion.utf8.prefix(20))
         hdvArray = '{:.20}'.format(self.hardwareVersion).encode('ascii')
-        if (len(hdvArray) > 0):
+        if len(hdvArray) > 0:
             for i in range(0, len(hdvArray)):
                 self.data[self.index] = hdvArray[i]
                 self.index += 1
@@ -162,7 +171,7 @@ class SNIP:
 
         # sdvArray = Data(softwareVersion.utf8.prefix(20))
         sdvArray = '{:.20}'.format(self.softwareVersion).encode('ascii')
-        if (len(sdvArray) > 0):
+        if len(sdvArray) > 0 :
             for i in range(0, len(sdvArray)):
                 self.data[self.index] = sdvArray[i]
                 self.index += 1
@@ -175,7 +184,7 @@ class SNIP:
 
         # upnArray = Data(userProvidedNodeName.utf8.prefix(62))
         upnArray = '{:.62}'.format(self.userProvidedNodeName).encode('ascii')
-        if (len(upnArray) > 0):
+        if len(upnArray) > 0 :
             for i in range(0, len(upnArray)):
                 self.data[self.index] = upnArray[i]
                 self.index += 1
@@ -186,7 +195,7 @@ class SNIP:
         # updArray = Data(userProvidedDescription.utf8.prefix(63))
         updArray = \
             '{:.63}'.format(self.userProvidedDescription).encode('ascii')
-        if (len(updArray) > 0):
+        if len(updArray) > 0 :
             for i in range(0, len(updArray)):
                 self.data[self.index] = updArray[i]
                 self.index += 1
@@ -198,7 +207,7 @@ class SNIP:
         '''copy out until the 6th zero byte'''
         stop = self.findString(6)
         retval = [0]*stop
-        if (stop == 0):
+        if stop == 0:
             return retval
         for i in range(0, stop-1):
             retval[i] = self.data[i]

@@ -15,19 +15,16 @@ object (the actual link implementation), so there's no semantic meaning to
 making multiple copies of a single object.
 '''
 
-from openlcb.message import Message
-from openlcb.mti import MTI
-from openlcb.nodeid import NodeID
-
-
 class LinkLayer:
 
 
     def __init__(self, localNodeID):
         self.localNodeID = localNodeID
 
-    def sendMessage(self, msg):  # this is the basic abstract interface
-        pass
+    def sendMessage(self, msg):
+        '''
+        This is the basic abstract interface
+        '''
 
     def registerMessageReceivedListener(self, listener):
         self.listeners.append(listener)

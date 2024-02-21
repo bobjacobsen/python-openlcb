@@ -105,8 +105,7 @@ class MemoryService:
         #   valid, whether byte, int, or whatever is ok.
         if space >= 0xFD:
             return (False, space & 0x03)
-        else:
-            return (True, space)
+        return (True, space)
 
     def requestMemoryRead(self, memo):
         '''Request a read operation start.
@@ -132,7 +131,7 @@ class MemoryService:
         addr5 = (memo.address & 0xFF)
         data = [DatagramService.ProtocolID.MemoryOperation.value, spaceFlag,
                 addr2, addr3, addr4, addr5]
-        if (byte6):
+        if byte6:
             data.extend([(memo.space & 0xFF)])
         data.extend([memo.size])
         dgWriteMemo = DatagramWriteMemo(memo.nodeID, data,
@@ -151,8 +150,8 @@ class MemoryService:
         Sends the positive reply and returns true if this is from our service.
         '''
         # node received a datagram, is it our service?
-        if (self.service.datagramType(dmemo.data)
-                != DatagramService.ProtocolID.MemoryOperation):
+        if self.service.datagramType(dmemo.data) \
+                != DatagramService.ProtocolID.MemoryOperation :
             return False
 
         # datagram must has a command value
@@ -205,7 +204,7 @@ class MemoryService:
                 if self.writeMemos[index].nodeID == dmemo.srcID:
                     tMemoryMemo = self.writeMemos[index]
                     del self.writeMemos[index]
-                    if (dmemo.data[1] & 0x08 == 0):
+                    if dmemo.data[1] & 0x08 == 0 :
                         tMemoryMemo.okReply(tMemoryMemo)
                     else:
                         tMemoryMemo.rejectedReply(tMemoryMemo)
@@ -299,8 +298,10 @@ class MemoryService:
             result = result | data[index]
         return result
 
-    # converts and array to a string up to the 1st zero byte or given length
     def arrayToString(self, data, length):
+        '''
+        Converts an array to a string up to the 1st zero byte or given length
+        '''
         zeroIndex = len(data)
         try:
             temp = data.index(0)
@@ -319,12 +320,12 @@ class MemoryService:
     def intToArray(self, value, length):
         if length == 1:
             return [(value & 0xff)]
-        elif length == 2:
+        if length == 2:
             return [((value >> 8) & 0xff), (value & 0xff)]
-        elif length == 4:
+        if length == 4:
             return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
                     ((value >> 8) & 0xff),  (value & 0xff)]
-        elif length == 8:
+        if length == 8:
             return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
                     ((value >> 40) & 0xff), ((value >> 32) & 0xff),
                     ((value >> 24) & 0xff), ((value >> 16) & 0xff),
@@ -335,12 +336,12 @@ class MemoryService:
         '''converts a 64-bit integer into an array of given length'''
         if length == 1:
             return [(value & 0xff)]
-        elif length == 2:
+        if length == 2:
             return [((value >> 8) & 0xff), (value & 0xff)]
-        elif length == 4:
+        if length == 4:
             return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
                     ((value >> 8) & 0xff),  (value & 0xff)]
-        elif length == 8:
+        if length == 8:
             return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
                     ((value >> 40) & 0xff), ((value >> 32) & 0xff),
                     ((value >> 24) & 0xff), ((value >> 16) & 0xff),

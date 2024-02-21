@@ -18,6 +18,8 @@ Remote Nodes.
 
 from enum import Enum
 
+import logging
+
 from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.controlframe import ControlFrame
 
@@ -25,8 +27,6 @@ from openlcb.linklayer import LinkLayer
 from openlcb.message import Message
 from openlcb.mti import MTI
 from openlcb.nodeid import NodeID
-
-import logging
 
 
 class CanLink(LinkLayer):
@@ -41,6 +41,7 @@ class CanLink(LinkLayer):
         self.nodeIdToAlias = {}
         self.accumulator = {}
         self.nextInternallyAssignedNodeID = 1
+        LinkLayer.__init__(self, localNodeID)
 
     def linkPhysicalLayer(self, cpl):  # CanPhysicalLayer
         self.link = cpl
@@ -165,17 +166,17 @@ class CanLink(LinkLayer):
                                         self.localAlias))
 
     def handleReceivedRID(self, frame):  # CanFrame
-        if (self.checkAndHandleAliasCollision(frame)):
+        if self.checkAndHandleAliasCollision(frame):
             return
 
     def handleReceivedAMD(self, frame):  # CanFrame
-        if (self.checkAndHandleAliasCollision(frame)):
+        if self.checkAndHandleAliasCollision(frame):
             return
         # check for matching node ID, which is a collision
         nodeID = NodeID(frame.data)
         if nodeID == self.localNodeID :
             print ("collide")
-            # collision, restart 
+            # collision, restart
             self.processCollision(frame)
             return
         #    This defines an alias, so store it
@@ -190,10 +191,10 @@ class CanLink(LinkLayer):
             return
         #    check node ID
         matchNodeID = self.localNodeID
-        if (len(frame.data) >= 6):
+        if len(frame.data) >= 6 :
             matchNodeID = NodeID(frame.data)
 
-        if (self.localNodeID == matchNodeID):
+        if self.localNodeID == matchNodeID :
             #    matched, send RID
             returnFrame = CanFrame(ControlFrame.AMD.value, self.localAlias,
                                    self.localNodeID.toArray())
@@ -242,8 +243,8 @@ class CanLink(LinkLayer):
         destID = NodeID(0)
         #    handle destination for addressed messages
         dgCode = frame.header & 0x00F_000_000
-        if (frame.header & 0x008_000 != 0
-                or (dgCode >= 0x00A_000_000 and dgCode <= 0x00F_000_000)):
+        if frame.header & 0x008_000 != 0 \
+                or (dgCode >= 0x00A_000_000 and dgCode <= 0x00F_000_000) :
             #    Addressed bit is active 1
             #    decoder regular addressed message from Datagram
             if (dgCode >= 0x00A_000_000 and dgCode <= 0x00F_000_000):
@@ -353,7 +354,7 @@ class CanLink(LinkLayer):
             # This includes the special case of MTI.Unknown, which needs
             # to carry its original MTI value
             if mti is MTI.Unknown :
-                message.originalMTI = ((frame.header >> 12) & 0xFFF)
+                msg.originalMTI = ((frame.header >> 12) & 0xFFF)
             self.fireListeners(msg)
 
     def sendMessage(self, msg):
@@ -519,7 +520,7 @@ class CanLink(LinkLayer):
         return abort
 
     def processCollision(self, frame) :
-        #    Collision!
+        ''' Collision! '''
         logging.warning("alias collision in {}, we restart with AMR"
                         " and attempt to get new alias".format(frame))
         self.link.sendCanFrame(CanFrame(ControlFrame.AMR.value,
@@ -542,17 +543,21 @@ class CanLink(LinkLayer):
         self.link.sendCanFrame(CanFrame(ControlFrame.RID.value,
                                         self.localAlias))
 
-    #    Implements the OpenLCB preferred alias
-    #     generation mechanism:  a 48-bit computation
-    #     of x(i+1) = (2^9+1) x(i) + c
-    #     where c = 29,741,096,258,473 or 0x1B0CA37A4BA9
     def incrementAlias48(self, oldAlias):
+        '''
+        Implements the OpenLCB preferred alias
+        generation mechanism:  a 48-bit computation
+        of x(i+1) = (2^9+1) x(i) + c
+        where c = 29,741,096,258,473 or 0x1B0CA37A4BA9
+        '''
+        
         newProduct = (oldAlias << 9) + oldAlias + (0x1B0CA37A4BA9)
         maskedProduct = newProduct & 0xFFFF_FFFF_FFFF
         return maskedProduct
 
-    #    Form 12 bit alias from 48-bit random number
     def createAlias12(self, rnd):
+        '''Form 12 bit alias from 48-bit random number'''
+
         part1 = (rnd >> 36) & 0x0FFF
         part2 = (rnd >> 24) & 0x0FFF
         part3 = (rnd >> 12) & 0x0FFF
@@ -560,27 +565,26 @@ class CanLink(LinkLayer):
 
         if (part1 ^ part2 ^ part3 ^ part4) != 0:
             return (part1 ^ part2 ^ part3 ^ part4)
-        else:
-            #    zero is not a valid alias, so provide a non-zero value
-            if ((part1+part2+part3+part4) & 0xFF) != 0:
-                return ((part1+part2+part3+part4) & 0xFF)
-            else:
-                return 0xAEF  # Why'd you say Burma?
+
+        #    zero is not a valid alias, so provide a non-zero value
+        if ((part1+part2+part3+part4) & 0xFF) != 0:
+            return ((part1+part2+part3+part4) & 0xFF)
+        return 0xAEF  # Why'd you say Burma?
 
     def decodeControlFrameFormat(self, frame):
         if (frame.header & 0x0800_0000) == 0x0800_0000:
             # data case; not checking leading 1 bit
             return ControlFrame.Data
-        elif (frame.header & 0x4_000_000) != 0:  # CID case
+        if (frame.header & 0x4_000_000) != 0:  # CID case
             return ControlFrame.CID
-        else:
-            try:
-                retval = ControlFrame((frame.header >> 12) & 0x2FFFF)
-                return retval  # top 1 bit for out-of-band messages
-            except:
-                logging.warning("Could not decode header 0x{:08X}"
-                                "".format(frame.header))
-                return ControlFrame.UnknownFormat
+            
+        try:
+            retval = ControlFrame((frame.header >> 12) & 0x2FFFF)
+            return retval  # top 1 bit for out-of-band messages
+        except:
+            logging.warning("Could not decode header 0x{:08X}"
+                            "".format(frame.header))
+            return ControlFrame.UnknownFormat
 
     def canHeaderToFullFormat(self, frame):
         '''Returns a full 16-bit MTI from the full 29 bits of a CAN header'''
@@ -596,14 +600,14 @@ class CanLink(LinkLayer):
                 return MTI.Unknown
             return okMTI
 
-        elif (frameType >= 2 and 5 >= frameType):
+        if (frameType >= 2 and 5 >= frameType):
             #    datagram type - we don't address the subtypes here
             return MTI.Datagram
-        else:
-            #    not handling reserver and stream type except to log
-            logging.warning("unhandled canMTI: {}, marked Unknown"
-                            "".format(frame))
-            return MTI.Unknown
+
+        #    not handling reserver and stream type except to log
+        logging.warning("unhandled canMTI: {}, marked Unknown"
+                        "".format(frame))
+        return MTI.Unknown
 
     class AccumKey:
         '''Class that holds the ID for accumulating a multi-part message:

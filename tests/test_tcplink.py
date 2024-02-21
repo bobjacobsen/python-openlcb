@@ -24,7 +24,7 @@ class MessageMockLayer:
         self.receivedMessages.append(msg)
 
 
-class TestCanLinkClass(unittest.TestCase):
+class TestTcpLinkClass(unittest.TestCase):
 
     def testLinkUpSequence(self):
         messageLayer = MessageMockLayer()
@@ -77,14 +77,13 @@ class TestCanLinkClass(unittest.TestCase):
                         0x00, 0x00, 20,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00, 0x00,                      # MTI: VerifyNode
+                        0x04, 0x90,                      # MTI: VerifyNode
                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
         
         self.assertEqual(len(tcpLayer.receivedText), 0)
         self.assertEqual(len(messageLayer.receivedMessages), 1)
-        print(messageLayer.receivedMessages[0].source)
         self.assertEqual(messageLayer.receivedMessages[0].source, NodeID(0x321))
         
     def testOneMessageOnePartTwoClumps(self) :
@@ -102,7 +101,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         messageText =  [0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00, 0x00,                      # MTI: VerifyNode
+                        0x04, 0x90,                      # MTI: VerifyNode
                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
@@ -129,7 +128,7 @@ class TestCanLinkClass(unittest.TestCase):
                        ]
                        
         linkLayer.receiveListener(messageText)                
-        messageText =  [0x00, 0x00,                      # MTI: VerifyNode
+        messageText =  [0x04, 0x90,                      # MTI: VerifyNode
                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
@@ -150,7 +149,7 @@ class TestCanLinkClass(unittest.TestCase):
                         0x00, 0x00, 20,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00, 0x00,                      # MTI: VerifyNode
+                        0x04, 0x90,                      # MTI: VerifyNode
                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
@@ -159,7 +158,7 @@ class TestCanLinkClass(unittest.TestCase):
                         0x00, 0x00, 20,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00, 0x00,                      # MTI: VerifyNode
+                        0x04, 0x90,                      # MTI: VerifyNode
                         0x00, 0x00, 0x00, 0x00, 0x04, 0x56  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
@@ -181,13 +180,13 @@ class TestCanLinkClass(unittest.TestCase):
                         0x00, 0x00, 13,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00,                      # first half MTI
+                        0x04,                      # first half MTI
                         
                         0x80, 0x80,                      # part 2
                         0x00, 0x00, 19,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00,                      # second half MTI
+                        0x90,                      # second half MTI
                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
                         ]
         linkLayer.receiveListener(messageText)                
@@ -208,13 +207,13 @@ class TestCanLinkClass(unittest.TestCase):
                         0x00, 0x00, 13,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00,                      # first half MTI
+                        0x04,                      # first half MTI
                         
                         0x80, 0xC0,                      # part 2
                         0x00, 0x00, 13,
                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
                         0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                        0x00,                      # second half MTI
+                        0x90,                      # second half MTI
                                                         # no data
 
                         0x80, 0x80,                      # part 3
