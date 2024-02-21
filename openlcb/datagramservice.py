@@ -170,17 +170,16 @@ class DatagramService:
                 or self.checkDestID(message, self.linkLayer.localNodeID)):
             return False
 
-        match message.mti:
-            case MTI.Datagram:
-                self.handleDatagram(message)
-            case MTI.Datagram_Rejected:
-                self.handleDatagramRejected(message)
-            case MTI.Datagram_Received_OK:
-                self.handleDatagramReceivedOK(message)
-            case MTI.Link_Layer_Quiesce:
-                self.handleLinkQuiesce(message)
-            case MTI.Link_Layer_Restarted:
-                self.handleLinkRestarted(message)
+        if message.mti == MTI.Datagram:
+            self.handleDatagram(message)
+        elif message.mti == MTI.Datagram_Rejected:
+            self.handleDatagramRejected(message)
+        elif message.mti == MTI.Datagram_Received_OK:
+            self.handleDatagramReceivedOK(message)
+        elif message.mti == MTI.Link_Layer_Quiesce:
+            self.handleLinkQuiesce(message)
+        elif message.mti == MTI.Link_Layer_Restarted:
+            self.handleLinkRestarted(message)
         return False
 
     def handleDatagram(self, message):

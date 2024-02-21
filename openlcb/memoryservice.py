@@ -167,73 +167,69 @@ class MemoryService:
         self.service.positiveReplyToDatagram(dmemo, 0x0000)
 
         # decode if read, write or some other reply
-        match dmemo.data[1]:
-            # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
-            case 0x50 | 0x51 | 0x52 | 0x53 | 0x58 | 0x59 | 0x5A | 0x5B:
-                # read or read-error reply
+        if dmemo.data[1] in (0x50, 0x51, 0x52, 0x53, 0x58, 0x59, 0x5A, 0x5B):
+            # read or read-error reply
 
-                # return data to requestor: first find matching memory read
-                # memo, then reply
-                for index in range(0, len(self.readMemos)):
-                    if self.readMemos[index].nodeID == dmemo.srcID:
-                        tMemoryMemo = self.readMemos[index]
-                        del self.readMemos[index]
-                        # decode type of operation, hence offset for start of
-                        # data
-                        offset = 6
-                        if dmemo.data[1] == 0x50 or dmemo.data[1] == 0x58:
-                            offset = 7
+            # return data to requestor: first find matching memory read
+            # memo, then reply
+            for index in range(0, len(self.readMemos)):
+                if self.readMemos[index].nodeID == dmemo.srcID:
+                    tMemoryMemo = self.readMemos[index]
+                    del self.readMemos[index]
+                    # decode type of operation, hence offset for start of
+                    # data
+                    offset = 6
+                    if dmemo.data[1] == 0x50 or dmemo.data[1] == 0x58:
+                        offset = 7
 
-                        # are there any additional requests queued to send?
-                        if len(self.readMemos) > 0:
-                            self.requestMemoryReadNext(self.readMemos[0])
+                    # are there any additional requests queued to send?
+                    if len(self.readMemos) > 0:
+                        self.requestMemoryReadNext(self.readMemos[0])
 
-                        # fill data for call-back to requestor
-                        if len(dmemo.data) > offset:
-                            tMemoryMemo.data = dmemo.data[offset:]
+                    # fill data for call-back to requestor
+                    if len(dmemo.data) > offset:
+                        tMemoryMemo.data = dmemo.data[offset:]
 
-                        # check for read or read error reply
-                        if (dmemo.data[1] & 0x08 == 0):
-                            tMemoryMemo.dataReply(tMemoryMemo)
-                        else:
-                            tMemoryMemo.rejectedReply(tMemoryMemo)
-                        break
-            case 0x10 | 0x11 | 0x12 | 0x13 | 0x18 | 0x19 | 0x1A | 0x1B:
-                # write reply good, bad
+                    # check for read or read error reply
+                    if (dmemo.data[1] & 0x08 == 0):
+                        tMemoryMemo.dataReply(tMemoryMemo)
+                    else:
+                        tMemoryMemo.rejectedReply(tMemoryMemo)
+                    break
+        elif dmemo.data[1] in (0x10, 0x11, 0x12, 0x13, 0x18, 0x19, 0x1A, 0x1B):
+            # write reply good, bad
 
-                # return data to requestor: first find matching memory write
-                # memo, then reply
-                for index in range(0, len(self.writeMemos)):
-                    if self.writeMemos[index].nodeID == dmemo.srcID:
-                        tMemoryMemo = self.writeMemos[index]
-                        del self.writeMemos[index]
-                        if (dmemo.data[1] & 0x08 == 0):
-                            tMemoryMemo.okReply(tMemoryMemo)
-                        else:
-                            tMemoryMemo.rejectedReply(tMemoryMemo)
-                        break
-
-            case 0x86 | 0x87:  # Address Space Information Reply
-                if self.spaceLengthCallback is None:
-                    logging.error("Address Space Information Reply"
-                                  " received with no callback")
-                    return True
-                if dmemo.data[1] == 0x86:
-                    # not present
-                    self.spaceLengthCallback(-1)
-                    self.spaceLengthCallback = None
-                    return True
-                # normal reply
-                address = (int(dmemo.data[3]) << 24
-                           + int(dmemo.data[4]) << 16
-                           + int(dmemo.data[5]) << 8
-                           + int(dmemo.data[6]))
-                self.spaceLengthCallback(address)
+            # return data to requestor: first find matching memory write
+            # memo, then reply
+            for index in range(0, len(self.writeMemos)):
+                if self.writeMemos[index].nodeID == dmemo.srcID:
+                    tMemoryMemo = self.writeMemos[index]
+                    del self.writeMemos[index]
+                    if (dmemo.data[1] & 0x08 == 0):
+                        tMemoryMemo.okReply(tMemoryMemo)
+                    else:
+                        tMemoryMemo.rejectedReply(tMemoryMemo)
+                    break
+        elif dmemo.data[1] in (0x86, 0x87):  # Address Space Information Reply
+            if self.spaceLengthCallback is None:
+                logging.error("Address Space Information Reply"
+                              " received with no callback")
+                return True
+            if dmemo.data[1] == 0x86:
+                # not present
+                self.spaceLengthCallback(-1)
                 self.spaceLengthCallback = None
-
-            case _:
-                logging.error("Did not expect reply of type 0x{:02X}"
-                              "".format(dmemo.data[1]))
+                return True
+            # normal reply
+            address = (int(dmemo.data[3]) << 24
+                       + int(dmemo.data[4]) << 16
+                       + int(dmemo.data[5]) << 8
+                       + int(dmemo.data[6]))
+            self.spaceLengthCallback(address)
+            self.spaceLengthCallback = None
+        else:
+            logging.error("Did not expect reply of type 0x{:02X}"
+                          "".format(dmemo.data[1]))
 
         return True
 
@@ -321,39 +317,35 @@ class MemoryService:
         return result
 
     def intToArray(self, value, length):
-        match length:
-            case 1:
-                return [(value & 0xff)]
-            case 2:
-                return [((value >> 8) & 0xff), (value & 0xff)]
-            case 4:
-                return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                        ((value >> 8) & 0xff),  (value & 0xff)]
-            case 8:
-                return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
-                        ((value >> 40) & 0xff), ((value >> 32) & 0xff),
-                        ((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                        ((value >> 8) & 0xff), (value & 0xff)]
-            case _:
-                return []
+        if length == 1:
+            return [(value & 0xff)]
+        elif length == 2:
+            return [((value >> 8) & 0xff), (value & 0xff)]
+        elif length == 4:
+            return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                    ((value >> 8) & 0xff),  (value & 0xff)]
+        elif length == 8:
+            return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
+                    ((value >> 40) & 0xff), ((value >> 32) & 0xff),
+                    ((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                    ((value >> 8) & 0xff), (value & 0xff)]
+        return []
 
     def uInt64ToArray(self, value, length):
         '''converts a 64-bit integer into an array of given length'''
-        match length:
-            case 1:
-                return [(value & 0xff)]
-            case 2:
-                return [((value >> 8) & 0xff), (value & 0xff)]
-            case 4:
-                return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                        ((value >> 8) & 0xff),  (value & 0xff)]
-            case 8:
-                return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
-                        ((value >> 40) & 0xff), ((value >> 32) & 0xff),
-                        ((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                        ((value >> 8) & 0xff), (value & 0xff)]
-            case _:
-                return []
+        if length == 1:
+            return [(value & 0xff)]
+        elif length == 2:
+            return [((value >> 8) & 0xff), (value & 0xff)]
+        elif length == 4:
+            return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                    ((value >> 8) & 0xff),  (value & 0xff)]
+        elif length == 8:
+            return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
+                    ((value >> 40) & 0xff), ((value >> 32) & 0xff),
+                    ((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                    ((value >> 8) & 0xff), (value & 0xff)]
+        return []
 
     def stringToArray(self, value, length):
         '''Converts a string to an array of given length

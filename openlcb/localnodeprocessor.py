@@ -34,37 +34,38 @@ class LocalNodeProcessor(Processor):
         if not (self.checkDestID(message, node) or message.isGlobal()):
             return False  # not to us
         # specific message handling
-        match message.mti:
-            # NOTE: Python 3.10 "match" uses "|" for logic (not "or").
-            case MTI.Link_Layer_Up:
-                self.linkUpMessage(message, node)
-            case MTI.Link_Layer_Down:
-                self.linkDownMessage(message, node)
-            case MTI.Verify_NodeID_Number_Global:
-                self.verifyNodeIDNumberGlobal(message, node)
-            case MTI.Verify_NodeID_Number_Addressed:
-                self.verifyNodeIDNumberAddressed(message, node)
-            case MTI.Protocol_Support_Inquiry:
-                self.protocolSupportInquiry(message, node)
-            case MTI.Protocol_Support_Reply | MTI.Simple_Node_Ident_Info_Reply:
-                # these are not relevant here
-                pass
-            case MTI.Traction_Control_Command | MTI.Traction_Control_Reply:
-                # these are not relevant here
-                pass
-            case MTI.Datagram | MTI.Datagram_Rejected | MTI.Datagram_Received_OK:
-                # datagrams and datagram replies are handled in the
-                # DatagramService
-                pass
-            case MTI.Simple_Node_Ident_Info_Request:
-                self.simpleNodeIdentInfoRequest(message, node)
-            case MTI.Identify_Events_Addressed:
-                self.identifyEventsAddressed(message, node)
-            case (MTI.Terminate_Due_To_Error
-                  | MTI.Optional_Interaction_Rejected):
-                self.errorMessageReceived(message, node)
-            case _:
-                self.unrecognizedMTI(message, node)
+        if message.mti == MTI.Link_Layer_Up:
+            self.linkUpMessage(message, node)
+        elif message.mti == MTI.Link_Layer_Down:
+            self.linkDownMessage(message, node)
+        elif message.mti == MTI.Verify_NodeID_Number_Global:
+            self.verifyNodeIDNumberGlobal(message, node)
+        elif message.mti == MTI.Verify_NodeID_Number_Addressed:
+            self.verifyNodeIDNumberAddressed(message, node)
+        elif message.mti == MTI.Protocol_Support_Inquiry:
+            self.protocolSupportInquiry(message, node)
+        elif message.mti in (MTI.Protocol_Support_Reply,
+                             MTI.Simple_Node_Ident_Info_Reply):
+            # these are not relevant here
+            pass
+        elif message.mti in (MTI.Traction_Control_Command,
+                             MTI.Traction_Control_Reply):
+            # these are not relevant here
+            pass
+        elif message.mti in (MTI.Datagram, MTI.Datagram_Rejected,
+                             MTI.Datagram_Received_OK):
+            # datagrams and datagram replies are handled in the
+            # DatagramService
+            pass
+        elif message.mti == MTI.Simple_Node_Ident_Info_Request:
+            self.simpleNodeIdentInfoRequest(message, node)
+        elif message.mti == MTI.Identify_Events_Addressed:
+            self.identifyEventsAddressed(message, node)
+        elif message.mti in (MTI.Terminate_Due_To_Error,
+                             MTI.Optional_Interaction_Rejected):
+            self.errorMessageReceived(message, node)
+        else:
+            self.unrecognizedMTI(message, node)
         return False
 
     # private method
