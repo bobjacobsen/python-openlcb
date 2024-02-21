@@ -86,7 +86,7 @@ python3 example_node_implementation.py 192.168.1.40:12021
 
 There's also a serial-port based example. 
 ```
-python3 example_string_serial_interface.py/dev/cu.ProperSerialPort
+python3 example_string_serial_interface.py /dev/cu.ProperSerialPort
 ```
 This can be compared to the example_string_interface.py to see
 the (small) differences between the serial version and the GridConnect TCP versions.
