@@ -12,6 +12,7 @@ class SerialLink:
         
     def connect(self, device, baudrate=230400):
         self.port = serial.Serial(device, baudrate)
+        self.port.reset_input_buffer() # drop anything that's just sitting there already
 
     # send a single string
     def send(self, string):
