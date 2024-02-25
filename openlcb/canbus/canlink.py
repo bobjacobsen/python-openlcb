@@ -251,13 +251,13 @@ class CanLink(LinkLayer):
                 #    datagram case
 
                 destAlias = (frame.header & 0x00_FFF_000) >> 12
-                mapped = self.aliasToNodeID[destAlias]
-                if mapped is not None:
-                    destID = mapped
+                
+                if destAlias in self.aliasToNodeID  :
+                    destID = self.aliasToNodeID[destAlias]
                 else:
                     destID = NodeID(self.nextInternallyAssignedNodeID)
                     logging.warning("message from unknown dest alias: {},"
-                                    " continue with {}", format(frame, destID))
+                                    " continue with {}".format(str(frame), str(destID)))
                     #    register that internally-generated nodeID-alias
                     #    association
                     self.aliasToNodeID[destAlias] = destID
