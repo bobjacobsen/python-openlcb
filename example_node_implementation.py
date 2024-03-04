@@ -16,6 +16,8 @@ from openlcb.canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
 from openlcb.datagramservice import DatagramService
 from openlcb.memoryservice import MemoryService
+from openlcb.message import Message
+from openlcb.mti import MTI
 
 from openlcb.localnodeprocessor import LocalNodeProcessor
 from openlcb.pip import PIP
@@ -134,11 +136,21 @@ localNode = Node(
 localNodeProcessor = LocalNodeProcessor(canLink, localNode)
 canLink.registerMessageReceivedListener(localNodeProcessor.process)
 
+# create a listener to identify connected nodes
+def displayOtherNodeIds(message) :
+    if message.mti == MTI.Verified_NodeID :
+        print("Detected farNodeID is {}".format(message.source))
+canLink.registerMessageReceivedListener(displayOtherNodeIds)
+
 #######################
 
 # have the socket layer report up to bring the link layer up and get an alias
 print("      SL : link up")
 canPhysicalLayerGridConnect.physicalLayerUp()
+
+# request that nodes identify themselves so that we can print their node IDs
+message = Message(MTI.Verify_NodeID_Number_Global, NodeID(localNodeID), None)
+canLink.sendMessage(message)
 
 # process resulting activity
 while True:
