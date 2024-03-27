@@ -1,5 +1,5 @@
 '''
-Demo of using the datagram service to send and receive a datagram
+Demo of using the memory service to read from node memory
 
 Usage:
 python3 example_memory_transfer.py [host|host:port]
@@ -138,7 +138,7 @@ canPhysicalLayerGridConnect.physicalLayerUp()
 
 
 def memoryRead():
-    """Create and send a write datagram.
+    """Create and send a read datagram.
     This is a read of 20 bytes from the start of CDI space.
     We will fire it on a separate thread to give time for other nodes to reply
     to AME
