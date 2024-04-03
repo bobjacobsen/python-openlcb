@@ -8,7 +8,7 @@
 		"rewrap.wrappingColumn": 79,
 		"autoDocstring.docstringFormat": "google",
 		"flake8.args": [
-			"--ignore=E203,E226,E701,E202,E222"
+			"--ignore=E203,E226,E701,E202,E222,E221"
 		],
 		"ruff.lint.args": [
 			"--ignore=E701"
