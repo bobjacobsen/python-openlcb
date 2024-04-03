@@ -13,7 +13,9 @@ host|host:port            (optional) Set the address (or using a colon,
 '''
 from openlcb.canbus.tcpsocket import TcpSocket
 
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
 from openlcb.canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
 from openlcb.message import Message

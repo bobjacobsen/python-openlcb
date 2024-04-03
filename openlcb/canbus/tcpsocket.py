@@ -10,16 +10,16 @@ MSGLEN = 35  # longest GC frame is 31 letters; forward if getting non-GC input
 class TcpSocket:
     def __init__(self, sock=None):
         if sock is None:
-            self.sock = socket.socket(
-                            socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.sock = sock
 
     def connect(self, host, port):
         self.sock.connect((host, port))
 
-    # send a single string
     def send(self, string):
+        """Send a single string.
+        """
         msg = string.encode('ascii')
         totalsent = 0
         while totalsent < len(msg[totalsent:]):
@@ -34,6 +34,9 @@ class TcpSocket:
           response.
         - This makes it nicer to display the raw data.
         - Note that the response may end with a partial frame.
+
+        Returns:
+            str: The received bytes decoded into a UTF-8 string.
         '''
         chunks = []
         bytes_recd = 0

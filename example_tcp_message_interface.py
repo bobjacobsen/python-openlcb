@@ -67,8 +67,10 @@ def sendToSocket(data):
     print("      SR: {}".format(data.strip()))
     s.send(data)
 
+
 def printMessage(msg):
     print("RM: {} from {}".format(msg, msg.source))
+
 
 tcpLinklayer = TcpLink(NodeID(100))
 tcpLinklayer.registerMessageReceivedListener(printMessage)

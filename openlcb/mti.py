@@ -1,3 +1,6 @@
+"""
+Message Type Indicator
+"""
 from enum import Enum
 
 
@@ -43,16 +46,16 @@ class MTI(Enum):
     Datagram_Received_OK               = 0x0A28
     Datagram_Rejected                  = 0x0A48
 
-    Unknown                            = 0x0008   # make this addressed so that it;s individually processed
+    Unknown                            = 0x0008   # make this addressed so that it;s individually processed  # noqa: E501
 
     # These are used for internal signalling and are not present in the MTI
     # specification.
-    Link_Layer_Up                      = 0x2000   # entered Permitted state; needs to be marked global
-    Link_Layer_Quiesce                 = 0x2010   # Link needs to be drained, will come back with Link_Layer_Restarted next
-    Link_Layer_Restarted               = 0x2020   # link cycled without change of node state; needs to be marked global
-    Link_Layer_Down                    = 0x2030   # entered Inhibited state; needs to be marked global
+    Link_Layer_Up                      = 0x2000   # entered Permitted state; needs to be marked global  # noqa: E501
+    Link_Layer_Quiesce                 = 0x2010   # Link needs to be drained, will come back with Link_Layer_Restarted next  # noqa: E501
+    Link_Layer_Restarted               = 0x2020   # link cycled without change of node state; needs to be marked global  # noqa: E501
+    Link_Layer_Down                    = 0x2030   # entered Inhibited state; needs to be marked global  # noqa: E501
 
-    New_Node_Seen                      = 0x2048   # alias resolution found new node; marked addressed (0x8 bit)
+    New_Node_Seen                      = 0x2048   # alias resolution found new node; marked addressed (0x8 bit)  # noqa: E501
 
     def priority(self): return (self.value & 0x0C00) >> 10
 

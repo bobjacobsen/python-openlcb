@@ -20,7 +20,7 @@ class Processor:
         Accept a Message, adjust state as needed, possibly reply.
 
         Args:
-            message (_type_): _description_
+            message (Message): Message to process.
             node (Optional[_type_]): _description_. Defaults to None.
 
         Returns:
@@ -36,11 +36,12 @@ class Processor:
         """check whether a message came from a specific nodeID
 
         Args:
-            message (_type_): _description_
-            arg (_type_): Node or NodeID
+            message (Message): A message.
+            arg (Union[NodeID,int]): NodeID or Node ID int to compare against
+                message.source.
 
         Returns:
-            _type_: _description_
+            bool: Whether the source of message is the given Node ID.
         """
         if isinstance(arg, NodeID):
             return message.source == arg
@@ -53,11 +54,12 @@ class Processor:
         """check whether a message is addressed to a specific nodeID
 
         Args:
-            message (_type_): _description_
-            arg (_type_): _description_
+            message (Message): A Message.
+            arg (Union[NodeID,int]): A Node ID.
 
         Returns:
-            bool: Global messages return False: Not specifically addressed
+            bool: Whether the message ID matches the arg. Global messages
+                return False: Not specifically addressed.
         """
         if isinstance(arg, NodeID):
             return message.destination == arg

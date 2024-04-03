@@ -13,7 +13,9 @@ host|host:port            (optional) Set the address (or using a colon,
 
 from openlcb.canbus.tcpsocket import TcpSocket
 
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
 from openlcb.canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
 from openlcb.datagramservice import (
@@ -102,7 +104,7 @@ def printDatagram(memo):
     """create a call-back to print datagram contents when received
 
     Args:
-        memo (_type_): _description_
+        memo (DatagramReadMemo): The datagram received
 
     Returns:
         bool: Always False (True would mean we sent a reply to this datagram,
@@ -121,7 +123,7 @@ def memoryReadSuccess(memo):
     """createcallbacks to get results of memory read
 
     Args:
-        memo (_type_): _description_
+        memo (MemoryReadMemo): Event that was generated.
     """
     print("successful memory read: {}".format(memo.data))
 

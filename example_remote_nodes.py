@@ -11,10 +11,12 @@ host|host:port            (optional) Set the address (or using a colon,
                           address and port.
 '''
 
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
-from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
+# from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.canlink import CanLink
-from openlcb.canbus.controlframe import ControlFrame
+# from openlcb.canbus.controlframe import ControlFrame
 from openlcb.canbus.tcpsocket import TcpSocket
 
 from openlcb.node import Node
@@ -39,8 +41,10 @@ timeout = 0.5
 
 # region same code as other examples
 
+
 def usage():
     print(__doc__, file=sys.stderr)
+
 
 if __name__ == "__main__":
     # global host  # only necessary if this is moved to a main/other function
@@ -73,21 +77,27 @@ s.connect(host, port)
 
 
 if trace :
-    print("RR, SR are raw socket interface receive and send; RL, SL are link (frame) interface")
+    print("RR, SR are raw socket interface receive and send;"
+          " RL, SL are link (frame) interface")
+
 
 def sendToSocket(string) :
     if trace : print("   SR: "+string.strip())
     s.send(string)
 
-def receiveFrame(frame) : 
-    if trace: print("RL: "+str(frame) )
- 
+
+def receiveFrame(frame) :
+    if trace: print("RL: "+str(frame))
+
+
 canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
+
 
 def printMessage(msg):
     if trace: print("RM: {} from {}".format(msg, msg.source))
     readQueue.put(msg)
+
 
 canLink = CanLink(NodeID(localNodeID))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
@@ -110,13 +120,16 @@ canLink.registerMessageReceivedListener(localNodeProcessor.process)
 remoteNodeStore = RemoteNodeStore(NodeID(localNodeID))
 remoteNodeProcessor = RemoteNodeProcessor(canLink)
 remoteNodeStore.processors = [remoteNodeProcessor]
-canLink.registerMessageReceivedListener(remoteNodeStore.processMessageFromLinkLayer)
+canLink.registerMessageReceivedListener(
+    remoteNodeStore.processMessageFromLinkLayer
+)
 
 
 readQueue = Queue()
 
-# put the read on a separate thread
+
 def receiveLoop() :
+    """put the read on a separate thread"""
     # bring the CAN level up
     if trace : print("      SL : link up")
     canPhysicalLayerGridConnect.physicalLayerUp()
@@ -125,26 +138,41 @@ def receiveLoop() :
         if trace : print("   RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
-import threading
+
+
+import threading  # noqa E402
 thread = threading.Thread(daemon=True, target=receiveLoop)
 
-# define a routine for checking tests
+
 def result(arg1, arg2=None, arg3=None, result=True) :
-    # returns True if OK, False if failed
-    # If arg1 and arg2 provided
-    #   compare those, and fail if not equal; arg3 is then message
-    # If only arg1, report it and return result for fail value
+    """Check and report on test results.
+
+    Args:
+        arg1: Any value.
+        arg2: value to compare to arg1. Defaults to None.
+        arg3: fail if arg1 not equal to arg1; arg3 is then message. Defaults to
+            None.
+        result (bool, optional): _description_. Defaults to True.
+
+    Raises:
+        ValueError: If only arg1 was provided (undefined behavior--in other
+            words, test itself is wrong not the data).
+
+    Returns:
+        bool: True if OK, False if failed
+    """
     if arg2 is not None :
         if arg1 == arg2 :
             # OK
             print(arg1)
             return True
         else :
-            print("{} does not equal {}, FAIL".format(arg1, arg2))
+            raise ValueError("{} does not equal {}, FAIL".format(arg1, arg2))
             return False
     else:
         print(arg1)
         return result
+
 
 # start the process
 thread.start()
@@ -156,7 +184,7 @@ while True :
         received = readQueue.get(True, timeout)
         if trace : print("received: ", received)
     except Empty:
-         break
+        break
 
 # send an VerifyNodes message to provoke response
 print("\nSend Verify NodeID Number Global\n")
@@ -170,12 +198,13 @@ while True :
         received = readQueue.get(True, timeout)
         if trace : print("received: ", received)
     except Empty:
-         break
+        break
 
 # print the resulting node store contents
 print("\nDiscovered nodes:")
 
 for node in remoteNodeStore.asArray() :
-    print(node, node.snip.manufacturerName, "/", node.snip.userProvidedNodeName)
+    print(node, node.snip.manufacturerName, "/",
+          node.snip.userProvidedNodeName)
 
 # this ends here, which takes the local node offline

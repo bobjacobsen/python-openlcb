@@ -53,14 +53,15 @@ class PIP(Enum):
             retval.append(pip.name.replace("_", " ").title())
         return retval
 
-    def setContentsFromInt(input):
-        """Get a set of contents from a single numeric input
+    def setContentsFromInt(bitmask):
+        """Get a set of contents from a single numeric bitmask
 
         Args:
-            input (_type_): _description_
+            bitmask (int): A single number that is the sum of 1 or more
+                protocol bits.
 
         Returns:
-            set: _description_
+            set (PIP): The set of protocol bits derived from the bitmask.
         """
         retVal = []
         for val in PIP.list():
@@ -72,10 +73,10 @@ class PIP(Enum):
         """set contents from a list of numeric inputs
 
         Args:
-            raw (_type_): _description_
+            raw (Union[bytes,list[int]]): a list of 1-byte values
 
         Returns:
-            _type_: _description_
+            set (PIP): The set of protocol bits derived from the raw data.
         """
         data = 0
         if (len(raw) > 0):

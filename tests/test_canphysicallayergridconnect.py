@@ -1,6 +1,8 @@
 import unittest
 
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
 from openlcb.canbus.canframe import CanFrame
 from openlcb.nodeid import NodeID
 
@@ -124,4 +126,3 @@ class CanPhysicalLayerGridConnectTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

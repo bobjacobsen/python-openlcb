@@ -11,7 +11,9 @@ host|host:port            (optional) Set the address (or using a colon,
 '''
 from openlcb.canbus.tcpsocket import TcpSocket
 
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
 from openlcb.canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
 from openlcb.datagramservice import DatagramService
@@ -99,7 +101,7 @@ def printDatagram(memo):
     """create a call-back to print datagram contents when received
 
     Args:
-        memo (_type_): _description_
+        memo (DatagramReadMemo): The datagram received
 
     Returns:
         bool: Always False (True would mean we sent a reply to the datagram,
@@ -136,11 +138,21 @@ localNode = Node(
 localNodeProcessor = LocalNodeProcessor(canLink, localNode)
 canLink.registerMessageReceivedListener(localNodeProcessor.process)
 
-# create a listener to identify connected nodes
+
 def displayOtherNodeIds(message) :
+    """Listener to identify connected nodes
+
+    Args:
+        message (_type_): _description_
+    """
+    print("[displayOtherNodeIds] type(message): {}"
+          "".format(type(message).__name__))
     if message.mti == MTI.Verified_NodeID :
         print("Detected farNodeID is {}".format(message.source))
+
+
 canLink.registerMessageReceivedListener(displayOtherNodeIds)
+
 
 #######################
 

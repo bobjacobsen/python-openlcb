@@ -128,14 +128,14 @@ class LocalNodeProcessor(Processor):
         by returning OptionalInteractionRejected
         '''
         # FIXME: should be private method. Add _ to start of method name.
-        
+
         # special case of unknown MTI from lower level
         unknownAddressed = False
         originalMTI = 0xFFFF
         if message.mti == MTI.Unknown :
             if hasattr(message, "originalMTI") :
                 originalMTI = message.originalMTI
-            else : 
+            else :
                 logging.error("MTI.Unknown without originalMTI")
             unknownAddressed = (originalMTI & 0x008 ) != 0
         if not (message.mti.addressPresent() or unknownAddressed) :

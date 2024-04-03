@@ -12,7 +12,9 @@ host|host:port            (optional) Set the address (or using a colon,
 import threading
 
 from openlcb.canbus.tcpsocket import TcpSocket
-from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
+from openlcb.canbus.canphysicallayergridconnect import (
+    CanPhysicalLayerGridConnect,
+)
 from openlcb.canbus.canlink import CanLink
 from openlcb.nodeid import NodeID
 from openlcb.datagramservice import (
@@ -101,7 +103,7 @@ def datagramReceiver(memo):
     """A call-back for when datagrams received
 
     Args:
-        _type_: _description_
+        DatagramReadMemo: The datagram object
 
     Returns:
         bool: Always True (means we sent the reply to this datagram)
