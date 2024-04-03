@@ -175,7 +175,7 @@ def memoryReadFail(memo):
 # in a row, we buffer up the characters until the `endElement`
 # call is invoked to indicate the text is complete
 
-import xml.sax
+import xml.sax  # noqa: E402
 
 
 class MyHandler(xml.sax.handler.ContentHandler):
@@ -184,13 +184,13 @@ class MyHandler(xml.sax.handler.ContentHandler):
         self._charBuffer = []
 
     def startElement(self, name, attrs):
-        print ("Start: ", name)
+        print("Start: ", name)
         if attrs is not None and attrs :
-            print ("  Atributes: ", attrs.getNames())
+            print("  Atributes: ", attrs.getNames())
 
     def endElement(self, name):
-        print (name, "cpntent:", self._flushCharBuffer())
-        print ("End: ", name)
+        print(name, "cpntent:", self._flushCharBuffer())
+        print("End: ", name)
         pass
 
     def _flushCharBuffer(self):

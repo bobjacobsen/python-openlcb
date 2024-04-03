@@ -84,7 +84,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
         self.assertEqual(self.node21.state, Node.State.Uninitialized)
 
     def testUndefinedType(self) :
-        msg = Message(MTI.Unknown, NodeID(12), NodeID(13))  # neither to nor from us
+        msg = Message(MTI.Unknown, NodeID(12), NodeID(13))  # neither to nor from us  # noqa: E501
         # nothing but logging happens on an unknown type
         self.processor.process(msg, self.node21)
 
