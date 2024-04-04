@@ -57,15 +57,16 @@ class PIP(Enum):
         """Get a set of contents from a single numeric bitmask
 
         Args:
-            bitmask (int): A single number that is the sum of 1 or more
+            bitmask (int): A single number that is the sum of any number of
                 protocol bits.
 
         Returns:
-            set (PIP): The set of protocol bits derived from the bitmask.
+            set (PIP): The set of protocol bits (bitmasks where 1 bit is on in
+                each) derived from the bitmask.
         """
         retVal = []
         for val in PIP.list():
-            if (val.value & input != 0):
+            if (val.value & bitmask != 0):
                 retVal.append(val)
         return set(retVal)
 
