@@ -19,51 +19,35 @@ from openlcb.message import Message
 from openlcb.mti import MTI
 
 # specify connection information
-host = "localhost"
-port = 12022
-localNodeID = "05.01.01.01.03.01"
+# region moved to settings
+# host = "localhost"
+# port = 12022
+# localNodeID = "05.01.01.01.03.01"
+# endregion moved to settings
 
 # region same code as other examples
-
-
-def usage():
-    print(__doc__, file=sys.stderr)
-
+from examples_settings import Settings
+settings = Settings()
 
 if __name__ == "__main__":
-    # global host  # only necessary if this is moved to a main/other function
-    import sys
-    if len(sys.argv) == 2:
-        host = sys.argv[1]
-        parts = host.split(":")
-        if len(parts) == 2:
-            host = parts[0]
-            try:
-                port = int(parts[1])
-            except ValueError:
-                usage()
-                print("Error: Port {} is not an integer.".format(parts[1]),
-                      file=sys.stderr)
-                sys.exit(1)
-        elif len(parts) > 2:
-            usage()
-            print("Error: blank, address or address:port format was expected.")
-            sys.exit(1)
-    elif len(sys.argv) > 2:
-        usage()
-        print("Error: blank, address or address:port format was expected.")
-        sys.exit(1)
-
+    settings.load_cli_args(docstring=__doc__)
 # endregion same code as other examples
 
 s = TcpSocket()
-s.connect(host, port)
+print("Using settings:")
+print(settings.dumps())
+s.connect(settings['host'], settings['port'])
 
 print("RR, SR are raw socket interface receive and send; "
       " RM, SM are message interface")
 
 
 def sendToSocket(data):
+    # if isinstance(data, list):
+    #     raise TypeError(
+    #         "Got {}({}) but expected str"
+    #         .format(type(data).__name__, data)
+    #     )
     print("      SR: {}".format(data.strip()))
     s.send(data)
 
@@ -83,7 +67,8 @@ print("      SL : link up")
 tcpLinklayer.linkUp()
 
 # send an VerifyNodes message to provoke response
-message = Message(MTI.Verify_NodeID_Number_Global, NodeID(localNodeID), None)
+message = Message(MTI.Verify_NodeID_Number_Global,
+                  NodeID(settings['localNodeID']), None)
 print("SM: {}".format(message))
 tcpLinklayer.sendMessage(message)
 

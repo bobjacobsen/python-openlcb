@@ -30,46 +30,23 @@ from openlcb.memoryservice import (
 )
 
 # specify connection information
-host = "192.168.16.212"
-port = 12021
-localNodeID = "05.01.01.01.03.01"
-farNodeID = "09.00.99.03.00.35"
+# region replaced by settings
+# host = "192.168.16.212"
+# port = 12021
+# localNodeID = "05.01.01.01.03.01"
+# farNodeID = "09.00.99.03.00.35"
+# endregion replaced by settings
 
 # region same code as other examples
-
-
-def usage():
-    print(__doc__, file=sys.stderr)
-
+from examples_settings import Settings
+settings = Settings()
 
 if __name__ == "__main__":
-    # global host  # only necessary if this is moved to a main/other function
-    import sys
-    if len(sys.argv) == 2:
-        host = sys.argv[1]
-        parts = host.split(":")
-        if len(parts) == 2:
-            host = parts[0]
-            try:
-                port = int(parts[1])
-            except ValueError:
-                usage()
-                print("Error: Port {} is not an integer.".format(parts[1]),
-                      file=sys.stderr)
-                sys.exit(1)
-        elif len(parts) > 2:
-            usage()
-            print("Error: blank, address or address:port format was expected.")
-            sys.exit(1)
-    elif len(sys.argv) > 2:
-        usage()
-        print("Error: blank, address or address:port format was expected.")
-        sys.exit(1)
-
+    settings.load_cli_args(docstring=__doc__)
 # endregion same code as other examples
 
 s = TcpSocket()
-s.connect(host, port)
+s.connect(settings['host'], settings['port'])
 
 print("RR, SR are raw socket interface receive and send;"
       " RL, SL are link interface; RM, SM are message interface")
@@ -92,7 +69,7 @@ def printMessage(message):
     print("RM: {} from {}".format(message, message.source))
 
 
-canLink = CanLink(NodeID(localNodeID))
+canLink = CanLink(NodeID(settings['localNodeID']))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
 canLink.registerMessageReceivedListener(printMessage)
 
@@ -149,7 +126,8 @@ def memoryRead():
     time.sleep(1)
 
     # read 64 bytes from the CDI space starting at address zero
-    memMemo = MemoryReadMemo(NodeID(farNodeID), 64, 0xFF, 0, memoryReadFail,
+    memMemo = MemoryReadMemo(NodeID(settings['farNodeID']),
+                             64, 0xFF, 0, memoryReadFail,
                              memoryReadSuccess)
     memoryService.requestMemoryRead(memMemo)
 

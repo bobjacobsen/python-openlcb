@@ -27,46 +27,23 @@ from openlcb.snip import SNIP
 from openlcb.node import Node
 
 # specify connection information
-host = "192.168.16.212"
-port = 12021
-localNodeID = "05.01.01.01.03.01"
-farNodeID = "09.00.99.03.00.35"
+# region moved to settings
+# host = "192.168.16.212"
+# port = 12021
+# localNodeID = "05.01.01.01.03.01"
+# farNodeID = "09.00.99.03.00.35"
+# endregion moved to settings
 
 # region same code as other examples
-
-
-def usage():
-    print(__doc__, file=sys.stderr)
-
+from examples_settings import Settings
+settings = Settings()
 
 if __name__ == "__main__":
-    # global host  # only necessary if this is moved to a main/other function
-    import sys
-    if len(sys.argv) == 2:
-        host = sys.argv[1]
-        parts = host.split(":")
-        if len(parts) == 2:
-            host = parts[0]
-            try:
-                port = int(parts[1])
-            except ValueError:
-                usage()
-                print("Error: Port {} is not an integer.".format(parts[1]),
-                      file=sys.stderr)
-                sys.exit(1)
-        elif len(parts) > 2:
-            usage()
-            print("Error: blank, address or address:port format was expected.")
-            sys.exit(1)
-    elif len(sys.argv) > 2:
-        usage()
-        print("Error: blank, address or address:port format was expected.")
-        sys.exit(1)
-
+    settings.load_cli_args(docstring=__doc__)
 # endregion same code as other examples
 
 s = TcpSocket()
-s.connect(host, port)
+s.connect(settings['host'], settings['port'])
 
 print("RR, SR are raw socket interface receive and send;"
       " RL, SL are link interface; RM, SM are message interface")
@@ -89,7 +66,7 @@ def printMessage(message):
     print("RM: {} from {}".format(message, message.source))
 
 
-canLink = CanLink(NodeID(localNodeID))
+canLink = CanLink(NodeID(settings['localNodeID']))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
 canLink.registerMessageReceivedListener(printMessage)
 
@@ -129,7 +106,7 @@ def memoryReadFail(memo):
 # This is a very minimal node, which just takes part in the low-level common
 # protocols
 localNode = Node(
-    NodeID(localNodeID),
+    NodeID(settings['localNodeID']),
     SNIP("PythonOlcbNode", "example_node_implementation",
          "0.1", "0.2", "User Name Here", "User Description Here"),
     set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL, PIP.DATAGRAM_PROTOCOL])
@@ -161,7 +138,8 @@ print("      SL : link up")
 canPhysicalLayerGridConnect.physicalLayerUp()
 
 # request that nodes identify themselves so that we can print their node IDs
-message = Message(MTI.Verify_NodeID_Number_Global, NodeID(localNodeID), None)
+message = Message(MTI.Verify_NodeID_Number_Global,
+                  NodeID(settings['localNodeID']), None)
 canLink.sendMessage(message)
 
 # process resulting activity
