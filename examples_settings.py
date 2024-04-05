@@ -268,6 +268,10 @@ class Settings:
                 for child_key, child in value.items():
                     if child_key not in self._meta[key]:
                         self._meta[key][child_key] = copy.deepcopy(child)
+        if not os.path.isfile(settings_path):
+            # Expose the settings to the user (even if not using GUI)
+            #   by creating the json file if it doesn't exist:
+            self.save(settings_path)
 
     def save(self, settings_path=None):
         """Save the settings.
