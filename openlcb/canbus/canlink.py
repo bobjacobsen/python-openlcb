@@ -56,9 +56,9 @@ class CanLink(LinkLayer):
 
         if self.decodeControlFrameFormat(frame) == ControlFrame.LinkUp:
             self.handleReceivedLinkUp(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkRestarted:
+        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkRestarted:  # noqa: E501
             self.handleReceivedLinkRestarted(frame)
-        elif self.decodeControlFrameFormat(frame) in (ControlFrame.LinkCollision,
+        elif self.decodeControlFrameFormat(frame) in (ControlFrame.LinkCollision,  # noqa: E501
                                                       ControlFrame.LinkError):
             logging.warning("Unexpected error report {:08X}"
                             "".format(frame.header))
@@ -175,7 +175,7 @@ class CanLink(LinkLayer):
         # check for matching node ID, which is a collision
         nodeID = NodeID(frame.data)
         if nodeID == self.localNodeID :
-            print ("collide")
+            print("collide")
             # collision, restart
             self.processCollision(frame)
             return
@@ -251,13 +251,14 @@ class CanLink(LinkLayer):
                 #    datagram case
 
                 destAlias = (frame.header & 0x00_FFF_000) >> 12
-                
+
                 if destAlias in self.aliasToNodeID  :
                     destID = self.aliasToNodeID[destAlias]
                 else:
                     destID = NodeID(self.nextInternallyAssignedNodeID)
                     logging.warning("message from unknown dest alias: {},"
-                                    " continue with {}".format(str(frame), str(destID)))
+                                    " continue with {}"
+                                    .format(str(frame), str(destID)))
                     #    register that internally-generated nodeID-alias
                     #    association
                     self.aliasToNodeID[destAlias] = destID
@@ -337,8 +338,8 @@ class CanLink(LinkLayer):
                 if frame.data[0] & 0x10 == 0:
                     # is end, ship and remove accumulation
                     msg = Message(mti, sourceID, destID, self.accumulator[key])
-                    # This includes the special case of MTI.Unknown, which needs
-                    # to carry its original MTI value
+                    # This includes the special case of MTI.Unknown,
+                    #   which needs to carry its original MTI value
                     if mti is MTI.Unknown :
                         msg.originalMTI = ((frame.header >> 12) & 0xFFF)
                     self.fireListeners(msg)
@@ -533,7 +534,6 @@ class CanLink(LinkLayer):
         self.localAlias = self.createAlias12(self.localAliasSeed)
         self.defineAndReserveAlias()
 
-    
     def sendAliasAllocationSequence(self):
         '''Send the alias allocation sequence'''
         self.link.sendCanFrame(CanFrame(7, self.localNodeID, self.localAlias))
@@ -550,7 +550,7 @@ class CanLink(LinkLayer):
         of x(i+1) = (2^9+1) x(i) + c
         where c = 29,741,096,258,473 or 0x1B0CA37A4BA9
         '''
-        
+
         newProduct = (oldAlias << 9) + oldAlias + (0x1B0CA37A4BA9)
         maskedProduct = newProduct & 0xFFFF_FFFF_FFFF
         return maskedProduct
@@ -577,7 +577,7 @@ class CanLink(LinkLayer):
             return ControlFrame.Data
         if (frame.header & 0x4_000_000) != 0:  # CID case
             return ControlFrame.CID
-            
+
         try:
             retval = ControlFrame((frame.header >> 12) & 0x2FFFF)
             return retval  # top 1 bit for out-of-band messages

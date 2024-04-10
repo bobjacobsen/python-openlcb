@@ -109,27 +109,29 @@ class TestMemoryServiceClass(unittest.TestCase):
         # ^ only one memory request datagram sent
 
         # have to reply through DatagramService
-        self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123), NodeID(12)))
-        self.assertEqual(len(LinkMockLayer.sentMessages), 1) # memory request datagram sent
-        self.assertEqual(LinkMockLayer.sentMessages[0].data, [0x20, 0x41, 0,0,0,0, 64])
-        self.assertEqual(len(self.returnedMemoryReadMemo), 0) # no memory read op returned
+        self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123),
+                                      NodeID(12)))
+        self.assertEqual(len(LinkMockLayer.sentMessages), 1)  # memory request datagram sent  # noqa: E501
+        self.assertEqual(LinkMockLayer.sentMessages[0].data, [0x20, 0x41, 0,0,0,0, 64])  # noqa: E231,E501
+        self.assertEqual(len(self.returnedMemoryReadMemo), 0)  # no memory read op returned  # noqa: E501
 
-        self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12), [0x20, 0x51, 0,0,0,0, 1,2,3,4]))
-        self.assertEqual(len(LinkMockLayer.sentMessages), 3) # read reply datagram reply sent and next datagram sent
-        self.assertEqual(len(self.returnedMemoryReadMemo), 1) # memory read returned
+        self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12), [0x20, 0x51, 0,0,0,0, 1,2,3,4]))  # noqa: E231,E501
+        self.assertEqual(len(LinkMockLayer.sentMessages), 3)  # read reply datagram reply sent and next datagram sent  # noqa: E501
+        self.assertEqual(len(self.returnedMemoryReadMemo), 1)  # memory read returned  # noqa: E501
 
         # walk through 2nd datagram
-        self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123), NodeID(12)))
-        self.assertEqual(len(LinkMockLayer.sentMessages), 3) # memory request datagram sent
-        self.assertEqual(LinkMockLayer.sentMessages[2].data, [0x20, 0x41, 0,0,0,64, 32])
-        self.assertEqual(len(self.returnedMemoryReadMemo), 1) # no memory read op returned
+        self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123),
+                                      NodeID(12)))
+        self.assertEqual(len(LinkMockLayer.sentMessages), 3)  # memory request datagram sent  # noqa: E501
+        self.assertEqual(LinkMockLayer.sentMessages[2].data, [0x20, 0x41, 0,0,0,64, 32])  # noqa: E231,E501
+        self.assertEqual(len(self.returnedMemoryReadMemo), 1)  # no memory read op returned  # noqa: E501
 
         self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12),
                                       [0x20, 0x51,
                                        0, 0, 0, 64,
                                        1, 2, 3, 4]))
-        self.assertEqual(len(LinkMockLayer.sentMessages), 5) # read reply datagram reply sent and next datagram sent
-        self.assertEqual(len(self.returnedMemoryReadMemo), 2) # memory read returned
+        self.assertEqual(len(LinkMockLayer.sentMessages), 5)  # read reply datagram reply sent and next datagram sent  # noqa: E501
+        self.assertEqual(len(self.returnedMemoryReadMemo), 2)  # memory read returned  # noqa: E501
 
     def testArrayToString(self):
         sut = self.mService.arrayToString([0x41, 0x42, 0x43, 0x44], 4)
@@ -176,4 +178,3 @@ class TestMemoryServiceClass(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

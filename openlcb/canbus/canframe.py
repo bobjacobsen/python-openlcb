@@ -20,7 +20,7 @@ class CanFrame:
             alias = arg3
 
             nodeCode = ((nodeID.nodeId >> ((cid-4)*12)) & 0xFFF)
-            self.header = ((cid << 12) | nodeCode) << 12 | (alias & 0xFFF) | 0x10_000_000
+            self.header = ((cid << 12) | nodeCode) << 12 | (alias & 0xFFF) | 0x10_000_000  # noqa: E501
             self.data = []
 
         # two arguments as header, data

@@ -5,7 +5,14 @@
 		}
 	],
 	"settings": {
-		"rewrap.wrappingColumn": 79,
-		"autoDocstring.docstringFormat": "google"
+		"rewrap.wrappingColumn": 72,
+		"autoDocstring.docstringFormat": "google",
+		"flake8.args": [
+			"--ignore=E203,E226,E701,E202,E222,E221,W503,E241"
+		],
+		"ruff.lint.args": [
+			"--ignore=E701"
+		],
+		"editor.wordWrapColumn": 79
 	}
 }

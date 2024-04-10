@@ -15,15 +15,14 @@ object (the actual link implementation), so there's no semantic meaning to
 making multiple copies of a single object.
 '''
 
-class LinkLayer:
 
+class LinkLayer:
 
     def __init__(self, localNodeID):
         self.localNodeID = localNodeID
 
     def sendMessage(self, msg):
-        '''
-        This is the basic abstract interface
+        '''This is the basic abstract interface
         '''
 
     def registerMessageReceivedListener(self, listener):

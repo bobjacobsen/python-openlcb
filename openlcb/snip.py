@@ -1,13 +1,13 @@
 
 import logging
 
-class SNIP:
-    '''
-    Holds the Simple Node Information Protocol values or blank strings.
 
-    Provides support for loading via short or long messages. A SNIP is write-once;
-    when the underlying connection resets, a new SNIP struct should be installed in
-    the node.
+class SNIP:
+    '''Holds the Simple Node Information Protocol values or blank strings.
+
+    Provides support for loading via short or long messages. A SNIP is
+    write-once; when the underlying connection resets, a new SNIP struct should
+    be installed in the node.
     '''
 
     def __init__(self, mfgName="",

@@ -6,16 +6,32 @@ import serial
 
 MSGLEN = 35
 
+
 class SerialLink:
     def __init__(self):
         pass
-        
-    def connect(self, device, baudrate=230400):
-        self.port = serial.Serial(device, baudrate)
-        self.port.reset_input_buffer() # drop anything that's just sitting there already
 
-    # send a single string
+    def connect(self, device, baudrate=230400):
+        """Connect to a serial port.
+
+        Args:
+            device (str): A string that identifies a serial port for the
+                serial.Serial constructor.
+            baudrate (int, optional): Desired serial speed. Defaults to
+                230400 bits per second.
+        """
+        self.port = serial.Serial(device, baudrate)
+        self.port.reset_input_buffer()  # drop anything that's just sitting there already  # noqa: E501
+
     def send(self, string):
+        """send a single string
+
+        Args:
+            string (str): Any string.
+
+        Raises:
+            RuntimeError: If the string couldn't be written to the port.
+        """
         msg = string.encode('ascii')
         totalsent = 0
         while totalsent < len(msg[totalsent:]):
@@ -30,6 +46,9 @@ class SerialLink:
           response.
         - This makes it nicer to display the raw data.
         - Note that the response may end with a partial frame.
+
+        Returns:
+            str: A GridConnect frame as a string.
         '''
         chunks = []
         bytes_recd = 0
@@ -41,4 +60,4 @@ class SerialLink:
             bytes_recd = bytes_recd + len(chunk)
             if 0x3B in chunk:
                 break
-        return b''.join(chunks).decode("utf-8")
+        return (b''.join(chunks)).decode("utf-8")

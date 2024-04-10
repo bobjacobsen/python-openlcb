@@ -17,6 +17,7 @@ from enum import Enum
 from openlcb.snip import SNIP
 from openlcb.localeventstore import LocalEventStore
 
+
 class Node:
     def __init__(self, nodeID, snip=None, pipSet=None):
         self.id = nodeID

@@ -32,8 +32,8 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
         self.assertEqual(self.node21.state, Node.State.Initialized)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         self.assertEqual(LinkMockLayer.sentMessages[0],
-                         Message(MTI.Initialization_Complete, self.node21.id, None,
-                                 self.node21.id.toArray()))
+                         Message(MTI.Initialization_Complete, self.node21.id,
+                                 None, self.node21.id.toArray()))
         # self.assertEqual(LinkMockLayer.sentMessages[1],
         #     Message(MTI.Verify_NodeID_Number_Global, self.node21.id))
 

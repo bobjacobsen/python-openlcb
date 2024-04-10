@@ -9,9 +9,10 @@ from openlcb.mti import MTI
 from openlcb.node import Node
 from openlcb.nodeid import NodeID
 
+
 class RemoteNodeStore(NodeStore) :
-    '''
-       Accumulates Nodes that it sees requested, unless they're already in a given local NodeStore
+    '''Accumulates Nodes that it sees requested
+    unless they're already in a given local NodeStore.
     '''
 
     def __init__(self, localNodeID) :
@@ -19,20 +20,22 @@ class RemoteNodeStore(NodeStore) :
         NodeStore.__init__(self)
 
     def description(self) :
+        '''Provide a more detailed string description
         '''
-        Provide a more detailed string description
-        '''
-        return  "RemoteNodeStore w {}".format(self.nodes.count)
+        return "RemoteNodeStore w {}".format(self.nodes.count)
 
     def checkForNewNode(self, message) :
-        '''
-        Return True if the message is to a new node, so that createNewRemoteNode should be called.
+        '''Check if the message is to a new node.
+        Returns:
+            bool: True if the message is to a new node, so that
+                createNewRemoteNode should be called.
         '''
         node_id = message.source
         if node_id == self.localNodeID :
             # present in other store, skip
             return False
-        # NodeID(0) is a special case, used for e.g. linkUp, linkDown; don't store
+        # NodeID(0) is a special case, used for
+        #   e.g. linkUp, linkDown; don't store
         if node_id == NodeID(0) :
             return False
         # make sure source node is in store if it needs to be
@@ -58,10 +61,14 @@ class RemoteNodeStore(NodeStore) :
             processor.process(new_message, node)
 
     def processMessageFromLinkLayer(self, message) :
-        '''
-        Process an incoming message across all the nodes in the remote node store.
-        Returns True is any of the nodes indicated a significant change.
-        - Parameter message: Incoming message to process
+        '''Process an incoming message
+        across all the nodes in the remote node store.
+
+        Args:
+            message (Message): Incoming message to process
+
+        Returns:
+            bool: True is any of the nodes indicated a significant change.
         '''
         publish = False
 

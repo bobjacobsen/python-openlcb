@@ -55,7 +55,7 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
                     header = 0
                     for offset in range(2, 9+1):
                         nextChar = (self.inboundBuffer[index+offset])
-                        nextByte = (nextChar & 0xF)+9 if nextChar > 0x39 else nextChar & 0xF
+                        nextByte = (nextChar & 0xF)+9 if nextChar > 0x39 else nextChar & 0xF  # noqa: E501
                         header = (header << 4)+nextByte
                     # offset 10 is N
                     # offset 11 might be data, might be ;
@@ -65,9 +65,9 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
                             break
                         # two characters are data
                         byte1 = self.inboundBuffer[index+11+2*dataItem]
-                        part1 = (byte1 & 0xF)+9 if byte1 > 0x39 else byte1 & 0xF
+                        part1 = (byte1 & 0xF)+9 if byte1 > 0x39 else byte1 & 0xF  # noqa: E501
                         byte2 = self.inboundBuffer[index+11+2*dataItem+1]
-                        part2 = (byte2 & 0xF)+9 if byte2 > 0x39 else byte2 & 0xF
+                        part2 = (byte2 & 0xF)+9 if byte2 > 0x39 else byte2 & 0xF  # noqa: E501
                         outData += [part1 << 4 | part2]
                         lastByte += 2
                     # lastByte is index of ; in this message

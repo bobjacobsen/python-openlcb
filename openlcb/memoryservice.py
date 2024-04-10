@@ -112,6 +112,9 @@ class MemoryService:
         - If okReply in the memo is triggered, it will be followed by a
           dataReply.
         - A rejectedReply will not be followed by a dataReply.
+
+        Args:
+            memo (MemoryReadMemo): Request to enqueue.
         '''
         # preserve the request
         self.readMemos.append(memo)
@@ -120,7 +123,11 @@ class MemoryService:
             self.requestMemoryReadNext(memo)
 
     def requestMemoryReadNext(self, memo):
-        # send the read request
+        """send the read request
+
+        Args:
+            memo (MemoryReadMemo): Request to send.
+        """
         byte6 = False
         flag = 0
         (byte6, flag) = self.spaceDecode(memo.space)

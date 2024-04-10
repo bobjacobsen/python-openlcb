@@ -8,13 +8,10 @@ class Message:
     """basic message, with an MTI, source, destination? and data content
 
     Args:
-        mti (_type_): _description_
-        source (_type_): _description_
-        destination (_type_): Set to None for global.
+        mti (MTI): Message Type Indicator.
+        source (NodeID): Message source.
+        destination (NodeID): Set to None for global.
         data (list, optional): _description_. Defaults to [].
-
-    Returns:
-        _type_: _description_
     """
 
     def __init__(self, mti, source, destination, data=[]):

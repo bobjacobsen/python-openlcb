@@ -16,9 +16,9 @@ class TestLinkLayerClass(unittest.TestCase):
         self.received = True
 
     def testReceipt(self):
-        received = False
-        msg = Message(MTI.Initialization_Complete,  NodeID(12), NodeID(21))
-        receiver  = self.receiveListener
+        self.received = False
+        msg = Message(MTI.Initialization_Complete, NodeID(12), NodeID(21))
+        receiver = self.receiveListener
         layer = LinkLayer(NodeID(100))
         layer.registerMessageReceivedListener(receiver)
 

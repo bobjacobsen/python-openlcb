@@ -5,11 +5,12 @@ from openlcb.nodestore import NodeStore
 from openlcb.node import Node
 from openlcb.nodeid import NodeID
 
+
 class TestNodeStoreClass(unittest.TestCase):
 
     def testIsPresent(self) :
         dut = NodeStore()
-        
+
         node = Node(NodeID(120))
         dut.store(node)
 
@@ -17,9 +18,9 @@ class TestNodeStoreClass(unittest.TestCase):
 
         self.assertEqual(dut.isPresent(NodeID(123)), False, "is present")
 
-    def testIsPresent(self) :
+    def testAsArray(self) :
         dut = NodeStore()
-        
+
         node1 = Node(NodeID(120))
         dut.store(node1)
 
@@ -27,7 +28,6 @@ class TestNodeStoreClass(unittest.TestCase):
         dut.store(node2)
 
         self.assertEqual(dut.asArray(), [node1, node2], "as array")
-
 
 
 if __name__ == '__main__':
