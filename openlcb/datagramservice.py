@@ -222,8 +222,7 @@ class DatagramService:
                 "Outstanding and replied-to memos don't match on rejected"
             )
 
-        currentOutstandingMemo = None
-        # FIXME: unused currentOutstandingMemo. Is any code incomplete here?
+        self.currentOutstandingMemo = None
 
         # fire the callback
         memo.rejectedReply(memo)
@@ -232,8 +231,7 @@ class DatagramService:
 
     def handleLinkQuiesce(self, message):
         '''Link quiesced before outage: stop operation'''
-        quiesced = True
-        # FIXME: unused quiesced. Is any code incomplete here?
+        self.quiesced = True
 
     def handleLinkRestarted(self, message):
         '''Link restarted after outage:
