@@ -42,34 +42,33 @@ class RemoteNodeProcessor(Processor) :
             node.state = Node.State.Initialized  # in case we came late to the party, must be in Initialized state  # noqa: E501
 
         # specific message handling
-        match message.mti :
-            case MTI.Initialization_Complete | MTI.Initialization_Complete_Simple :  # noqa: E501
-                self.initializationComplete(message, node)
-                return True
-            case MTI.Protocol_Support_Reply :
-                self.protocolSupportReply(message, node)
-                return True
-            case MTI.Link_Layer_Up :
-                self.linkUpMessage(message, node)
-            case MTI.Link_Layer_Down :
-                self.linkDownMessage(message, node)
-            case MTI.Simple_Node_Ident_Info_Request :
-                self.simpleNodeIdentInfoRequest(message, node)
-            case MTI.Simple_Node_Ident_Info_Reply :
-                self.simpleNodeIdentInfoReply(message, node)
-                return True
-            case MTI.Producer_Identified_Active | MTI.Producer_Identified_Inactive | MTI.Producer_Identified_Unknown | MTI.Producer_Consumer_Event_Report :  # noqa: E501
-                self.producedEventIndicated(message, node)
-                return True
-            case MTI.Consumer_Identified_Active | MTI.Consumer_Identified_Inactive | MTI.Consumer_Identified_Unknown :  # noqa: E501
-                self.consumedEventIndicated(message, node)
-                return True
-            case MTI.New_Node_Seen :
-                self.newNodeSeen(message, node)
-                return True
-            case _ :
-                # we ignore others
-                return False
+        if message.mti in (MTI.Initialization_Complete, MTI.Initialization_Complete_Simple) :  # noqa: E501
+            self.initializationComplete(message, node)
+            return True
+        elif message.mti == MTI.Protocol_Support_Reply :
+            self.protocolSupportReply(message, node)
+            return True
+        elif message.mti == MTI.Link_Layer_Up :
+            self.linkUpMessage(message, node)
+        elif message.mti == MTI.Link_Layer_Down :
+            self.linkDownMessage(message, node)
+        elif message.mti == MTI.Simple_Node_Ident_Info_Request :
+            self.simpleNodeIdentInfoRequest(message, node)
+        elif message.mti == MTI.Simple_Node_Ident_Info_Reply :
+            self.simpleNodeIdentInfoReply(message, node)
+            return True
+        elif message.mti in (MTI.Producer_Identified_Active, MTI.Producer_Identified_Inactive, MTI.Producer_Identified_Unknown, MTI.Producer_Consumer_Event_Report) :  # noqa: E501
+            self.producedEventIndicated(message, node)
+            return True
+        elif message.mti in (MTI.Consumer_Identified_Active, MTI.Consumer_Identified_Inactive, MTI.Consumer_Identified_Unknown) :  # noqa: E501
+            self.consumedEventIndicated(message, node)
+            return True
+        elif message.mti == MTI.New_Node_Seen :
+            self.newNodeSeen(message, node)
+            return True
+        else :
+            # we ignore others
+            return False
         return False
 
     def initializationComplete(self, message, node) :
