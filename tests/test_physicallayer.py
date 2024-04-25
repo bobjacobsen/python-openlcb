@@ -7,7 +7,7 @@ from openlcb.physicallayer import PhysicalLayer
 class TestPhysicalLayerClass(unittest.TestCase):
 
     def testExample(self):
-        # FIXME: finish this
+        # TODO: Test what is possible without hardware.
         pass
 
 
