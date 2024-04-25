@@ -65,7 +65,7 @@ class LocalNodeProcessor(Processor):
                              MTI.Optional_Interaction_Rejected):
             self.errorMessageReceived(message, node)
         else:
-            self.unrecognizedMTI(message, node)
+            self._unrecognizedMTI(message, node)
         return False
 
     # private method
@@ -123,11 +123,10 @@ class LocalNodeProcessor(Processor):
         '''
         return
 
-    def unrecognizedMTI(self, message, node):
+    def _unrecognizedMTI(self, message, node):
         '''Handle a message with an unrecognized MTI
         by returning OptionalInteractionRejected
         '''
-        # FIXME: should be private method. Add _ to start of method name.
 
         # special case of unknown MTI from lower level
         unknownAddressed = False
