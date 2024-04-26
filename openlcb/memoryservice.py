@@ -296,9 +296,9 @@ class MemoryService:
                 64-bit int
 
         Returns:
-            int: The converted data as a number.
+            int: The converted data as a number (Python determines
+                actual in-memory size based on the value).
         """
-        # FIXME: Python resizes ints automatically based on value.
         result = 0
         for index in range(0, len(data)):
             result = result << 8
