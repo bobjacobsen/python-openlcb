@@ -145,8 +145,7 @@ class TcpLink(LinkLayer):
         destNodeID = None
         data = messageBytes[8:]
         if mti.addressPresent() :
-            destNodeID = NodeID(messagePart[8:13])
-            # FIXME: ^ messagePart is undefined. Slice data or messageBytes?
+            destNodeID = NodeID(messageBytes[8:13])
             data = messageBytes[14:]
         # and finally create the message
         message = Message(mti, sourceNodeID, destNodeID, data)
