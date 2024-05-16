@@ -313,6 +313,8 @@ class MemoryService:
         try:
             temp = data.index(0)
             zeroIndex = temp
+        except KeyboardInterrupt:
+            raise
         except:
             pass
 

@@ -106,6 +106,8 @@ class DatagramService:
             return DatagramService.ProtocolID.Unrecognized
         try:
             retval = DatagramService.ProtocolID(data[0])
+        except KeyboardInterrupt:
+            raise
         except:
             return DatagramService.ProtocolID.Unrecognized
         if retval is not None:

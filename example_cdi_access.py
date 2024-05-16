@@ -45,6 +45,7 @@ if __name__ == "__main__":
 # endregion same code as other examples
 
 s = TcpSocket()
+# s.settimeout(30)
 s.connect(settings['host'], settings['port'])
 
 
@@ -106,7 +107,6 @@ def memoryReadSuccess(memo):
     this queues a new read until the entire CDI has been
     returned.  At that point, it invokes the XML processing below.
 
-
     Args:
         memo (_type_): _description_
     """
@@ -167,7 +167,7 @@ class MyHandler(xml.sax.handler.ContentHandler):
             print("  Atributes: ", attrs.getNames())
 
     def endElement(self, name):
-        print(name, "cpntent:", self._flushCharBuffer())
+        print(name, "content:", self._flushCharBuffer())
         print("End: ", name)
         pass
 

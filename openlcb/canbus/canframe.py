@@ -34,7 +34,6 @@ class CanFrame:
             alias = arg2
             self.header = (control << 12) | (alias & 0xFFF) | 0x10_000_000
             self.data = arg3
-
         else:
             print("could not decode NodeID ctor arguments")
 

@@ -209,6 +209,8 @@ class CanLink(LinkLayer):
         try:
             del self.aliasToNodeID[alias]
             del self.nodeIdToAlias[nodeID]
+        except KeyboardInterrupt:
+            raise
         except:
             pass
 
@@ -221,6 +223,8 @@ class CanLink(LinkLayer):
         try:
             mapped = self.aliasToNodeID[frame.header & 0xFFF]
             sourceID = mapped
+        except KeyboardInterrupt:
+            raise
         except:
             #    special case for JMRI before 5.1.5 which sends
             #    VerifiedNodeID but not AMD
@@ -305,6 +309,8 @@ class CanLink(LinkLayer):
                 try:
                     mapped = self.aliasToNodeID[destAlias]
                     destID = mapped
+                except KeyboardInterrupt:
+                    raise
                 except:
                     destID = NodeID(self.nextInternallyAssignedNodeID)
                     logging.warning("message from unknown dest alias:"
@@ -370,6 +376,8 @@ class CanLink(LinkLayer):
             try:
                 sssAlias = self.nodeIdToAlias[msg.source]
                 header |= ((sssAlias) & 0xFFF)
+            except KeyboardInterrupt:
+                raise
             except:
                 logging.warning(
                     "Did not know source = {} on datagram send"
@@ -379,6 +387,8 @@ class CanLink(LinkLayer):
             try:
                 dddAlias = self.nodeIdToAlias[msg.destination]
                 header |= ((dddAlias) & 0xFFF) << 12
+            except KeyboardInterrupt:
+                raise
             except:
                 logging.warning(
                     "Did not know destination = {} on datagram send"
@@ -581,6 +591,8 @@ class CanLink(LinkLayer):
         try:
             retval = ControlFrame((frame.header >> 12) & 0x2FFFF)
             return retval  # top 1 bit for out-of-band messages
+        except KeyboardInterrupt:
+            raise
         except:
             logging.warning("Could not decode header 0x{:08X}"
                             "".format(frame.header))
