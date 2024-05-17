@@ -109,8 +109,10 @@ class MemoryService:
 
     def requestMemoryRead(self, memo):
         '''Request a read operation start.
+
         - If okReply in the memo is triggered, it will be followed by a
           dataReply.
+
         - A rejectedReply will not be followed by a dataReply.
 
         Args:

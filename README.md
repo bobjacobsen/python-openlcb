@@ -23,7 +23,7 @@ Linux:
 mkdir -p ~/.virtualenvs
 python3 -m venv ~/.virtualenvs/pytest-env
 source ~/.virtualenvs/pytest-env/bin/activate
-``` 
+```
 
 Windows:
 ```
@@ -51,11 +51,21 @@ If using VSCode (or fully open-source VSCodium):
   - (recommended) **autoDocstring**: Type `"""` below a method or class and it will create a Sphinx-style template for you.
     - The workspace file has `"autoDocstring.docstringFormat": "google"` set since Google style is widely used and comprehensive (documents types etc).
 
+#### Documentation
+The sources for building documentation are:
+- rst (reStructuredText) file(s) in the doc directory
+- Google-style docstrings which is one of the formats recognized by Sphinx (and one with a thorough explanation of input and output types).
+
+To generate documentation that can be placed on a website (such as could be published to readthedocs.io automatically) or provided to end users, run:
+```
+make html
+```
+
 ### Testing
 To run the unit test suite:
 ```
 python3 -m pip install --user pytest
-# ^ or use a 
+# ^ or use a
 python3 -m pytest
 # or to auto-detect test and run with standard log level:
 # python3 -m pytest tests
@@ -84,7 +94,7 @@ python3 example_node_implementation.py 192.168.1.40
 python3 example_node_implementation.py 192.168.1.40:12021
 ```
 
-There's also a serial-port based example. 
+There's also a serial-port based example.
 ```
 python3 example_string_serial_interface.py /dev/cu.ProperSerialPort
 ```

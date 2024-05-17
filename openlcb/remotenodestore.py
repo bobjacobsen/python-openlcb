@@ -48,6 +48,7 @@ class RemoteNodeStore(NodeStore) :
         A new node was found by checkForNewNode, so this
         mutates the store to add this.  This should only be called
         if checkForNewNode is true to avoid excess publishing!
+
         - Parameter message: Incoming message to process
         '''
         # need to create the node and process it's New_Node_Seen

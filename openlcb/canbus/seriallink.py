@@ -1,5 +1,5 @@
 '''
-simple serial nput for string send and receive
+simple serial input for string send and receive
 expects prior setting of device name
 '''
 import serial
@@ -8,6 +8,7 @@ MSGLEN = 35
 
 
 class SerialLink:
+    """simple serial input for string send and receive"""
     def __init__(self):
         pass
 
@@ -42,9 +43,12 @@ class SerialLink:
 
     def receive(self):
         '''Receive at least one GridConnect frame and return as string.
-        - Guarantee: If input is valid, there will be at least one ";" in the
-          response.
+
+        - Guarantee: If input is valid, there will be at least one ";"
+          in the response.
+
         - This makes it nicer to display the raw data.
+
         - Note that the response may end with a partial frame.
 
         Returns:

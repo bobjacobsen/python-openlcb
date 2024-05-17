@@ -10,10 +10,12 @@ Uses a ``CanPhysicalLayer`` implementation at the CanFrame layer.
 
 This implementation handles one static Local Node and a variable number of
 Remote Nodes.
- - An alias is allocated for the Local Node when the link comes up.
- - Aliases are tracked for the Remote Nodes, but not allocated here
 
- Multi-frame addressed messages are accumulated in parallel
+- An alias is allocated for the Local Node when the link comes up.
+
+- Aliases are tracked for the Remote Nodes, but not allocated here
+
+Multi-frame addressed messages are accumulated in parallel
 '''
 
 from enum import Enum
@@ -623,8 +625,11 @@ class CanLink(LinkLayer):
 
     class AccumKey:
         '''Class that holds the ID for accumulating a multi-part message:
+
         - MTI
+
         - Source
+
         - Destination
 
         Together these uniquely identify a stream of frames that need to
