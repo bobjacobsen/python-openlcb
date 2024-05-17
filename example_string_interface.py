@@ -29,6 +29,7 @@ if __name__ == "__main__":
 
 
 s = TcpSocket()
+# s.settimeout(30)
 s.connect(settings['host'], settings['port'])
 
 #######################

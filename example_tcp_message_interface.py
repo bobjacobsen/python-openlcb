@@ -34,6 +34,7 @@ if __name__ == "__main__":
 # endregion same code as other examples
 
 s = TcpSocket()
+# s.settimeout(30)
 print("Using settings:")
 print(settings.dumps())
 s.connect(settings['host'], settings['port'])

@@ -37,6 +37,7 @@ if __name__ == "__main__":
 # endregion same code as other examples
 
 s = TcpSocket()
+# s.settimeout(30)
 s.connect(settings['host'], settings['port'])
 
 print("RR, SR are raw socket interface receive and send; RL,"

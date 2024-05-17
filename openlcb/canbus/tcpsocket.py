@@ -14,6 +14,15 @@ class TcpSocket:
         else:
             self.sock = sock
 
+    def settimeout(self, seconds):
+        """Set the timeout for connect and transfer.
+
+        Args:
+            seconds (float): The number of seconds to wait before
+                a timeout error occurs.
+        """
+        self.sock.settimeout(seconds)
+
     def connect(self, host, port):
         self.sock.connect((host, port))
 

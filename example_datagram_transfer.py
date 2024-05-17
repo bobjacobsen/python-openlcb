@@ -40,6 +40,7 @@ if __name__ == "__main__":
 localNodeID = "05.01.01.01.03.01"
 farNodeID = "09.00.99.03.00.35"
 s = TcpSocket()
+# s.settimeout(30)
 s.connect(settings['host'], settings['port'])
 
 print("RR, SR are raw socket interface receive and send;"
