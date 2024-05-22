@@ -39,9 +39,12 @@ class TcpSocket:
 
     def receive(self):
         '''Receive at least one GridConnect frame and return as string.
+
         - Guarantee: If input is valid, there will be at least one ";" in the
           response.
+
         - This makes it nicer to display the raw data.
+
         - Note that the response may end with a partial frame.
 
         Returns:

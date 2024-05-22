@@ -73,8 +73,10 @@ class MainForm(ttk.Frame):
 
     The program is organized into fields. Each field contains a label, entry
     widget, and potentially a tooltip Label and command button.
+
     - The entry widget for each field may be a ttk.Entry, ttk.Combobox, or
       potentially another ttk widget subclass.
+
     - Each field has a key. Only keys in self.settings are directly used
       as settings.
 
