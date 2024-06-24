@@ -49,7 +49,7 @@ def sendToSocket(data):
     #         "Got {}({}) but expected str"
     #         .format(type(data).__name__, data)
     #     )
-    print("      SR: {}".format(data.strip()))
+    print("      SR: {}".format(data))
     s.send(data)
 
 
@@ -76,6 +76,6 @@ tcpLinklayer.sendMessage(message)
 # process resulting activity
 while True:
     received = s.receive()
-    print("      RR: {}".format(received.strip()))
+    print("      RR: {}".format(received))
     # pass to link processor
     tcpLinklayer.receiveListener(received)
