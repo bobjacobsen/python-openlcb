@@ -41,6 +41,10 @@ requires-python = ">= 3.8"
 # dependencies = [
 # ]
 
+[project.optional-dependencies]
+gui = ["zeroconf"]
+# ^ GUI uses zeroconf for a drop-down to select an TCP/IP device if any advertise an openlcb-can service.
+
 [project.urls]
 # List of names: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#urls
 Repository = "https://github.com/bobjacobsen/PythonOlcbNode"
