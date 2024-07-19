@@ -1,4 +1,4 @@
-A Python implementation of [OpenLCB](http://www.openlcb.org)/[LCC](https://www.nmra.org/lcc) based on the [LccTools](https://apps.apple.com/sr/app/lcctools/id1640295587) app's [Swift implementation](https://github.com/bobjacobsen/OpenlcbLibrary) as of January 2024.
+A Python implementation of [OpenLCB](https://www.openlcb.org)/[LCC](https://www.nmra.org/lcc) based on the [LccTools](https://apps.apple.com/sr/app/lcctools/id1640295587) app's [Swift implementation](https://github.com/bobjacobsen/OpenlcbLibrary) as of January 2024.
 
 Requires Python 3.8 or later.
 

@@ -32,7 +32,7 @@ SETTINGS_COMMENTS = {
         "Warning: *only for openlcb*:"
         " 05.01.01.01.03.01 is reserved by OpenLCB Python examples."
         " Find or suggest your organization's range"
-        " at http://registry.openlcb.org/uniqueidranges"
+        " at https://registry.openlcb.org/uniqueidranges"
         " and serialize if producing hardware (See LCC Standard(s))."
     ),
     "farNodeID_comment": (
