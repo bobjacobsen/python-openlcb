@@ -309,7 +309,7 @@ class MainForm(ttk.Frame):
             command_text="Default",
             tooltip=('("05.01.01.01.03.01 for Python openlcb examples only:'),
         )
-        self.unique_ranges_url = "http://registry.openlcb.org/uniqueidranges"
+        self.unique_ranges_url = "https://registry.openlcb.org/uniqueidranges"
         underlined_url = \
             ''.join([letter+'\u0332' for letter in self.unique_ranges_url])
         # ^ '\u0332' is unicode for "underline previous character"
