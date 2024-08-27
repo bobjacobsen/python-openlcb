@@ -65,3 +65,7 @@ class SerialLink:
             if 0x3B in chunk:
                 break
         return (b''.join(chunks)).decode("utf-8")
+
+    def close(self): 
+        self.port.close()
+        return

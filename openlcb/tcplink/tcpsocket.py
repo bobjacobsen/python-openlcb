@@ -50,3 +50,7 @@ class TcpSocket:
         if chunk == b'':
             raise RuntimeError("socket connection broken")
         return list(chunk)  # convert from bytes
+
+    def close(self): 
+        self.sock.close()
+        return
