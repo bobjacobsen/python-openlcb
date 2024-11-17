@@ -41,13 +41,22 @@ class TestPipClass(unittest.TestCase):
         )
 
     def testContentsNameUInt1(self):
-        result = PIP.contentsNamesFromInt(0x10_00_00)
+        result = PIP.contentsNamesFromInt(0x00_10_00_00)
         self.assertEqual(result, ["Simple Node Identification Protocol"])
 
-    def testContentsNameUSet(self):
+    def testContentsNameUInt2(self):
+        result = PIP.contentsNamesFromInt(0x00_40_00_00)
+        self.assertEqual(result, ["ADCDI Protocol"])
+
+    def testContentsNameUSet1(self):
         input = set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL])
         result = PIP.contentsNamesFromList(input)
         self.assertEqual(result, ["Simple Node Identification Protocol"])
+
+    def testContentsNameUSet2(self):
+        input = set([PIP.ADCDI_PROTOCOL])
+        result = PIP.contentsNamesFromList(input)
+        self.assertEqual(result, ["ADCDI Protocol"])
 
 
 if __name__ == '__main__':

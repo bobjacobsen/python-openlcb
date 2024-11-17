@@ -43,14 +43,20 @@ class PIP(Enum):
         retval = []
         for pip in PIP.list():
             if (pip.value & contents == pip.value):
-                retval.append(pip.name.replace("_", " ").title())
+                val = pip.name.replace("_", " ").title()
+                if val.startswith("Adcdi") : 
+                    val = "ADCDI Protocol" # Handle special case
+                retval.append(val)
         return retval
 
     # return an array of strings for all values included in a collection
     def contentsNamesFromList(contents):
         retval = []
         for pip in contents:
-            retval.append(pip.name.replace("_", " ").title())
+            val = pip.name.replace("_", " ").title()
+            if val.startswith("Adcdi") : 
+                val = "ADCDI Protocol" # Handle special case
+            retval.append(val)
         return retval
 
     def setContentsFromInt(bitmask):
