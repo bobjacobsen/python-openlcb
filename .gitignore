@@ -171,7 +171,7 @@ cython_debug/
 *.dvi
 *.aux
 *.out
-*.log
+# *.log  # redundant (See further up)
 
 *localoverrides.py
 
@@ -182,3 +182,4 @@ cython_debug/
 # ^ /.vscode/settings.json is ignored since it may have python.defaultInterpreterPath with differs depending on the specific machine. Recommended: place that setting in there ("PythonOlcbNode Folder" tab in VSCode settings)
 /build
 /doc/_autosummary
+/examples/settings.json

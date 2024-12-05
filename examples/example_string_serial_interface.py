@@ -10,6 +10,13 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
+# region same code as other examples
+from examples_settings import Settings  # do 1st to fix path if no pip install
+settings = Settings()
+
+if __name__ == "__main__":
+    settings.load_cli_args(docstring=__doc__)
+# endregion same code as other examples
 
 from openlcb.canbus.seriallink import SerialLink
 
@@ -18,13 +25,6 @@ from openlcb.canbus.seriallink import SerialLink
 # device = "/dev/cu.usbmodemCC570001B1"
 # endregion replaced by settings
 
-# region same code as other examples
-from examples_settings import Settings
-settings = Settings()
-
-if __name__ == "__main__":
-    settings.load_cli_args(docstring=__doc__)
-# endregion same code as other examples
 
 s = SerialLink()
 s.connect(settings['device'])
