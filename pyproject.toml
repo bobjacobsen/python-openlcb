@@ -47,8 +47,8 @@ gui = ["zeroconf"]
 
 [project.urls]
 # List of names: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#urls
-Repository = "https://github.com/bobjacobsen/PythonOlcbNode"
-Issues = "https://github.com/bobjacobsen/PythonOlcbNode/issues"
-# Changelog = "https://github.com/bobjacobsen/PythonOlcbNode/blob/master/CHANGELOG.md"
+Repository = "https://github.com/bobjacobsen/python-openlcb"
+Issues = "https://github.com/bobjacobsen/python-openlcb/issues"
+# Changelog = "https://github.com/bobjacobsen/python-openlcb/blob/master/CHANGELOG.md"
 # ^ TODO: Uncomment this if a changelog is added (& change url to match case).
 #   - For a common way to use markdown for it see: https://keepachangelog.com/en/1.1.0/
