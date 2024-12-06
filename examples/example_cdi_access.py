@@ -10,7 +10,13 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
+# region same code as other examples
+from examples_settings import Settings  # do 1st to fix path if no pip install
+settings = Settings()
 
+if __name__ == "__main__":
+    settings.load_cli_args(docstring=__doc__)
+# endregion same code as other examples
 
 from openlcb.canbus.tcpsocket import TcpSocket
 
@@ -35,14 +41,6 @@ from openlcb.memoryservice import (
 # # farNodeID = "09.00.99.03.00.35"
 # farNodeID = "02.01.57.00.04.9C"
 # endregion moved to settings
-
-# region same code as other examples
-from examples_settings import Settings
-settings = Settings()
-
-if __name__ == "__main__":
-    settings.load_cli_args(docstring=__doc__)
-# endregion same code as other examples
 
 s = TcpSocket()
 # s.settimeout(30)

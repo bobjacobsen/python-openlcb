@@ -10,6 +10,13 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
+# region same code as other examples
+from examples_settings import Settings  # do 1st to fix path if no pip install
+settings = Settings()
+
+if __name__ == "__main__":
+    settings.load_cli_args(docstring=__doc__)
+# endregion same code as other examples
 
 from openlcb.canbus.canphysicallayergridconnect import (
     CanPhysicalLayerGridConnect,
@@ -41,19 +48,9 @@ from queue import Empty
 # timeout = 0.5
 # endregion replaced by settings
 
-# region same code as other examples
-from examples_settings import Settings
-settings = Settings()
-
-if __name__ == "__main__":
-    settings.load_cli_args(docstring=__doc__)
-# endregion same code as other examples
-
-
 s = TcpSocket()
 # s.settimeout(30)
 s.connect(settings['host'], settings['port'])
-
 
 if settings['trace'] :
     print("RR, SR are raw socket interface receive and send;"

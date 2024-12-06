@@ -8,6 +8,12 @@ import os
 import shutil
 import sys
 
+REPO_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+if os.path.isfile(os.path.join(REPO_DIR, "openlcb", "__init__.py")):
+    # User is running from the repo
+    #   (generally true if using examples_settings)
+    sys.path.insert(0, REPO_DIR)
+
 CONFIGS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 DEFAULT_SETTINGS = {

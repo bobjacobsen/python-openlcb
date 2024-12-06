@@ -1,5 +1,5 @@
 '''
-Demo of using the memory service to read from node memory
+Demo of using the memory service to get the length of a node memory
 
 Usage:
 python3 example_memory_transfer.py [host|host:port]
@@ -9,7 +9,13 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
+# region same code as other examples
+from examples_settings import Settings  # do 1st to fix path if no pip install
+settings = Settings()
 
+if __name__ == "__main__":
+    settings.load_cli_args(docstring=__doc__)
+# endregion same code as other examples
 
 from openlcb.canbus.tcpsocket import TcpSocket
 
@@ -31,19 +37,11 @@ from openlcb.memoryservice import (
 
 # specify connection information
 # region replaced by settings
-# host = "192.168.16.212"
-# port = 12021
-# localNodeID = "05.01.01.01.03.01"
-# farNodeID = "09.00.99.03.00.35"
+host = "192.168.16.212"
+port = 12021
+localNodeID = "05.01.01.01.03.01"
+farNodeID = "09.00.99.03.00.35"
 # endregion replaced by settings
-
-# region same code as other examples
-from examples_settings import Settings
-settings = Settings()
-
-if __name__ == "__main__":
-    settings.load_cli_args(docstring=__doc__)
-# endregion same code as other examples
 
 s = TcpSocket()
 # s.settimeout(30)
@@ -97,18 +95,20 @@ datagramService.registerDatagramReceivedListener(printDatagram)
 memoryService = MemoryService(datagramService)
 
 
-def memoryReadSuccess(memo):
-    """createcallbacks to get results of memory read
+# def memoryReadSuccess(memo):
+#     """createcallbacks to get results of memory read
+# 
+#     Args:
+#         memo (MemoryReadMemo): Event that was generated.
+#     """
+#     print("successful memory read: {}".format(memo.data))
+# 
+# 
+# def memoryReadFail(memo):
+#     print("memory read failed: {}".format(memo.data))
 
-    Args:
-        memo (MemoryReadMemo): Event that was generated.
-    """
-    print("successful memory read: {}".format(memo.data))
-
-
-def memoryReadFail(memo):
-    print("memory read failed: {}".format(memo.data))
-
+def memoryLengthReply(address) :
+    print ("memory length reply: "+str(address))
 
 #######################
 
@@ -117,7 +117,7 @@ print("      SL : link up")
 canPhysicalLayerGridConnect.physicalLayerUp()
 
 
-def memoryRead():
+def memoryRequest():
     """Create and send a read datagram.
     This is a read of 20 bytes from the start of CDI space.
     We will fire it on a separate thread to give time for other nodes to reply
@@ -126,15 +126,15 @@ def memoryRead():
     import time
     time.sleep(1)
 
-    # read 64 bytes from the CDI space starting at address zero
-    memMemo = MemoryReadMemo(NodeID(settings['farNodeID']),
-                             64, 0xFF, 0, memoryReadFail,
-                             memoryReadSuccess)
-    memoryService.requestMemoryRead(memMemo)
+    # request the length of the CDI space
+#     memMemo = MemoryReadMemo(NodeID(settings['farNodeID']),
+#                              64, 0xFF, 0, memoryReadFail,
+#                              memoryReadSuccess)
+    memoryService.requestSpaceLength(0xFF, NodeID(settings['farNodeID']), memoryLengthReply)
 
 
 import threading  # noqa E402
-thread = threading.Thread(target=memoryRead)
+thread = threading.Thread(target=memoryRequest)
 thread.start()
 
 # process resulting activity

@@ -10,27 +10,24 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
-
-from openlcb.canbus.tcpsocket import TcpSocket
-
-# specify connection information
-# region replaced by settings
-# host = "192.168.16.212"
-# port = 12021
-# endregion replaced by settings
-
 # region same code as other examples
-from examples_settings import Settings
+from examples_settings import Settings  # do 1st to fix path if no pip install
 settings = Settings()
 
 if __name__ == "__main__":
     settings.load_cli_args(docstring=__doc__)
 # endregion same code as other examples
 
+from openlcb.canbus.seriallink import SerialLink
 
-s = TcpSocket()
-# s.settimeout(30)
-s.connect(settings['host'], settings['port'])
+# specify connection information
+# region replaced by settings
+# device = "/dev/cu.usbmodemCC570001B1"
+# endregion replaced by settings
+
+
+s = SerialLink()
+s.connect(settings['device'])
 
 #######################
 
