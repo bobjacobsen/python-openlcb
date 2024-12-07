@@ -108,7 +108,7 @@ def memoryReadFail(memo):
 # protocols
 localNode = Node(
     NodeID(settings['localNodeID']),
-    SNIP("PythonOlcbNode", "example_node_implementation",
+    SNIP("python-openlcb", "example_node_implementation",
          "0.1", "0.2", "User Name Here", "User Description Here"),
     set([PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL, PIP.DATAGRAM_PROTOCOL])
 )

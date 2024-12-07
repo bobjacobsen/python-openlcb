@@ -179,7 +179,7 @@ cython_debug/
 /*.bad_json.txt
 /settings.json
 /.vscode/settings.json
-# ^ /.vscode/settings.json is ignored since it may have python.defaultInterpreterPath with differs depending on the specific machine. Recommended: place that setting in there ("PythonOlcbNode Folder" tab in VSCode settings)
+# ^ /.vscode/settings.json is ignored since it may have python.defaultInterpreterPath with differs depending on the specific machine. Recommended: place that setting in there ("python-openlcb Folder" tab in VSCode settings)
 /build
 /doc/_autosummary
 /examples/settings.json

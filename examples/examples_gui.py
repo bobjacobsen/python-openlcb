@@ -1,8 +1,8 @@
 """
 Examples GUI
 
-This file is part of the PythonOlcbNode project
-(<https://github.com/bobjacobsen/PythonOlcbNode>).
+This file is part of the python-openlcb project
+(<https://github.com/bobjacobsen/python-openlcb>).
 
 Contributors: Poikilos
 
