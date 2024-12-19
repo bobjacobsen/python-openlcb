@@ -20,6 +20,7 @@ from tkinter import ttk
 from collections import OrderedDict
 
 from examples_settings import Settings
+from openlcb.tcplink.mdnsconventions import id_from_tcp_service_name
 
 zeroconf_enabled = False
 try:
@@ -291,7 +292,10 @@ class MainForm(ttk.Frame):
         self.row = 0
         self.add_field("service_name",
                        "TCP Service name (optional, sets host&port)",
-                       gui_class=ttk.Combobox, tooltip="")
+                       gui_class=ttk.Combobox, tooltip="",
+                       command=self.set_id_from_name,
+                       command_text="Copy digits to Far Node ID")
+        self.fields["service_name"].button.configure(state=tk.DISABLED)
         self.fields["service_name"].var.trace('w', self.on_service_name_change)
         self.add_field("host", "IP address/hostname",
                        command=self.detect_hosts,
@@ -334,8 +338,8 @@ class MainForm(ttk.Frame):
         self.add_field(
             "farNodeID", "Far Node ID",
             gui_class=ttk.Combobox,
-            # command=self.detect_nodes,  # TODO: finish detect_nodes & use
-            # command_text="Detect",  # TODO: finish detect_nodes & use
+            command=self.detect_nodes,  # TODO: finish detect_nodes & use
+            command_text="Detect",  # TODO: finish detect_nodes & use
         )
 
         self.add_field(
@@ -362,8 +366,24 @@ class MainForm(ttk.Frame):
         #     self.rowconfigure(row, weight=1)
         # self.rowconfigure(self.row_count-1, weight=1)  # make last row expand
 
+    def set_id_from_name(self):
+        id = self.get_id_from_name(update_button=True)
+        if not id:
+            return
+        self.fields['farNodeID'].var.set(id)
+
+    def get_id_from_name(self, update_button=False):
+        lcc_id = id_from_tcp_service_name(self.fields['service_name'].var.get())
+        if update_button:
+            if not lcc_id:
+                self.fields["service_name"].button.configure(state=tk.DISABLED)
+            else:
+                self.fields["service_name"].button.configure(state=tk.NORMAL)
+        return lcc_id
+
     def on_service_name_change(self, index, value, op):
         key = self.fields['service_name'].get()
+        _ = self.get_id_from_name(update_button=True)
         info = self.detected_services.get(key)
         if not info:
             # The user may be typing, so don't spam screen with messages,
