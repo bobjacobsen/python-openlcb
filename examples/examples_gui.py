@@ -390,7 +390,8 @@ class MainForm(ttk.Frame):
             #   just ignore incomplete entries.
             return
         # We got info, so use the info to set *other* fields:
-        self.fields['host'].set(info['server'])
+        self.fields['host'].set(info['server'].rstrip("."))
+        # ^ Remove trailing "." to prevent getaddrinfo failed.
         self.fields['port'].set(info['port'])
         self.set_status("Hostname & Port have been set ({server}:{port})"
                         .format(**info))
