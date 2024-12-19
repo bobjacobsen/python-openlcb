@@ -63,7 +63,7 @@ class SNIP:
 
         Zero indexed.
         Is aware of the 2nd version code byte.
-        Logs and returns -1 if the string isn't found withn the buffer
+        Logs and returns -1 if the string isn't found within the buffer
         '''
 
         if n == 0:
@@ -103,17 +103,17 @@ class SNIP:
         retval = ''.join([chr(i) for i in self.data[first:last]])
         return retval
 
-    def addData(self, indata):
+    def addData(self, in_data):
         '''
         Add additional bytes of SNIP data
         '''
-        for i in range(0, len(indata)):
+        for i in range(0, len(in_data)):
             # protect against overlapping requests causing an overflow
             if (i+self.index) >= 253:
                 logging.error("Overlapping SNIP requests, truncating")
                 break
-            self.data[i+self.index] = indata[i]
-        self.index += len(indata)
+            self.data[i+self.index] = in_data[i]
+        self.index += len(in_data)
         self.updateStringsFromSnipData()
 
     def updateStringsFromSnipData(self):

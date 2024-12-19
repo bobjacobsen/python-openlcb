@@ -90,7 +90,7 @@ class MainForm(ttk.Frame):
             key and the Button instance is the value.
         example_modules (OrderedDict[str]): The example
             module name is the key, and the full path is the value. If
-            examples are made modular, the value will not be nessary, but
+            examples are made modular, the value will not be necessary, but
             for now just run the file in another Python instance (See
             run_example method).
 
@@ -550,14 +550,14 @@ def main():
         window_h,
     ))  # WxH+X+Y format
     root.minsize = (window_w, window_h)
-    mainform = MainForm(root)
-    mainform.master.title("Python OpenLCB Examples")
+    main_form = MainForm(root)
+    main_form.master.title("Python OpenLCB Examples")
     try:
-        mainform.mainloop()
+        main_form.mainloop()
     finally:
-        if mainform.zeroconf:
-            mainform.zeroconf.close()
-            mainform.zeroconf = None
+        if main_form.zeroconf:
+            main_form.zeroconf.close()
+            main_form.zeroconf = None
     return 0
 
 

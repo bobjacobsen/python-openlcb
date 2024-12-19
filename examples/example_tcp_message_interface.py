@@ -57,25 +57,25 @@ def printMessage(msg):
     print("RM: {} from {}".format(msg, msg.source))
 
 
-tcpLinklayer = TcpLink(NodeID(100))
-tcpLinklayer.registerMessageReceivedListener(printMessage)
-tcpLinklayer.linkPhysicalLayer(sendToSocket)
+tcpLinkLayer = TcpLink(NodeID(100))
+tcpLinkLayer.registerMessageReceivedListener(printMessage)
+tcpLinkLayer.linkPhysicalLayer(sendToSocket)
 
 #######################
 
 # have the socket layer report up to bring the link layer up and get an alias
 print("      SL : link up")
-tcpLinklayer.linkUp()
+tcpLinkLayer.linkUp()
 
 # send an VerifyNodes message to provoke response
 message = Message(MTI.Verify_NodeID_Number_Global,
                   NodeID(settings['localNodeID']), None)
 print("SM: {}".format(message))
-tcpLinklayer.sendMessage(message)
+tcpLinkLayer.sendMessage(message)
 
 # process resulting activity
 while True:
     received = s.receive()
     print("      RR: {}".format(received))
     # pass to link processor
-    tcpLinklayer.receiveListener(received)
+    tcpLinkLayer.receiveListener(received)

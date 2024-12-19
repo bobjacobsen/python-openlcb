@@ -30,12 +30,12 @@ class TcpSocket:
         """Send a single string.
         """
         msg = string.encode('ascii')
-        totalsent = 0
-        while totalsent < len(msg[totalsent:]):
-            sent = self.sock.send(msg[totalsent:])
+        total_sent = 0
+        while total_sent < len(msg[total_sent:]):
+            sent = self.sock.send(msg[total_sent:])
             if sent == 0:
                 raise RuntimeError("socket connection broken")
-            totalsent = totalsent + sent
+            total_sent = total_sent + sent
 
     def receive(self):
         '''Receive at least one GridConnect frame and return as string.
@@ -61,7 +61,6 @@ class TcpSocket:
             if 0x3B in chunk:
                 break
         return b''.join(chunks).decode("utf-8")
-        
+
     def close(self):
         self.sock.close()
-        

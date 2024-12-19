@@ -94,16 +94,17 @@ datagramService.registerDatagramReceivedListener(printDatagram)
 
 memoryService = MemoryService(datagramService)
 
+# callbacks to get results of memory read
 
 # def memoryReadSuccess(memo):
-#     """createcallbacks to get results of memory read
-# 
+#     """Handle a successful read
+#
 #     Args:
 #         memo (MemoryReadMemo): Event that was generated.
 #     """
 #     print("successful memory read: {}".format(memo.data))
-# 
-# 
+#
+#
 # def memoryReadFail(memo):
 #     print("memory read failed: {}".format(memo.data))
 
