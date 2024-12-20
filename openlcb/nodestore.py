@@ -53,5 +53,5 @@ class NodeStore :
         publish = False  # has any processor returned True?
         for processor in self.processors :
             for node in self.byIdMap.values() :
-                publish = processor.process(message, node) or publish  # always invoke Processsor on node first  # noqa: E501
+                publish = processor.process(message, node) or publish  # always invoke Processor on node first  # noqa: E501
         return publish

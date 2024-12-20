@@ -98,9 +98,10 @@ memoryService = MemoryService(datagramService)
 # accumulate the CDI information
 resultingCDI = []
 
+# callbacks to get results of memory read
 
 def memoryReadSuccess(memo):
-    """createcallbacks to get results of memory read
+    """Handle a successful read
     Invoked when the memory read successfully returns,
     this queues a new read until the entire CDI has been
     returned.  At that point, it invokes the XML processing below.
@@ -162,7 +163,7 @@ class MyHandler(xml.sax.handler.ContentHandler):
     def startElement(self, name, attrs):
         print("Start: ", name)
         if attrs is not None and attrs :
-            print("  Atributes: ", attrs.getNames())
+            print("  Attributes: ", attrs.getNames())
 
     def endElement(self, name):
         print(name, "content:", self._flushCharBuffer())

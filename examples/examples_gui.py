@@ -20,6 +20,7 @@ from tkinter import ttk
 from collections import OrderedDict
 
 from examples_settings import Settings
+from openlcb.tcplink.mdnsconventions import id_from_tcp_service_name
 
 zeroconf_enabled = False
 try:
@@ -90,7 +91,7 @@ class MainForm(ttk.Frame):
             key and the Button instance is the value.
         example_modules (OrderedDict[str]): The example
             module name is the key, and the full path is the value. If
-            examples are made modular, the value will not be nessary, but
+            examples are made modular, the value will not be necessary, but
             for now just run the file in another Python instance (See
             run_example method).
 
@@ -291,7 +292,10 @@ class MainForm(ttk.Frame):
         self.row = 0
         self.add_field("service_name",
                        "TCP Service name (optional, sets host&port)",
-                       gui_class=ttk.Combobox, tooltip="")
+                       gui_class=ttk.Combobox, tooltip="",
+                       command=self.set_id_from_name,
+                       command_text="Copy digits to Far Node ID")
+        self.fields["service_name"].button.configure(state=tk.DISABLED)
         self.fields["service_name"].var.trace('w', self.on_service_name_change)
         self.add_field("host", "IP address/hostname",
                        command=self.detect_hosts,
@@ -334,8 +338,8 @@ class MainForm(ttk.Frame):
         self.add_field(
             "farNodeID", "Far Node ID",
             gui_class=ttk.Combobox,
-            # command=self.detect_nodes,  # TODO: finish detect_nodes & use
-            # command_text="Detect",  # TODO: finish detect_nodes & use
+            command=self.detect_nodes,  # TODO: finish detect_nodes & use
+            command_text="Detect",  # TODO: finish detect_nodes & use
         )
 
         self.add_field(
@@ -362,15 +366,32 @@ class MainForm(ttk.Frame):
         #     self.rowconfigure(row, weight=1)
         # self.rowconfigure(self.row_count-1, weight=1)  # make last row expand
 
+    def set_id_from_name(self):
+        id = self.get_id_from_name(update_button=True)
+        if not id:
+            return
+        self.fields['farNodeID'].var.set(id)
+
+    def get_id_from_name(self, update_button=False):
+        lcc_id = id_from_tcp_service_name(self.fields['service_name'].var.get())
+        if update_button:
+            if not lcc_id:
+                self.fields["service_name"].button.configure(state=tk.DISABLED)
+            else:
+                self.fields["service_name"].button.configure(state=tk.NORMAL)
+        return lcc_id
+
     def on_service_name_change(self, index, value, op):
         key = self.fields['service_name'].get()
+        _ = self.get_id_from_name(update_button=True)
         info = self.detected_services.get(key)
         if not info:
             # The user may be typing, so don't spam screen with messages,
             #   just ignore incomplete entries.
             return
         # We got info, so use the info to set *other* fields:
-        self.fields['host'].set(info['server'])
+        self.fields['host'].set(info['server'].rstrip("."))
+        # ^ Remove trailing "." to prevent getaddrinfo failed.
         self.fields['port'].set(info['port'])
         self.set_status("Hostname & Port have been set ({server}:{port})"
                         .format(**info))
@@ -550,14 +571,14 @@ def main():
         window_h,
     ))  # WxH+X+Y format
     root.minsize = (window_w, window_h)
-    mainform = MainForm(root)
-    mainform.master.title("Python OpenLCB Examples")
+    main_form = MainForm(root)
+    main_form.master.title("Python OpenLCB Examples")
     try:
-        mainform.mainloop()
+        main_form.mainloop()
     finally:
-        if mainform.zeroconf:
-            mainform.zeroconf.close()
-            mainform.zeroconf = None
+        if main_form.zeroconf:
+            main_form.zeroconf.close()
+            main_form.zeroconf = None
     return 0
 
 

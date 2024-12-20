@@ -76,6 +76,6 @@ class RemoteNodeStore(NodeStore) :
         if self.checkForNewNode(message) :
             self.createNewRemoteNode(message)
             publish = True
-        # always run invoke Processsors on nodes
+        # always run invoke Processors on nodes
         publish = self.invokeProcessorsOnNodes(message) or publish
         return publish
