@@ -1,6 +1,7 @@
 from logging import getLogger
 
 from openlcb import only_hex_pairs
+from openlcb.conventions import hex_to_dotted_lcc_id
 
 
 logger = getLogger(__name__)
@@ -8,8 +9,13 @@ logger = getLogger(__name__)
 
 def id_from_tcp_service_name(service_name):
     """Scrape an MDNS TCP service name, assuming it uses conventions
-    (`"{org}_{model}_{id}._openlcb-can.{protocol}.{tld}".format(...)`)
-    Example:
+    (`"{org}_{model}_{id}._openlcb-can.{protocol}.{tld}".format(...)`
+    where:
+    - `"{org}_"` and `"{model}_"` are optional
+    - "{model}" can be a model name or product category abbreviation.
+    Examples:
+    "pythonopenlcb_02015700049C._openlcb-can._tcp.local."
+    or
     "bobjacobsen_pythonopenlcb_02015700049C._openlcb-can._tcp.local."
     becomes "02.01.57.00.04.9C"
 
@@ -38,8 +44,7 @@ def id_from_tcp_service_name(service_name):
         if not only_hex_pairs(part):
             logger.debug("Not hex digits: {}".format(repr(part)))
             continue
-        sep = "."
-        lcc_id = sep.join([part[i*2:i*2+2] for i in range(len(part)//2)])
+        lcc_id = hex_to_dotted_lcc_id(part)
         logger.debug("id_from_tcp_service_name got {}".format(repr(lcc_id)))
         msg = None
 
