@@ -140,6 +140,11 @@ class Settings:
         self._iterate_i += 1
         return key
 
+    def get(self, key):
+        if key not in self:
+            return None
+        return self[key]
+
     def keys(self):
         """Return the keys iterator from the settings dictionary.
 

@@ -349,6 +349,17 @@ class MainForm(ttk.Frame):
             command_text="Default",
         )
 
+        self.add_field(
+            "timeout", "Remote nodes timeout (seconds)",
+            gui_class=ttk.Entry,
+        )
+
+        self.add_field(
+            "trace", "Remote nodes logging",
+            gui_class=ttk.Checkbutton,
+            text="Trace",
+        )
+
         # The status widget is the only widget other than self which
         #   is directly inside the parent widget (forces it to bottom):
         self.statusLabel = ttk.Label(self.parent)
@@ -396,15 +407,15 @@ class MainForm(ttk.Frame):
         self.set_status("Hostname & Port have been set ({server}:{port})"
                         .format(**info))
 
-    def add_field(self, key, text, gui_class=ttk.Entry, command=None,
-                  command_text=None, tooltip=None):
+    def add_field(self, key, caption, gui_class=ttk.Entry, command=None,
+                  command_text=None, tooltip=None, text=None):
         """Generate a uniform data field that may or may not affect a setting.
 
         The row(s) for the data field will start at self.row, and self.row will
         be incremented for (each) row added by this function.
 
         Args:
-            text (str): Text for the label.
+            caption (str): Text for the label.
             key (str): Key to store the widget.
             gui_class (Misc): The ttk widget class or function to use to create
                 the data entry widget (field.widget).
@@ -413,6 +424,8 @@ class MainForm(ttk.Frame):
             tooltip (str, optional): Add a tooltip tk.Label as field.tooltip
                 with this text. Added even if "". Defaults to None (not added
                 in that case).
+            text (str, optional): Text on the input widget itself (only
+                applies to gui_class Checkbutton).
         """
         # self.row should already be set to an empty row.
         self.column = 0  # Return to beginning of row
@@ -425,16 +438,27 @@ class MainForm(ttk.Frame):
                 raise ValueError("command is required for command_caption.")
 
         field = DataField()
-        field.label = ttk.Label(self, text=text)
+        field.label = ttk.Label(self, text=caption)
         field.label.grid(row=self.row, column=self.column, **self.grid_args)
         self.host_column = self.column
         self.column += 1
         self.fields[key] = field
-        field.var = tk.StringVar(self.w1)
-        field.widget = gui_class(
-            self,
-            textvariable=field.var,
-        )
+        if gui_class in (ttk.Checkbutton, tk.Checkbutton):
+            field.var = tk.BooleanVar(self.w1)
+            # field.var.set(True)
+            field.widget = gui_class(
+                self,
+                # onvalue=True,
+                # offvalue=False,
+                variable=field.var,
+                text=text,
+            )
+        else:
+            field.var = tk.StringVar(self.w1)
+            field.widget = gui_class(
+                self,
+                textvariable=field.var,
+            )
         field.widget.grid(row=self.row, column=self.column, **self.grid_args)
         self.column += 1
 
