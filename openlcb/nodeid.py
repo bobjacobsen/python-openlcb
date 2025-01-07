@@ -1,3 +1,6 @@
+from openlcb import emit_cast
+
+
 class NodeID:
     """A 6-byte (48-bit) Node ID.
     The constructor is manually overloaded as follows:
@@ -7,8 +10,8 @@ class NodeID:
     - nodeId (list[int]): If list. Six ints.
 
     Args:
-        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, hex
-            string, NodeID, or list[int] form.
+        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
+            hex string, NodeID, or list[int] form.
     """
     def __str__(self):
         '''Display in standard format'''
@@ -23,6 +26,10 @@ class NodeID:
         elif isinstance(data, str):
             parts = data.split(".")
             result = 0
+            if len(parts) != 6:
+                raise ValueError(
+                    "6 dot-separated hex digits/pairs required if arg is str,"
+                    " but got {}".format(emit_cast(data)))
             for part in parts:
                 result = result*0x100+int(part, 16)
             self.nodeId = result
