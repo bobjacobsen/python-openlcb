@@ -369,7 +369,7 @@ class CanLink(LinkLayer):
     def sendMessage(self, msg):
         #    special case for datagram
         if msg.mti == MTI.Datagram:
-            header = 0x10_000_000
+            header = 0x10_00_00_00
             #    datagram headers are
             #             1Adddsss - one frame
             #             1Bdddsss - first frame
