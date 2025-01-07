@@ -9,6 +9,8 @@ host|host:port            (optional) Set the address (or using a colon,
                           the address and port). Defaults to a hard-coded test
                           address and port.
 '''
+import socket
+
 # region same code as other examples
 from examples_settings import Settings  # do 1st to fix path if no pip install
 settings = Settings()
@@ -44,7 +46,12 @@ from openlcb.node import Node
 
 s = TcpSocket()
 # s.settimeout(30)
-s.connect(settings['host'], settings['port'])
+try:
+    s.connect(settings['host'], settings['port'])
+except socket.gaierror:
+    print("Failure accessing {}:{}"
+          .format(settings.get('host'), settings.get('port')))
+    raise
 
 print("RR, SR are raw socket interface receive and send;"
       " RL, SL are link interface; RM, SM are message interface")
