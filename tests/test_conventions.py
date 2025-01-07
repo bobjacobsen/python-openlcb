@@ -82,6 +82,14 @@ class TestConventions(unittest.TestCase):
         self.assertEqual(hex_to_dotted_lcc_id("02015700049C"),
                          "02.01.57.00.04.9C")
 
+    def test_hex_to_dotted_lcc_id_fail(self):
+        exception = None
+        try:
+            _ = hex_to_dotted_lcc_id("2015700049C")
+        except ValueError as ex:
+            exception = ex
+        self.assertIsInstance(exception, ValueError)
+
 
 if __name__ == '__main__':
     unittest.main()

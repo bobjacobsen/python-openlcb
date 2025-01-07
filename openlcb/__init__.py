@@ -12,3 +12,8 @@ def only_hex_pairs(value):
     functions (less restrictive).
     """
     return hex_pairs_rc.fullmatch(value)
+
+
+def emit_cast(value):
+    """Show type and value, such as for debug output."""
+    return "{}({})".format(type(value).__name__, repr(value))

@@ -1,6 +1,9 @@
 from logging import getLogger
 
-from openlcb import only_hex_pairs
+from openlcb import (
+    only_hex_pairs,
+    emit_cast,
+)
 
 logger = getLogger(__name__)
 
@@ -8,6 +11,10 @@ LCC_ID_SEP = "."
 
 
 def hex_to_dotted_lcc_id(hex_s):
+    if (not isinstance(hex_s, str)) or (len(hex_s) != 12):
+        raise ValueError(
+            "Only 6 hex pairs (12 characters) allowed, but got {}."
+            .format(emit_cast(hex_s)))
     return LCC_ID_SEP.join([hex_s[i*2:i*2+2] for i in range(len(hex_s)//2)])
 
 
