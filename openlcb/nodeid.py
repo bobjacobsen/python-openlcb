@@ -1,5 +1,14 @@
 class NodeID:
-    """Convert an integer, list, NodeID or string to a NodeID
+    """A 6-byte (48-bit) Node ID.
+    The constructor is manually overloaded as follows:
+    - nodeId (int): If int.
+    - nodeId (str): If str. Six dot-separated hex pairs.
+    - nodeId (NodeID): If NodeID. data.nodeID is used in this case.
+    - nodeId (list[int]): If list. Six ints.
+
+    Args:
+        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, hex
+            string, NodeID, or list[int] form.
     """
     def __str__(self):
         '''Display in standard format'''
