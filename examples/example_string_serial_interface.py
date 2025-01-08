@@ -1,6 +1,6 @@
 '''
 Example of raw socket communications over the physical connection, in this case
-a socket.
+a serial port.
 
 Usage:
 python3 example_string_interface.py [host|host:port]

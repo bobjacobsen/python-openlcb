@@ -27,7 +27,7 @@ DEFAULT_SETTINGS = {
     "timeout": 0.5,  # Such as for example_remote_nodes.py
     "device": "/dev/cu.usbmodemCC570001B1",
     # ^ serial device such as for example_string_serial_interface.py
-    # "service_name": "",  # mdns service name (maybe more than 1 on host)
+    # "service_name": "",  # MDNS service name (maybe more than 1 on host)
     # ^ service_name isn't saved here, since it is not used by LCC
     #   examples (See examples_gui instead, which finds it dynamically,
     #   and where it is associated with a host and port).
@@ -139,6 +139,11 @@ class Settings:
         key = self._keys[self._iterate_i]
         self._iterate_i += 1
         return key
+
+    def get(self, key):
+        if key not in self:
+            return None
+        return self[key]
 
     def keys(self):
         """Return the keys iterator from the settings dictionary.

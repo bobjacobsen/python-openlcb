@@ -32,12 +32,12 @@ class TcpSocket:
         '''Send a single message, provided as an [int]
         '''
         msg = bytes(data)
-        totalsent = 0
-        while totalsent < len(msg[totalsent:]):
-            sent = self.sock.send(msg[totalsent:])
+        total_sent = 0
+        while total_sent < len(msg[total_sent:]):
+            sent = self.sock.send(msg[total_sent:])
             if sent == 0:
                 raise RuntimeError("socket connection broken")
-            totalsent = totalsent + sent
+            total_sent = total_sent + sent
 
     def receive(self):
         '''Receive one or more bytes and return as an [int]
@@ -51,6 +51,6 @@ class TcpSocket:
             raise RuntimeError("socket connection broken")
         return list(chunk)  # convert from bytes
 
-    def close(self): 
+    def close(self):
         self.sock.close()
         return

@@ -20,6 +20,7 @@ from tkinter import ttk
 from collections import OrderedDict
 
 from examples_settings import Settings
+from openlcb.tcplink.mdnsconventions import id_from_tcp_service_name
 
 zeroconf_enabled = False
 try:
@@ -90,7 +91,7 @@ class MainForm(ttk.Frame):
             key and the Button instance is the value.
         example_modules (OrderedDict[str]): The example
             module name is the key, and the full path is the value. If
-            examples are made modular, the value will not be nessary, but
+            examples are made modular, the value will not be necessary, but
             for now just run the file in another Python instance (See
             run_example method).
 
@@ -291,7 +292,10 @@ class MainForm(ttk.Frame):
         self.row = 0
         self.add_field("service_name",
                        "TCP Service name (optional, sets host&port)",
-                       gui_class=ttk.Combobox, tooltip="")
+                       gui_class=ttk.Combobox, tooltip="",
+                       command=self.set_id_from_name,
+                       command_text="Copy digits to Far Node ID")
+        self.fields["service_name"].button.configure(state=tk.DISABLED)
         self.fields["service_name"].var.trace('w', self.on_service_name_change)
         self.add_field("host", "IP address/hostname",
                        command=self.detect_hosts,
@@ -334,8 +338,8 @@ class MainForm(ttk.Frame):
         self.add_field(
             "farNodeID", "Far Node ID",
             gui_class=ttk.Combobox,
-            # command=self.detect_nodes,  # TODO: finish detect_nodes & use
-            # command_text="Detect",  # TODO: finish detect_nodes & use
+            command=self.detect_nodes,  # TODO: finish detect_nodes & use
+            command_text="Detect",  # TODO: finish detect_nodes & use
         )
 
         self.add_field(
@@ -343,6 +347,17 @@ class MainForm(ttk.Frame):
             gui_class=ttk.Combobox,
             command=lambda: self.load_default("device"),
             command_text="Default",
+        )
+
+        self.add_field(
+            "timeout", "Remote nodes timeout (seconds)",
+            gui_class=ttk.Entry,
+        )
+
+        self.add_field(
+            "trace", "Remote nodes logging",
+            gui_class=ttk.Checkbutton,
+            text="Trace",
         )
 
         # The status widget is the only widget other than self which
@@ -362,28 +377,45 @@ class MainForm(ttk.Frame):
         #     self.rowconfigure(row, weight=1)
         # self.rowconfigure(self.row_count-1, weight=1)  # make last row expand
 
+    def set_id_from_name(self):
+        id = self.get_id_from_name(update_button=True)
+        if not id:
+            return
+        self.fields['farNodeID'].var.set(id)
+
+    def get_id_from_name(self, update_button=False):
+        lcc_id = id_from_tcp_service_name(self.fields['service_name'].var.get())
+        if update_button:
+            if not lcc_id:
+                self.fields["service_name"].button.configure(state=tk.DISABLED)
+            else:
+                self.fields["service_name"].button.configure(state=tk.NORMAL)
+        return lcc_id
+
     def on_service_name_change(self, index, value, op):
         key = self.fields['service_name'].get()
+        _ = self.get_id_from_name(update_button=True)
         info = self.detected_services.get(key)
         if not info:
             # The user may be typing, so don't spam screen with messages,
             #   just ignore incomplete entries.
             return
         # We got info, so use the info to set *other* fields:
-        self.fields['host'].set(info['server'])
+        self.fields['host'].set(info['server'].rstrip("."))
+        # ^ Remove trailing "." to prevent getaddrinfo failed.
         self.fields['port'].set(info['port'])
         self.set_status("Hostname & Port have been set ({server}:{port})"
                         .format(**info))
 
-    def add_field(self, key, text, gui_class=ttk.Entry, command=None,
-                  command_text=None, tooltip=None):
+    def add_field(self, key, caption, gui_class=ttk.Entry, command=None,
+                  command_text=None, tooltip=None, text=None):
         """Generate a uniform data field that may or may not affect a setting.
 
         The row(s) for the data field will start at self.row, and self.row will
         be incremented for (each) row added by this function.
 
         Args:
-            text (str): Text for the label.
+            caption (str): Text for the label.
             key (str): Key to store the widget.
             gui_class (Misc): The ttk widget class or function to use to create
                 the data entry widget (field.widget).
@@ -392,6 +424,8 @@ class MainForm(ttk.Frame):
             tooltip (str, optional): Add a tooltip tk.Label as field.tooltip
                 with this text. Added even if "". Defaults to None (not added
                 in that case).
+            text (str, optional): Text on the input widget itself (only
+                applies to gui_class Checkbutton).
         """
         # self.row should already be set to an empty row.
         self.column = 0  # Return to beginning of row
@@ -404,16 +438,27 @@ class MainForm(ttk.Frame):
                 raise ValueError("command is required for command_caption.")
 
         field = DataField()
-        field.label = ttk.Label(self, text=text)
+        field.label = ttk.Label(self, text=caption)
         field.label.grid(row=self.row, column=self.column, **self.grid_args)
         self.host_column = self.column
         self.column += 1
         self.fields[key] = field
-        field.var = tk.StringVar(self.w1)
-        field.widget = gui_class(
-            self,
-            textvariable=field.var,
-        )
+        if gui_class in (ttk.Checkbutton, tk.Checkbutton):
+            field.var = tk.BooleanVar(self.w1)
+            # field.var.set(True)
+            field.widget = gui_class(
+                self,
+                # onvalue=True,
+                # offvalue=False,
+                variable=field.var,
+                text=text,
+            )
+        else:
+            field.var = tk.StringVar(self.w1)
+            field.widget = gui_class(
+                self,
+                textvariable=field.var,
+            )
         field.widget.grid(row=self.row, column=self.column, **self.grid_args)
         self.column += 1
 
@@ -550,14 +595,14 @@ def main():
         window_h,
     ))  # WxH+X+Y format
     root.minsize = (window_w, window_h)
-    mainform = MainForm(root)
-    mainform.master.title("Python OpenLCB Examples")
+    main_form = MainForm(root)
+    main_form.master.title("Python OpenLCB Examples")
     try:
-        mainform.mainloop()
+        main_form.mainloop()
     finally:
-        if mainform.zeroconf:
-            mainform.zeroconf.close()
-            mainform.zeroconf = None
+        if main_form.zeroconf:
+            main_form.zeroconf.close()
+            main_form.zeroconf = None
     return 0
 
 

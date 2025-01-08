@@ -229,10 +229,10 @@ class MemoryService:
                 self.spaceLengthCallback = None
                 return True
             # normal reply
-            address = (int(dmemo.data[3]) << 24) \
-                       + (int(dmemo.data[4]) << 16) \
-                       + (int(dmemo.data[5]) << 8) \
-                       + int(dmemo.data[6])
+            address = ((int(dmemo.data[3]) << 24)
+                       + (int(dmemo.data[4]) << 16)
+                       + (int(dmemo.data[5]) << 8)
+                       + int(dmemo.data[6]))
             self.spaceLengthCallback(address)
             self.spaceLengthCallback = None
         else:
