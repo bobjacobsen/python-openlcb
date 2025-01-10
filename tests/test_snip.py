@@ -1,4 +1,14 @@
+import os
+import sys
 import unittest
+
+
+if __name__ == "__main__":
+    # Allow importing repo copy of openlcb if running tests from repo manually.
+    TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
+    REPO_DIR = os.path.dirname(TESTS_DIR)
+    sys.path.insert(0, REPO_DIR)
+
 
 from openlcb.snip import SNIP
 
@@ -125,6 +135,20 @@ class TestSnipClass(unittest.TestCase):
         self.assertEqual(result[23], 0x45)
         self.assertEqual(result[24], 0x46)
         self.assertEqual(result[25], 0)
+
+    def testReturnCyrillicStrings(self):
+        # See also testReturnCyrillicStrings in test_memoryservice
+        s = SNIP()  # init to all zeros
+
+        s.manufacturerName = "ABC"
+        s.modelName = "DEF"
+        s.hardwareVersion = "1EF"
+        s.softwareVersion = "2EF"
+        s.userProvidedNodeName = b'\xd0\x94\xd0\xbc\xd0\xb8\xd1\x82\xd1\x80\xd0\xb8\xd0\xb9'.decode("utf-8")   # Cyrillic spelling of the name Dmitry
+        s.userProvidedDescription = "4EF"
+
+        s.updateSnipDataFromStrings()
+        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry
 
     def testName(self):
         s = SNIP()  # init to all zeros

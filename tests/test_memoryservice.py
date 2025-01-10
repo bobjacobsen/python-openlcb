@@ -1,4 +1,12 @@
+import os
+import sys
 import unittest
+
+if __name__ == "__main__":
+    # Allow importing repo copy of openlcb if running tests from repo manually.
+    TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
+    REPO_DIR = os.path.dirname(TESTS_DIR)
+    sys.path.insert(0, REPO_DIR)
 
 from openlcb.nodeid import NodeID
 from openlcb.linklayer import LinkLayer
@@ -37,6 +45,11 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.returnedMemoryWriteMemo = []
         self.dService = DatagramService(LinkMockLayer(NodeID(12)))
         self.mService = MemoryService(self.dService)
+
+    def testReturnCyrillicStrings(self):
+        # See also testReturnCyrillicStrings in test_snip
+        data = [0xd0, 0x94, 0xd0, 0xbc, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb9]   # Cyrillic spelling of the name Dmitry (7 characters becomes 14 bytes)
+        self.assertEqual(self.mService.arrayToString(data, len(data)), "Дмитрий")  # Cyrillic spelling of the name Dmitry
 
     def testSingleRead(self):
         memMemo = MemoryReadMemo(NodeID(123), 64, 0xFD, 0,
