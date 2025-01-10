@@ -129,7 +129,7 @@ def displayOtherNodeIds(message) :
     """Listener to identify connected nodes
 
     Args:
-        message (_type_): _description_
+        message (Message): A response from the network
     """
     print("[displayOtherNodeIds] type(message): {}"
           "".format(type(message).__name__))

@@ -95,7 +95,7 @@ class DatagramService:
         """Determine the protocol type of the content of the datagram.
 
         Args:
-            data (_type_): _description_
+            data (list[int]): datagram payload
 
         Returns:
             DatagramService.ProtocolID: A detected protocol ID, or
@@ -149,7 +149,7 @@ class DatagramService:
         datagram and return true.
 
         Args:
-            listener (function): A function that accepts a DatagramReadMemo
+            listener (Callable): A function that accepts a DatagramReadMemo
                 as an argument.
         '''
         self.listeners.append(listener)
@@ -189,7 +189,7 @@ class DatagramService:
         return False
 
     def handleDatagram(self, message):
-        # create a read memo and pass to listeners
+        '''create a read memo and pass to listeners'''
         memo = DatagramReadMemo(message.source, message.data)
         self.fireListeners(memo)
         # ^ destination listener calls back to
@@ -278,7 +278,7 @@ class DatagramService:
         Args:
             dg (DatagramReadMemo): Datagram memo being responded to.
             flags (Optional[int]): Flag byte to be returned to sender, see
-                Datagram S&TN for meaning. Defaults to 0.
+                Datagram Standard & Technical Note for meaning. Defaults to 0.
         """
         message = Message(MTI.Datagram_Received_OK, self.linkLayer.localNodeID,
                           dg.srcID, [flags])
@@ -290,7 +290,7 @@ class DatagramService:
         Args:
             dg (DatagramReadMemo): Datagram memo being responded to.
             err (int): Error code(s) to be returned to sender,
-                see Datagram S&TN for meaning.
+                see Datagram Standard & Technical Note for meaning.
         """
         data0 = ((err >> 8) & 0xFF)
         data1 = (err & 0xFF)

@@ -16,12 +16,12 @@ from openlcb.nodeid import NodeID
 class Processor:
 
     def process(self, message, node=None):
-        """abstract method to be implemented below
+        """abstract method to be implemented below only in subclasses
         Accept a Message, adjust state as needed, possibly reply.
 
         Args:
             message (Message): Message to process.
-            node (Optional[_type_]): _description_. Defaults to None.
+            node (Node, optional): The source node.
 
         Returns:
             bool: True if the contents of the node changed in a way that should

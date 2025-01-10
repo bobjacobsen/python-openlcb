@@ -11,7 +11,8 @@ class Message:
         mti (MTI): Message Type Indicator.
         source (NodeID): Message source.
         destination (NodeID): Set to None for global.
-        data (list, optional): _description_. Defaults to [].
+        data (list[int], optional): Data being transmitted. Defaults to
+            [].
     """
 
     def __init__(self, mti, source, destination, data=[]):

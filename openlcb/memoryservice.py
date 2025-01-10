@@ -33,12 +33,20 @@ class MemoryReadMemo:
     """Memo carries request and reply.
 
     Args:
-        nodeID (_type_): _description_
-        size (_type_): _description_
-        space (_type_): _description_
-        address (_type_): _description_
-        rejectedReply (_type_): _description_
-        dataReply (_type_): _description_
+        nodeID (NodeID): Node from which the memory read request is issued.
+        size (int): Size of the data to be read, typically in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the read operation
+            should be performed.
+        rejectedReply (Callable): Callback function to handle rejected read
+            responses. The callback will receive this MemoryReadMemo instance.
+        dataReply (Callable): Callback function to handle successful
+            read responses. The callback will receive the data read from
+            memory. This is passed as a MemoryReadMemo object with the
+            data member set.
     """
     def __init__(self, nodeID, size, space, address, rejectedReply, dataReply):
         # For args see class docstring.
@@ -54,15 +62,23 @@ class MemoryReadMemo:
 
 
 class MemoryWriteMemo:
-    """_summary_
+    """A memory write request within an OpenLCB network.
     Args:
-        nodeID (_type_): Node from which write is requested
-        okReply (_type_): _description_
-        rejectedReply (_type_): _description_
-        size (_type_): _description_
-        space (_type_): _description_
-        address (_type_): _description_
-        data (_type_): _description_
+        nodeID (NodeID):  Node from which the write request is issued
+        okReply (Callable): Callback function to handle successful write
+            responses. The callback receives this MemoryWriteMemo instance.
+        rejectedReply (Callable): Callback function to handle rejected
+            write responses. The callback receives this MemoryWriteMemo
+            instance.
+        size (int): Size of the data to be written in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the data should be
+            written.
+        data (bytes): The actual data to be written to the specified
+            memory address.
     """
     def __init__(self, nodeID, okReply, rejectedReply, size, space, address,
                  data):
@@ -90,10 +106,14 @@ class MemoryService:
         )
 
     def spaceDecode(self, space):
-        """convert from a space number to either
+        """Convert from a space number to either
+        False and command byte or True and standard memory space
 
         Args:
-            space (_type_): _description_
+            space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
 
         Returns:
             tuple(bool, byte): (False, 1-3 for in command byte) :
@@ -262,7 +282,22 @@ class MemoryService:
         self.service.sendDatagram(dgWriteMemo)
 
     def requestSpaceLength(self, space, nodeID, callback):
-        '''Request the length of a specific memory space from a remote node.'''
+        '''Request the length of a specific memory space from a remote node.
+
+        Args:
+            space (int): Encoded memory space identifier. This can be a
+                value within a specific range, as defined in the
+                `spaceDecode` method.
+            nodeID (NodeID): Node from which the memory space length is
+                requested.
+            callback (Callable): Callback function that will receive the
+                response. The callback will receive an integer address
+                as a parameter, representing the address of the
+                requested memory space or -1 if not present.
+
+        Returns:
+            None
+        '''
         if self.spaceLengthCallback is not None:
             logging.error("Overlapping calls to requestSpaceLength")
             return

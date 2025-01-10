@@ -100,6 +100,7 @@ resultingCDI = []
 
 # callbacks to get results of memory read
 
+
 def memoryReadSuccess(memo):
     """Handle a successful read
     Invoked when the memory read successfully returns,
@@ -107,7 +108,7 @@ def memoryReadSuccess(memo):
     returned.  At that point, it invokes the XML processing below.
 
     Args:
-        memo (_type_): _description_
+        memo (MemoryReadMemo): Successful MemoryReadMemo
     """
     # print("successful memory read: {}".format(memo.data))
 
@@ -186,7 +187,7 @@ def processXML(content) :
     """process the XML and invoke callbacks
 
     Args:
-        content (_type_): _description_
+        content (str): Raw XML data
     """
     xml.sax.parseString(content, handler)
     print("\nParser done")
