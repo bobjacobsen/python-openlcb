@@ -360,7 +360,7 @@ class MemoryService:
         if byteCount == 0:
             return ""
 
-        result = ''.join([chr(i) for i in data[:byteCount]])
+        result = bytes(data[:byteCount]).decode("utf-8")
         return result
 
     def intToArray(self, value, length):

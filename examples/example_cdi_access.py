@@ -127,14 +127,14 @@ def memoryReadSuccess(memo):
         # save content
         resultingCDI += memo.data
         # concert resultingCDI to a string up to 1st zero
-        cdiString = ""
+        cdiBytes = bytearray()
         for x in resultingCDI:
             if x == 0 : break
-            cdiString += chr(x)
+            cdiBytes.append(x)
         # print (cdiString)
 
         # and process that
-        processXML(cdiString)
+        processXML(cdiBytes.decode("utf-8"))
 
         # done
 
