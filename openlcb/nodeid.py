@@ -4,14 +4,18 @@ from openlcb import emit_cast
 class NodeID:
     """A 6-byte (48-bit) Node ID.
     The constructor is manually overloaded as follows:
-    - nodeId (int): If int.
-    - nodeId (str): If str. Six dot-separated hex pairs.
-    - nodeId (NodeID): If NodeID. data.nodeID is used in this case.
-    - nodeId (list[int]): If list. Six ints.
+    - data (int): If int.
+    - data (str): If str. Six dot-separated hex pairs.
+    - data (NodeID): If NodeID. data.nodeID is used in this case.
+    - data (list[int]): If list. Six ints.
 
     Args:
-        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
+        data (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
             hex string, NodeID, or list[int] form.
+
+    Attributes:
+        nodeId (int): The node id in int form (uses 48 bits, so Python
+            will allocate 64-bit or larger int)
     """
     def __str__(self):
         '''Display in standard format'''
