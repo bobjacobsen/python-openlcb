@@ -33,7 +33,7 @@ class SerialLink:
         Raises:
             RuntimeError: If the string couldn't be written to the port.
         """
-        msg = string.encode('ascii')
+        msg = string.encode('utf-8')
         total_sent = 0
         while total_sent < len(msg[total_sent:]):
             sent = self.port.write(msg[total_sent:])

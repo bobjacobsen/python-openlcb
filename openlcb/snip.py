@@ -140,7 +140,7 @@ class SNIP:
 
         # mfgArray = Data(manufacturerName.utf8.prefix(40))
         # ^ leave one space for zero
-        mfgArray = '{:.40}'.format(self.manufacturerName).encode('ascii')
+        mfgArray = '{:.40}'.format(self.manufacturerName).encode('utf-8')
         if len(mfgArray) > 0 :
             for i in range(0, len(mfgArray)):
                 self.data[self.index] = mfgArray[i]
@@ -150,7 +150,7 @@ class SNIP:
         self.index += 1
 
         # mdlArray = Data(modelName.utf8.prefix(40))
-        mdlArray = '{:.40}'.format(self.modelName).encode('ascii')
+        mdlArray = '{:.40}'.format(self.modelName).encode('utf-8')
         if len(mdlArray) > 0:
             for i in range(0, len(mdlArray)):
                 self.data[self.index] = mdlArray[i]
@@ -160,7 +160,7 @@ class SNIP:
         self.index += 1
 
         # hdvArray = Data(hardwareVersion.utf8.prefix(20))
-        hdvArray = '{:.20}'.format(self.hardwareVersion).encode('ascii')
+        hdvArray = '{:.20}'.format(self.hardwareVersion).encode('utf-8')
         if len(hdvArray) > 0:
             for i in range(0, len(hdvArray)):
                 self.data[self.index] = hdvArray[i]
@@ -170,7 +170,7 @@ class SNIP:
         self.index += 1
 
         # sdvArray = Data(softwareVersion.utf8.prefix(20))
-        sdvArray = '{:.20}'.format(self.softwareVersion).encode('ascii')
+        sdvArray = '{:.20}'.format(self.softwareVersion).encode('utf-8')
         if len(sdvArray) > 0 :
             for i in range(0, len(sdvArray)):
                 self.data[self.index] = sdvArray[i]
@@ -183,7 +183,7 @@ class SNIP:
         self.index += 1
 
         # upnArray = Data(userProvidedNodeName.utf8.prefix(62))
-        upnArray = '{:.62}'.format(self.userProvidedNodeName).encode('ascii')
+        upnArray = '{:.62}'.format(self.userProvidedNodeName).encode('utf-8')
         if len(upnArray) > 0 :
             for i in range(0, len(upnArray)):
                 self.data[self.index] = upnArray[i]
@@ -194,7 +194,7 @@ class SNIP:
 
         # updArray = Data(userProvidedDescription.utf8.prefix(63))
         updArray = \
-            '{:.63}'.format(self.userProvidedDescription).encode('ascii')
+            '{:.63}'.format(self.userProvidedDescription).encode('utf-8')
         if len(updArray) > 0 :
             for i in range(0, len(updArray)):
                 self.data[self.index] = updArray[i]

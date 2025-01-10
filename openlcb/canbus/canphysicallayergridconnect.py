@@ -35,9 +35,9 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
         '''Receive a string from the outside link to be parsed
 
         Args:
-            string (str): An ASCII string to parse.
+            string (str): A utf-8 string to parse.
         '''
-        self.receiveChars(string.encode("ASCII"))
+        self.receiveChars(string.encode("utf-8"))
 
     # Provide characters from the outside link to be parsed
     def receiveChars(self, data):

@@ -52,11 +52,11 @@ class TestSnipClass(unittest.TestCase):
         # This checks how we're converting strings to byte arrays
         str1 = "1234567890"
 
-        first3Bytes = '{:.3}'.format(str1).encode('ASCII')
+        first3Bytes = '{:.3}'.format(str1).encode('utf-8')
         self.assertEqual(len(first3Bytes), 3)
         self.assertEqual(first3Bytes[0], 0x31)
 
-        first20Bytes = '{:.20}'.format(str1).encode('ASCII')
+        first20Bytes = '{:.20}'.format(str1).encode('utf-8')
         self.assertEqual(first20Bytes[0], 0x31)
 
     def testLoadStrings(self):

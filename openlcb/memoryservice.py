@@ -398,7 +398,7 @@ class MemoryService:
         '''Converts a string to an array of given length
         padding with 0 bytes as needed
         '''
-        strToUInt8 = value.encode('ascii')
+        strToUInt8 = value.encode('utf-8')
         byteCount = min(length, len(strToUInt8))
         contentPart = list(strToUInt8[:byteCount])
         padding = [0]*length
