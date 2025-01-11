@@ -53,7 +53,7 @@ class TestMemoryServiceClass(unittest.TestCase):
         #   add the following as the 1st or 2nd line of the py file:
         # -*- coding: utf-8 -*-
         data = [0xd0, 0x94, 0xd0, 0xbc, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb9]   # Cyrillic spelling of the name Dmitry (7 characters becomes 14 bytes)
-        self.assertEqual(self.mService.arrayToString(data, len(data)), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
+        self.assertEqual(self.mService.arrayToString(data, len(data)), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters like Dmitry-Cyrillic.png in doc (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
 
     def testSingleRead(self):
         memMemo = MemoryReadMemo(NodeID(123), 64, 0xFD, 0,

@@ -152,7 +152,7 @@ class TestSnipClass(unittest.TestCase):
         s.userProvidedDescription = "4EF"
 
         s.updateSnipDataFromStrings()
-        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
+        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters like Dmitry-Cyrillic.png in doc (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
 
     def testName(self):
         s = SNIP()  # init to all zeros
