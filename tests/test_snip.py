@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import unittest
@@ -138,6 +139,9 @@ class TestSnipClass(unittest.TestCase):
 
     def testReturnCyrillicStrings(self):
         # See also testReturnCyrillicStrings in test_memoryservice
+        # If you have characters specific to UTF-8 (either in code or comment)
+        #   add the following as the 1st or 2nd line of the py file:
+        # -*- coding: utf-8 -*-
         s = SNIP()  # init to all zeros
 
         s.manufacturerName = "ABC"
@@ -148,7 +152,7 @@ class TestSnipClass(unittest.TestCase):
         s.userProvidedDescription = "4EF"
 
         s.updateSnipDataFromStrings()
-        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry
+        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
 
     def testName(self):
         s = SNIP()  # init to all zeros
