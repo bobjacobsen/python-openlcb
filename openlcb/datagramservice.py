@@ -253,7 +253,7 @@ class DatagramService:
     def matchToWriteMemo(self, message):
         for memo in self.pendingWriteMemos:
             if memo.destID != message.source:
-                break
+                continue  # keep looking
             # remove the found element - might need a try/except on this
             index = self.pendingWriteMemos.index(memo)
             del self.pendingWriteMemos[index]
