@@ -16,7 +16,7 @@ class EventID:
         return ("{:02X}.{:02X}.{:02X}.{:02X}.{:02X}.{:02X}.{:02X}.{:02X}"
                 "".format(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7]))
 
-    # Convert an integer, list, NodeID or string to a NodeID
+    # Convert an integer, list, EventID or string to an EventID
     def __init__(self, data):
         if isinstance(data, int):  # create from an integer value
             self.eventId = data
@@ -27,7 +27,7 @@ class EventID:
                 result = result*0x100+int(part, 16)
             self.eventId = result
         elif isinstance(data, EventID):
-            self.eventId = data.nodeId
+            self.eventId = data.eventId
         elif isinstance(data, list):
             self.eventId = 0
             if (len(data) > 0):
@@ -47,7 +47,7 @@ class EventID:
             if (len(data) > 7):
                 self.eventId |= (data[7] & 0xFF)
         else:
-            print("invalid data type to nodeid constructor", data)
+            print("invalid data type to EventID constructor", data)
 
     def toArray(self):
         return [
