@@ -11,8 +11,8 @@ class Message:
         mti (MTI): Message Type Indicator.
         source (NodeID): Message source.
         destination (NodeID): Set to None for global.
-        data (bytearray, optional): _description_.
-            Defaults to empty bytearray.
+        data (bytearray, optional): Data being transmitted. Defaults to
+            empty bytearray().
     """
 
     def __init__(self, mti, source, destination, data=bytearray()):

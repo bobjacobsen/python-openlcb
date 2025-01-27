@@ -19,6 +19,25 @@ from openlcb.localeventstore import LocalEventStore
 
 
 class Node:
+    """Network node with an associated ID, SNIP, PIP set, and state.
+
+    Args:
+        nodeID (NodeID): The unique identifier for the node.
+        snip (SNIP, optional): An optional SNIP instance associated with
+            the node. Defaults to a new SNIP instance if not provided.
+        pipSet (set[PIP], optional): A set of PIP enums associated with
+            the node. Defaults to an empty set if not provided.
+
+    Attributes:
+        id (NodeID): The unique identifier for the node.
+        snip (SNIP): The SNIP instance associated with the node.
+        pipSet (set[PIP]): The set of PIP enums associated with the
+            node.
+        state (Node.State): The current state of the node, initialized
+            to `Node.State.Uninitialized`.
+        events (LocalEventStore): The store for local events associated
+            with the node.
+    """
     def __init__(self, nodeID, snip=None, pipSet=None):
         self.id = nodeID
         self.snip = snip

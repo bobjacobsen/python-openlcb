@@ -33,15 +33,22 @@ class MemoryReadMemo:
     """Memo carries request and reply.
 
     Args:
-        nodeID (NodeID): _description_
-        size (int): _description_
-        space (int): _description_
-        address (int): _description_
-        rejectedReply (Callable[MemoryReadMemo]): Called if reply
-            indicates read attempt was rejected.
-        dataReply (Callable[MemoryReadMemo]): Called if read response
-            contains data (occurs after okReply which is handled by
-            MemoryService).
+        nodeID (NodeID): Node from which the memory read request is issued.
+        size (int): Size of the data to be read, typically in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the read operation
+            should be performed.
+        rejectedReply (Callable[MemoryReadMemo]): Callback function to handle
+            rejected read responses.
+            The callback will receive this MemoryReadMemo instance.
+        dataReply (Callable[MemoryReadMemo]): Callback function to handle successful
+            read responses (called after okReply which is handled by
+            MemoryService). The callback will receive the data read from
+            memory. This is passed as a MemoryReadMemo object with the
+            data member set
 
     Attributes:
         data(bytearray): The data that was read.
@@ -60,18 +67,27 @@ class MemoryReadMemo:
 
 
 class MemoryWriteMemo:
-    """_summary_
+    """A memory write request within an OpenLCB network.
     Args:
-        nodeID (NodeID): Node for which write is requested
-        okReply (Callable[MemoryWriteMemo]): Called if request was
-            accepted (data written).
-        rejectedReply (Callable[MemoryWriteMemo]): Called if request was
-            rejected (data not written).
-        size (int): _description_
-        space (int): _description_
-        address (int): _description_
-        data (bytearray): The data to write
+        nodeID (NodeID):  _description_:
+            Node from which the write request is issued,
+            or Node for which write is requested?
+        okReply (Callable): Callback function to handle successful write
+            responses. The callback receives this MemoryWriteMemo instance.
+        rejectedReply (Callable): Callback function to handle rejected
+            write responses. The callback receives this MemoryWriteMemo
+            instance.
+        size (int): Size of the data to be written in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the data should be
+            written.
+        data (bytes): The actual data to be written to the specified
+            memory address.
     """
+    # FIXME: docstring entry for nodeID above
     def __init__(self, nodeID, okReply, rejectedReply, size, space, address,
                  data):
         # For args see class docstring.
@@ -104,10 +120,14 @@ class MemoryService:
         )
 
     def spaceDecode(self, space):
-        """convert from a space number to either
+        """Convert from a space number to either
+        False and command byte or True and standard memory space
 
         Args:
-            space (int): The memory space bytes from the packet
+            space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
 
         Returns:
             tuple(bool, byte): (False, 1-3 for in command byte) :
@@ -286,15 +306,22 @@ class MemoryService:
         self.service.sendDatagram(dgWriteMemo)
 
     def requestSpaceLength(self, space, nodeID, callback):
-        """Request the length of a specific memory space
-        from a remote node.
+        '''Request the length of a specific memory space from a remote node.
 
         Args:
-            space (int): (See DatagramWriteMemo)
-            nodeID (NodeID): remote node ID
-            callback (Callable[int]): A function that can receive the
-                length of the memory space.
-        """
+            space (int): Encoded memory space identifier. This can be a
+                value within a specific range, as defined in the
+                `spaceDecode` method.
+            nodeID (NodeID): ID of remote node from which the memory space length is
+                requested.
+            callback (Callable): Callback function that will receive the
+                response. The callback will receive an integer address
+                as a parameter, representing the address of the
+                requested memory space or -1 if not present.
+
+        Returns:
+            None
+        '''
         if self.spaceLengthCallback is not None:
             logging.error("Overlapping calls to requestSpaceLength")
             return

@@ -8,6 +8,23 @@ class SNIP:
     Provides support for loading via short or long messages. A SNIP is
     write-once; when the underlying connection resets, a new SNIP struct should
     be installed in the node.
+
+    Args:
+        mfgName (str, optional): The manufacturer name for the node
+            (vendor or creator of device).
+        model (str, optional): The model name of the node, indicating a
+            specific product.
+        hVersion (str, optional): The hardware version identifier
+            (physical revision of the hardware).
+        sVersion (str, optional): The software version identifier.
+            Indicates the firmware or control software version running
+            on the node.
+        uName (str, optional): The user-provided node name. This can be
+            customized by the user to provide a recognizable identifier for
+            the node.
+        uDesc (str, optional): The user-provided description for the node.
+            This provides additional information about the node's function or
+            location.
     '''
 
     def __init__(self, mfgName="",
@@ -88,9 +105,6 @@ class SNIP:
         # fell out without finding
         return 0
 
-    #  Retrieve a string from a starting byte index and largest possible length
-    #
-    #   The `maxLength` parameter prevents overflow
     def getString(self, first, maxLength):
         """Get the string at index `first`
         ending with either a null or having maxLength,
@@ -109,6 +123,7 @@ class SNIP:
             terminate_i = min(null_i, terminate_i)
         # terminate_i should point at the first zero or exclusive end
         return self.data[first:terminate_i].decode("utf-8")
+
 
     def addData(self, in_data):
         '''

@@ -108,7 +108,7 @@ def memoryReadSuccess(memo):
     returned.  At that point, it invokes the XML processing below.
 
     Args:
-        memo (MemoryReadMemo): _description_
+        memo (MemoryReadMemo): Successful MemoryReadMemo
     """
     # print("successful memory read: {}".format(memo.data))
 
@@ -207,7 +207,7 @@ def processXML(content) :
     """process the XML and invoke callbacks
 
     Args:
-        content (_type_): _description_
+        content (str): Raw XML data
     """
     # NOTE: The data is complete in this example since processXML is
     #   only called when there is a null terminator, which indicates the

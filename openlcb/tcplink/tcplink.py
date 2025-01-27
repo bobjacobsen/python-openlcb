@@ -44,7 +44,7 @@ class TcpLink(LinkLayer):
         """Register the handler for when the layer is up.
 
         Args:
-            lpl (function): A handler that accepts a bytes object, usually a
+            lpl (Callable): A handler that accepts a bytes object, usually a
                 socket connection send() method.
         """
         self.linkCall = lpl

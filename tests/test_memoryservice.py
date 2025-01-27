@@ -1,5 +1,14 @@
+# -*- coding: utf-8 -*-
+import os
 import struct
+import sys
 import unittest
+
+if __name__ == "__main__":
+    # Allow importing repo copy of openlcb if running tests from repo manually.
+    TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
+    REPO_DIR = os.path.dirname(TESTS_DIR)
+    sys.path.insert(0, REPO_DIR)
 
 from openlcb.nodeid import NodeID
 from openlcb.linklayer import LinkLayer
@@ -38,6 +47,15 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.returnedMemoryWriteMemo = []
         self.dService = DatagramService(LinkMockLayer(NodeID(12)))
         self.mService = MemoryService(self.dService)
+
+    def testReturnCyrillicStrings(self):
+        # See also testReturnCyrillicStrings in test_snip
+        # If you have characters specific to UTF-8 (either in code or comment)
+        #   add the following as the 1st or 2nd line of the py file:
+        # -*- coding: utf-8 -*-
+        data = [0xd0, 0x94, 0xd0, 0xbc, 0xd0, 0xb8, 0xd1, 0x82, 0xd1, 0x80, 0xd0, 0xb8, 0xd0, 0xb9]   # Cyrillic spelling of the name Dmitry (7 characters becomes 14 bytes)
+        self.assertEqual(self.mService.arrayToString(data, len(data)), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters like Cyrillic-demo-Dmitry.png in doc (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
+        # TODO: Russian version is Дми́трий according to <https://en.wikipedia.org/wiki/Dmitry>. See Cyrillic-demo-Dmitry-Russian.png in doc.
 
     def testSingleRead(self):
         memMemo = MemoryReadMemo(NodeID(123), 64, 0xFD, 0,

@@ -10,8 +10,12 @@ class NodeID:
     - nodeId (bytearray): If bytearray (formerly list[int]). Six ints.
 
     Args:
-        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
+        data (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
             hex string, NodeID, or list[int] form.
+
+    Attributes:
+        nodeId (int): The node id in int form (uses 48 bits, so Python
+            will allocate 64-bit or larger int)
     """
     def __str__(self):
         '''Display in standard format'''
