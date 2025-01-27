@@ -368,6 +368,9 @@ class MemoryService:
         Returns:
             str: Data decoded as text.
         """
+        if not isinstance(data, bytearray):
+            raise TypeError("Expected bytearray (formerly list[int]), got {}"
+                            .format(type(data).__name__))
         zeroIndex = len(data)
         try:
             temp = data.index(0)

@@ -41,6 +41,9 @@ class DatagramWriteMemo:
     def __init__(self, destID, data, okReply=defaultIgnoreReply,
                  rejectedReply=defaultIgnoreReply):
         self.destID = destID
+        if not isinstance(data, bytearray):
+            raise TypeError("Expected bytearray (formerly list[int]), got {}"
+                            .format(type(data).__name__))
         self.data = data
         self.okReply = okReply
         self.rejectedReply = rejectedReply
