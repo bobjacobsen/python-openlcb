@@ -150,7 +150,7 @@ class TestCanLinkClass(unittest.TestCase):
         canLink.state = CanLink.State.Permitted
 
         frame = CanFrame(ControlFrame.AME.value, 0)
-        frame.data = [5, 1, 1, 1, 3, 1]
+        frame.data = bytearray([5, 1, 1, 1, 3, 1])
         canPhysicalLayer.fireListeners(frame)
         self.assertEqual(len(canPhysicalLayer.receivedFrames), 1)
         self.assertEqual(canPhysicalLayer.receivedFrames[0],
@@ -164,7 +164,7 @@ class TestCanLinkClass(unittest.TestCase):
         canLink.state = CanLink.State.Permitted
 
         frame = CanFrame(ControlFrame.AME.value, 0)
-        frame.data = [0, 0, 0, 0, 0, 0]
+        frame.data = bytearray([0, 0, 0, 0, 0, 0])
         canPhysicalLayer.fireListeners(frame)
         self.assertEqual(len(canPhysicalLayer.receivedFrames), 0)
 
@@ -195,17 +195,18 @@ class TestCanLinkClass(unittest.TestCase):
         # ^ includes recovery of new alias 4 CID, RID, AMR, AME
         self.assertEqual(canPhysicalLayer.receivedFrames[0],
                          CanFrame(ControlFrame.AMR.value, ourAlias,
-                                  [5, 1, 1, 1, 3, 1]))
+                                  bytearray([5, 1, 1, 1, 3, 1])))
         self.assertEqual(canPhysicalLayer.receivedFrames[6],
                          CanFrame(ControlFrame.AMD.value, 0x539,
-                                  [5, 1, 1, 1, 3, 1]))  # new alias
+                                  bytearray([5, 1, 1, 1, 3, 1])))  # new alias
         self.assertEqual(canLink.state, CanLink.State.Permitted)
 
     def testCheckMTImapping(self):
 
         canLink = CanLink(NodeID("05.01.01.01.03.01"))
         self.assertEqual(
-            canLink.canHeaderToFullFormat(CanFrame(0x19490247, [])),
+            canLink.canHeaderToFullFormat(CanFrame(0x19490247,
+                                                   bytearray())),
             MTI.Verify_NodeID_Number_Global
         )
 
@@ -225,7 +226,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         # map an alias we'll use
         amd = CanFrame(0x0701, 0x247)
-        amd.data = [1, 2, 3, 4, 5, 6]
+        amd.data = bytearray([1, 2, 3, 4, 5, 6])
         canPhysicalLayer.fireListeners(amd)
 
         canPhysicalLayer.fireListeners(CanFrame(0x19490, 0x247))
@@ -255,7 +256,7 @@ class TestCanLinkClass(unittest.TestCase):
         # Don't map an alias with an AMD for this test
 
         canPhysicalLayer.fireListeners(CanFrame(0x19170, 0x247,
-                                                [8, 7, 6, 5, 4, 3]))
+                                                bytearray([8, 7, 6, 5, 4, 3])))
         # ^ VerifiedNodeID from unique alias
 
         self.assertEqual(len(canPhysicalLayer.receivedFrames), 0)
@@ -283,7 +284,7 @@ class TestCanLinkClass(unittest.TestCase):
         # Don't map an alias with an AMD for this test
 
         canPhysicalLayer.fireListeners(CanFrame(0x19968, 0x247,
-                                                [8, 7, 6, 5, 4, 3]))
+                                                bytearray([8, 7, 6, 5, 4, 3])))
         # ^ Identify Events Addressed from unique alias
 
         self.assertEqual(len(canPhysicalLayer.receivedFrames), 0)
@@ -307,12 +308,13 @@ class TestCanLinkClass(unittest.TestCase):
 
         # map an alias we'll use
         amd = CanFrame(0x0701, 0x247)
-        amd.data = [1, 2, 3, 4, 5, 6]
+        amd.data = bytearray([1, 2, 3, 4, 5, 6])
         canPhysicalLayer.fireListeners(amd)
 
         ourAlias = canLink.localAlias  # 576 with NodeID(0x05_01_01_01_03_01)
         frame = CanFrame(0x19488, 0x247)  # Verify Node ID Addressed
-        frame.data = [((ourAlias & 0x700) >> 8), (ourAlias & 0xFF), 12, 13]
+        frame.data = bytearray([((ourAlias & 0x700) >> 8), (ourAlias & 0xFF),
+                                12, 13])
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
         self.assertEqual(len(messageLayer.receivedMessages), 2)
@@ -343,7 +345,9 @@ class TestCanLinkClass(unittest.TestCase):
         # send Verify Node ID Addressed from unknown alias
         ourAlias = canLink.localAlias  # 576 with NodeID(0x05_01_01_01_03_01)
         frame = CanFrame(0x19488, 0x247)  # Verify Node ID Addressed
-        frame.data = [((ourAlias & 0x700) >> 8), (ourAlias & 0xFF), 12, 13]
+        frame.data = bytearray(
+            [((ourAlias & 0x700) >> 8), (ourAlias & 0xFF), 12, 13]
+        )
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
         self.assertEqual(len(messageLayer.receivedMessages), 2)
@@ -374,13 +378,13 @@ class TestCanLinkClass(unittest.TestCase):
 
         # map an alias we'll use
         amd = CanFrame(0x0701, 0x247)
-        amd.data = [1, 2, 3, 4, 5, 6]
+        amd.data = bytearray([1, 2, 3, 4, 5, 6])
         canPhysicalLayer.fireListeners(amd)
 
         ourAlias = canLink.localAlias  # 576 with NodeID(0x05_01_01_01_03_01)
         frame = CanFrame(0x19488, 0x247)  # Verify Node ID Addressed
-        frame.data = [(((ourAlias & 0x700) >> 8) | 0x10),
-                      (ourAlias & 0xFF), 1, 2]
+        frame.data = bytearray([(((ourAlias & 0x700) >> 8) | 0x10),
+                                (ourAlias & 0xFF), 1, 2])
         # ^ start not end
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
@@ -388,8 +392,8 @@ class TestCanLinkClass(unittest.TestCase):
         # ^ startup only, no message forwarded yet
 
         frame = CanFrame(0x19488, 0x247)  # Verify Node ID Addressed
-        frame.data = [(((ourAlias & 0x700) >> 8) | 0x20), (ourAlias & 0xFF),
-                      3, 4]
+        frame.data = bytearray([(((ourAlias & 0x700) >> 8) | 0x20),
+                                (ourAlias & 0xFF), 3, 4])
         # ^ end, not start
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
@@ -404,7 +408,7 @@ class TestCanLinkClass(unittest.TestCase):
         self.assertEqual(messageLayer.receivedMessages[1].destination,
                          NodeID(0x05_01_01_01_03_01))
 
-    def testSimpleDatagrm(self):  # Test start=yes, end=yes frame
+    def testSimpleDatagram(self):  # Test start=yes, end=yes frame
         canPhysicalLayer = CanPhysicalLayerSimulation()
         canLink = CanLink(NodeID("05.01.01.01.03.01"))
         canLink.linkPhysicalLayer(canPhysicalLayer)
@@ -415,14 +419,14 @@ class TestCanLinkClass(unittest.TestCase):
 
         # map two aliases we'll use
         amd = CanFrame(0x0701, 0x247)
-        amd.data = [1, 2, 3, 4, 5, 6]
+        amd.data = bytearray([1, 2, 3, 4, 5, 6])
         canPhysicalLayer.fireListeners(amd)
         amd = CanFrame(0x0701, 0x123)
-        amd.data = [6, 5, 4, 3, 2, 1]
+        amd.data = bytearray([6, 5, 4, 3, 2, 1])
         canPhysicalLayer.fireListeners(amd)
 
         frame = CanFrame(0x1A123, 0x247)  # single frame datagram
-        frame.data = [10, 11, 12, 13]
+        frame.data = bytearray([10, 11, 12, 13])
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
         self.assertEqual(len(messageLayer.receivedMessages), 2)
@@ -451,20 +455,20 @@ class TestCanLinkClass(unittest.TestCase):
 
         # map two aliases we'll use
         amd = CanFrame(0x0701, 0x247)
-        amd.data = [1, 2, 3, 4, 5, 6]
+        amd.data = bytearray([1, 2, 3, 4, 5, 6])
         canPhysicalLayer.fireListeners(amd)
         amd = CanFrame(0x0701, 0x123)
-        amd.data = [6, 5, 4, 3, 2, 1]
+        amd.data = bytearray([6, 5, 4, 3, 2, 1])
         canPhysicalLayer.fireListeners(amd)
 
         frame = CanFrame(0x1B123, 0x247)  # single frame datagram
-        frame.data = [10, 11, 12, 13]
+        frame.data = bytearray([10, 11, 12, 13])
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
         frame = CanFrame(0x1C123, 0x247)  # single frame datagram
-        frame.data = [20, 21, 22, 23]
+        frame.data = bytearray([20, 21, 22, 23])
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
         frame = CanFrame(0x1D123, 0x247)  # single frame datagram
-        frame.data = [30, 31, 32, 33]
+        frame.data = bytearray([30, 31, 32, 33])
         canPhysicalLayer.fireListeners(frame)  # from previously seen alias
 
         self.assertEqual(len(messageLayer.receivedMessages), 2)
@@ -511,7 +515,7 @@ class TestCanLinkClass(unittest.TestCase):
 
         message = Message(MTI.Datagram, NodeID("05.01.01.01.03.01"),
                           NodeID("05.01.01.01.03.01"),
-                          [1, 2, 3, 4, 5, 6, 7, 8])
+                          bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
 
         canLink.sendMessage(message)
 
@@ -528,8 +532,8 @@ class TestCanLinkClass(unittest.TestCase):
 
         message = Message(MTI.Datagram, NodeID("05.01.01.01.03.01"),
                           NodeID("05.01.01.01.03.01"),
-                          [1, 2, 3, 4, 5, 6, 7, 8,
-                           9, 10, 11, 12, 13, 14, 15, 16])
+                          bytearray([1, 2, 3, 4, 5, 6, 7, 8,
+                                     9, 10, 11, 12, 13, 14, 15, 16]))
 
         canLink.sendMessage(message)
 
@@ -550,9 +554,9 @@ class TestCanLinkClass(unittest.TestCase):
 
         message = Message(MTI.Datagram, NodeID("05.01.01.01.03.01"),
                           NodeID("05.01.01.01.03.01"),
-                          [1, 2, 3, 4, 5, 6, 7, 8,
-                           9, 10, 11, 12, 13, 14, 15, 16,
-                           17, 18, 19])
+                          bytearray([1, 2, 3, 4, 5, 6, 7, 8,
+                                     9, 10, 11, 12, 13, 14, 15, 16,
+                                     17, 18, 19]))
 
         canLink.sendMessage(message)
 
@@ -598,50 +602,93 @@ class TestCanLinkClass(unittest.TestCase):
         canLink = CanLink(NodeID("05.01.01.01.03.01"))
 
         # no data
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), []), [[0x1,0x23]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray((0x123), bytearray()),
+            [bytearray([0x1,0x23])])  # noqa: E231
 
         # short data
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), [0x1, 0x2]), [[0x1,0x23, 0x01, 0x02]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray((0x123), bytearray([0x1, 0x2])),
+            [bytearray([0x1,0x23, 0x01, 0x02])])  # noqa: E231
 
         # full first frame
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), [0x1, 0x2, 0x3, 0x4, 0x5, 0x6]), [[0x1,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray(
+                (0x123),
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6])),
+            [bytearray([0x1,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6])])  # noqa: E231,E501
 
         # two frames needed
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), [0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7]), [[0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6], [0x21,0x23, 0x7]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray(
+                (0x123),
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7])),
+            [bytearray([0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6]),  # noqa:E231
+             bytearray([0x21,0x23, 0x7])])  # noqa:E231,E501
 
         # two full frames needed
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), [0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC]),  # noqa: E501
-                         [[0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6], [0x21,0x23, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray(
+                (0x123),
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC])),  # noqa: E501
+            [bytearray([0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6]),  # noqa:E231
+             bytearray([0x21,0x23, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC])])  # noqa: E231,E501
 
         # three frames needed
-        self.assertEqual(canLink.segmentAddressedDataArray((0x123), [0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE]),  # noqa: E501
-                         [[0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6], [0x31,0x23, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC], [0x21, 0x23, 0xD, 0xE]])  # noqa: E231,E501
+        self.assertEqual(
+            canLink.segmentAddressedDataArray(
+                (0x123),
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE])),  # noqa: E501
+            [bytearray([0x11,0x23, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6]),  # noqa:E231
+             bytearray([0x31,0x23, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC]),  # noqa:E231
+             bytearray([0x21, 0x23, 0xD, 0xE])])  # noqa: E231
 
     def testSegmentDatagramDataArray(self):
         canLink = CanLink(NodeID("05.01.01.01.03.01"))
 
         # no data
-        self.assertEqual(canLink.segmentDatagramDataArray([]), [[]])
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(bytearray()),
+            [bytearray()])
 
         # short data
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2]), [[0x01, 0x02]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(bytearray([0x1, 0x2])),
+            [bytearray([0x01, 0x02])])  # noqa: E501
 
         # partially full first frame
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6]), [[0x1, 0x2, 0x3, 0x4, 0x5, 0x6]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6])),
+            [bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6])])  # noqa: E501
 
         # one full frame needed
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8]), [[0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8])),
+            [bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8])])  # noqa: E501
 
         # two frames needed
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9]), [[0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8], [0x9]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9])),
+            [bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8]),
+             bytearray([0x9])])  # noqa: E501
 
         # two full frames needed
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10]),  # noqa: E501
-                         [[0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8], [0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10])),  # noqa: E501
+            [bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8]),
+             bytearray([0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10])])  # noqa: E501
 
         # three frames needed
-        self.assertEqual(canLink.segmentDatagramDataArray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11]),  # noqa: E501
-                         [[0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8], [0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10], [0x11]])  # noqa: E501
+        self.assertEqual(
+            canLink.segmentDatagramDataArray(
+                bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11])),  # noqa: E501
+            [bytearray([0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8]),
+             bytearray([0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10]),
+             bytearray([0x11])])  # noqa: E501
 
 
 if __name__ == '__main__':

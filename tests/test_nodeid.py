@@ -29,7 +29,7 @@ class TestNodeIDClass(unittest.TestCase):
 
     def testToArray(self):
         arr = NodeID(0x05_01_01_01_03_01).toArray()
-        self.assertEqual(arr, [5, 1, 1, 1, 3, 1])
+        self.assertEqual(arr, bytearray([5, 1, 1, 1, 3, 1]))
         self.assertEqual(NodeID(arr), NodeID(0x05_01_01_01_03_01),
                          "array operations")
 

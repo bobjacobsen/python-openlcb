@@ -73,13 +73,14 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x00,                      # full message
-                       0x00, 0x00, 20,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04, 0x90,                      # MTI: VerifyNode
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+        messageText = bytearray([
+            0x80, 0x00,                          # full message
+            0x00, 0x00, 20,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04, 0x90,                          # MTI: VerifyNode
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21   # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -95,16 +96,18 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x00,                      # full message
-                       0x00, 0x00, 20,
-                       ]
+        messageText = bytearray([
+            0x80, 0x00,                      # full message
+            0x00, 0x00, 20,
+        ])
         linkLayer.receiveListener(messageText)
 
-        messageText = [0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04, 0x90,                      # MTI: VerifyNode
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+        messageText = bytearray([
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04, 0x90,                      # MTI: VerifyNode
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -120,19 +123,22 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x00,                      # full message
-                       0x00, 0x00, 20,
-                       ]
+        messageText = bytearray([
+            0x80, 0x00,                      # full message
+            0x00, 0x00, 20,
+        ])
         linkLayer.receiveListener(messageText)
 
-        messageText = [0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       ]
+        messageText = bytearray([
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+        ])
 
         linkLayer.receiveListener(messageText)
-        messageText = [0x04, 0x90,                      # MTI: VerifyNode
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+        messageText = bytearray([
+            0x04, 0x90,                         # MTI: VerifyNode
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -148,22 +154,24 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x00,                      # full message
-                       0x00, 0x00, 20,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04, 0x90,                      # MTI: VerifyNode
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+        messageText = bytearray([
+            0x80, 0x00,                      # full message
+            0x00, 0x00, 20,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04, 0x90,                      # MTI: VerifyNode
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
-        messageText = [0x80, 0x00,                      # full message
-                       0x00, 0x00, 20,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04, 0x90,                      # MTI: VerifyNode
-                       0x00, 0x00, 0x00, 0x00, 0x04, 0x56  # source NodeID
-                       ]
+        messageText = bytearray([
+            0x80, 0x00,                      # full message
+            0x00, 0x00, 20,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04, 0x90,                      # MTI: VerifyNode
+            0x00, 0x00, 0x00, 0x00, 0x04, 0x56  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -181,19 +189,20 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x40,                      # part 1
-                       0x00, 0x00, 13,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04,                      # first half MTI
+        messageText = bytearray([
+            0x80, 0x40,                      # part 1
+            0x00, 0x00, 13,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04,                      # first half MTI
 
-                       0x80, 0x80,                      # part 2
-                       0x00, 0x00, 19,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x90,                      # second half MTI
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+            0x80, 0x80,                      # part 2
+            0x00, 0x00, 19,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x90,                      # second half MTI
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -209,25 +218,26 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.registerMessageReceivedListener(messageLayer.receiveMessage)
         linkLayer.linkPhysicalLayer(tcpLayer.send)
 
-        messageText = [0x80, 0x40,                      # part 1
-                       0x00, 0x00, 13,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x04,                      # first half MTI
+        messageText = bytearray([
+            0x80, 0x40,                      # part 1
+            0x00, 0x00, 13,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x04,                      # first half MTI
 
-                       0x80, 0xC0,                      # part 2
-                       0x00, 0x00, 13,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x90,                      # second half MTI
-                                                  # no data
+            0x80, 0xC0,                      # part 2
+            0x00, 0x00, 13,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x90,                      # second half MTI
+                                        # no data
 
-                       0x80, 0x80,                      # part 3
-                       0x00, 0x00, 18,
-                       0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
-                       0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
-                       0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
-                       ]
+            0x80, 0x80,                      # part 3
+            0x00, 0x00, 18,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x23,  # source node ID
+            0x00, 0x00, 0x11, 0x00, 0x00, 0x00,  # time
+            0x00, 0x00, 0x00, 0x00, 0x03, 0x21  # source NodeID
+        ])
         linkLayer.receiveListener(messageText)
 
         self.assertEqual(len(tcpLayer.receivedText), 0)
@@ -248,16 +258,22 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.sendMessage(message)
 
         self.assertEqual(len(tcpLayer.receivedText), 1)
-        self.assertEqual(tcpLayer.receivedText[0][0:11], [  # can't check time
-                         0x80, 0x00,
-                         0x00, 0x00, 26,
-                         0x00, 0x00, 0x00, 0x00, 0x00, 100,
-                         ])
-        self.assertEqual(tcpLayer.receivedText[0][17:], [  # can't check time
-                         0x04, 0x90,     # MTI
-                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,
-                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
-                         ])
+        self.assertEqual(
+            tcpLayer.receivedText[0][0:11],
+            bytearray([  # can't check time
+                0x80, 0x00,
+                0x00, 0x00, 26,
+                0x00, 0x00, 0x00, 0x00, 0x00, 100,
+            ])
+        )
+        self.assertEqual(
+            tcpLayer.receivedText[0][17:],
+            bytearray([  # can't check time
+                0x04, 0x90,     # MTI
+                0x00, 0x00, 0x00, 0x00, 0x01, 0x23,
+                0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
+            ])
+        )
         self.assertEqual(len(messageLayer.receivedMessages), 0)
 
     def testSendAddressedMessage(self) :
@@ -273,17 +289,23 @@ class TestTcpLinkClass(unittest.TestCase):
         linkLayer.sendMessage(message)
 
         self.assertEqual(len(tcpLayer.receivedText), 1)
-        self.assertEqual(tcpLayer.receivedText[0][0:11], [  # can't check time
+        self.assertEqual(
+            tcpLayer.receivedText[0][0:11],
+            bytearray([  # can't check time
                          0x80, 0x00,
                          0x00, 0x00, 32,
                          0x00, 0x00, 0x00, 0x00, 0x00, 100,
-                         ])
-        self.assertEqual(tcpLayer.receivedText[0][17:], [  # can't check time
-                         0x04, 0x88,     # MTI
-                         0x00, 0x00, 0x00, 0x00, 0x01, 0x23,
-                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
-                         0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
-                         ])
+            ])
+        )
+        self.assertEqual(
+            tcpLayer.receivedText[0][17:],
+            bytearray([  # can't check time
+                0x04, 0x88,     # MTI
+                0x00, 0x00, 0x00, 0x00, 0x01, 0x23,
+                0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
+                0x00, 0x00, 0x00, 0x00, 0x03, 0x21,
+            ])
+        )
         self.assertEqual(len(messageLayer.receivedMessages), 0)
 
 

@@ -33,7 +33,7 @@ class SerialLink:
         Raises:
             RuntimeError: If the string couldn't be written to the port.
         """
-        msg = string.encode('ascii')
+        msg = string.encode('utf-8')
         total_sent = 0
         while total_sent < len(msg[total_sent:]):
             sent = self.port.write(msg[total_sent:])
@@ -54,17 +54,17 @@ class SerialLink:
         Returns:
             str: A GridConnect frame as a string.
         '''
-        chunks = []
+        data = bytearray()
         bytes_recd = 0
         while bytes_recd < MSGLEN:
             chunk = self.port.read(1)
             if chunk == b'':
                 raise RuntimeError("serial connection broken")
-            chunks.append(chunk)
+            data.extend(chunk)
             bytes_recd = bytes_recd + len(chunk)
             if 0x3B in chunk:
                 break
-        return (b''.join(chunks)).decode("utf-8")
+        return data.decode("utf-8")
 
     def close(self):
         self.port.close()

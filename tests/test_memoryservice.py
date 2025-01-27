@@ -1,3 +1,4 @@
+import struct
 import unittest
 
 from openlcb.nodeid import NodeID
@@ -51,12 +52,13 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         # ^ memory request datagram sent
         self.assertEqual(LinkMockLayer.sentMessages[0].data,
-                         [0x20, 0x41, 0, 0, 0, 0, 64])
+                         bytearray([0x20, 0x41, 0, 0, 0, 0, 64]))
         self.assertEqual(len(self.returnedMemoryReadMemo), 0)
         # ^ no memory read op returned
 
-        self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12),
-                                      [0x20, 0x51, 0, 0, 0, 0, 1, 2, 3, 4]))
+        self.dService.process(
+            Message(MTI.Datagram, NodeID(123), NodeID(12),
+                    bytearray([0x20, 0x51, 0, 0, 0, 0, 1, 2, 3, 4])))
         self.assertEqual(len(LinkMockLayer.sentMessages), 2)
         # read reply datagram reply sent
         self.assertEqual(len(self.returnedMemoryReadMemo), 1)
@@ -66,7 +68,7 @@ class TestMemoryServiceClass(unittest.TestCase):
         memMemo = MemoryWriteMemo(NodeID(123),
                                   self.callbackW, self.callbackW,
                                   64, 0xFD, 0,
-                                  [1, 2, 3])
+                                  bytearray([1, 2, 3]))
         self.mService.requestMemoryWrite(memMemo)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         # ^ memory request datagram sent
@@ -77,16 +79,17 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         # ^ memory request datagram sent
         self.assertEqual(LinkMockLayer.sentMessages[0].data,
-                         [0x20, 0x01,
-                          0, 0, 0, 0,
-                          1, 2, 3])
+                         bytearray([
+                             0x20, 0x01,
+                             0, 0, 0, 0,
+                             1, 2, 3]))
         self.assertEqual(len(self.returnedMemoryWriteMemo), 0)
         # ^ no memory write op returned
 
         self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12),
-                                      [0x20,
-                                       0x11,
-                                       0, 0, 0, 0]))
+                                      bytearray([0x20,
+                                                 0x11,
+                                                 0, 0, 0, 0])))
         self.assertEqual(len(LinkMockLayer.sentMessages), 2)
         # ^ write reply datagram reply sent
         self.assertEqual(len(self.returnedMemoryWriteMemo), 1)
@@ -112,10 +115,13 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123),
                                       NodeID(12)))
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)  # memory request datagram sent  # noqa: E501
-        self.assertEqual(LinkMockLayer.sentMessages[0].data, [0x20, 0x41, 0,0,0,0, 64])  # noqa: E231,E501
+        self.assertEqual(LinkMockLayer.sentMessages[0].data,
+                         bytearray([0x20, 0x41, 0,0,0,0, 64]))  # noqa: E231
         self.assertEqual(len(self.returnedMemoryReadMemo), 0)  # no memory read op returned  # noqa: E501
 
-        self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12), [0x20, 0x51, 0,0,0,0, 1,2,3,4]))  # noqa: E231,E501
+        self.dService.process(
+            Message(MTI.Datagram, NodeID(123), NodeID(12),
+                    bytearray([0x20, 0x51, 0,0,0,0, 1,2,3,4])))  # noqa: E231
         self.assertEqual(len(LinkMockLayer.sentMessages), 3)  # read reply datagram reply sent and next datagram sent  # noqa: E501
         self.assertEqual(len(self.returnedMemoryReadMemo), 1)  # memory read returned  # noqa: E501
 
@@ -123,41 +129,88 @@ class TestMemoryServiceClass(unittest.TestCase):
         self.dService.process(Message(MTI.Datagram_Received_OK, NodeID(123),
                                       NodeID(12)))
         self.assertEqual(len(LinkMockLayer.sentMessages), 3)  # memory request datagram sent  # noqa: E501
-        self.assertEqual(LinkMockLayer.sentMessages[2].data, [0x20, 0x41, 0,0,0,64, 32])  # noqa: E231,E501
+        self.assertEqual(LinkMockLayer.sentMessages[2].data,
+                         bytearray([0x20, 0x41, 0,0,0,64, 32]))  # noqa: E231,E501
         self.assertEqual(len(self.returnedMemoryReadMemo), 1)  # no memory read op returned  # noqa: E501
 
-        self.dService.process(Message(MTI.Datagram, NodeID(123), NodeID(12),
-                                      [0x20, 0x51,
-                                       0, 0, 0, 64,
-                                       1, 2, 3, 4]))
+        self.dService.process(
+            Message(MTI.Datagram, NodeID(123), NodeID(12),
+                    bytearray([0x20, 0x51,
+                               0, 0, 0, 64,
+                               1, 2, 3, 4])))
         self.assertEqual(len(LinkMockLayer.sentMessages), 5)  # read reply datagram reply sent and next datagram sent  # noqa: E501
         self.assertEqual(len(self.returnedMemoryReadMemo), 2)  # memory read returned  # noqa: E501
 
     def testArrayToString(self):
-        sut = self.mService.arrayToString([0x41, 0x42, 0x43, 0x44], 4)
+        sut = MemoryService.arrayToString(bytearray([0x41, 0x42, 0x43, 0x44]), 4)  # noqa:E501
         self.assertEqual(sut, "ABCD")
 
-        sut = self.mService.arrayToString([0x41, 0x42, 0, 0x44], 4)
+        sut = MemoryService.arrayToString(bytearray([0x41, 0x42, 0, 0x44]), 4)
         self.assertEqual(sut, "AB")
 
-        sut = self.mService.arrayToString([0x41, 0x42, 0x43, 0x44], 2)
+        sut = MemoryService.arrayToString(bytearray([0x41, 0x42, 0x43, 0x44]), 2)  # noqa:E501
         self.assertEqual(sut, "AB")
 
-        sut = self.mService.arrayToString([0x41, 0x42, 0x43, 0], 4)
+        sut = MemoryService.arrayToString(bytearray([0x41, 0x42, 0x43, 0]), 4)
         self.assertEqual(sut, "ABC")
 
-        sut = self.mService.arrayToString([0x41, 0x42, 0x31, 0x32], 8)
+        sut = MemoryService.arrayToString(bytearray([0x41, 0x42, 0x31, 0x32]), 8)  # noqa:E501
         self.assertEqual(sut, "AB12")
 
     def testStringToArray(self):
-        aut = self.mService.stringToArray("ABCD", 4)
-        self.assertEqual(aut, [0x41, 0x42, 0x43, 0x44])
+        aut = MemoryService.stringToArray("ABCD", 4)
+        self.assertEqual(aut, bytearray([0x41, 0x42, 0x43, 0x44]))
 
-        aut = self.mService.stringToArray("ABCD", 2)
-        self.assertEqual(aut, [0x41, 0x42])
+        aut = MemoryService.stringToArray("ABCD", 2)
+        self.assertEqual(aut, bytearray([0x41, 0x42]))
 
-        aut = self.mService.stringToArray("ABCD", 6)
-        self.assertEqual(aut, [0x41, 0x42, 0x43, 0x44, 0x00, 0x00])
+        aut = MemoryService.stringToArray("ABCD", 6)
+        self.assertEqual(aut, bytearray([0x41, 0x42, 0x43, 0x44, 0x00, 0x00]))
+
+    def testIntToArray(self):
+        test_metas = [
+            {
+                'value': 65536,  # not a short (1 over max)
+                'length': 8,
+                # good_bytes: b'\x00\x00\x00\x00\x00\x01\x00\x00'
+            },
+            {
+                'value': 65536,
+                'length': 4,
+                # good_bytes: b'\x00\x01\x00\x00',
+            },
+            {
+                'value': 281470681743360,  # 65535 << 32
+                'length': 8,
+                # 'good_bytes': b'\x00\x00\xff\xff\x00\x00\x00\x00',
+            }
+        ]
+        for test_meta in test_metas:
+            value = test_meta['value']
+            length = test_meta['length']
+            good_bytes = struct.pack(">{}s".format(length),
+                                     value.to_bytes(length, 'big'))
+            self.assertEqual(MemoryService.intToArray(value, length),
+                             good_bytes)
+
+    def testIntToArrayFail(self):
+        test_metas = [
+            {
+                'value': 65536,  # not a short (1 over max)
+                'length': 2,
+                # good_bytes: b'\x00\x00\x00\x00\x00\x01\x00\x00'
+            },
+            {
+                'value': 281470681743360,  # 65535 << 32
+                'length': 4,
+                # 'good_bytes': b'\x00\x00\xff\xff\x00\x00\x00\x00',
+            }
+        ]
+        for test_meta in test_metas:
+            value = test_meta['value']
+            length = test_meta['length']
+            with self.assertRaises(ValueError):
+                MemoryService.intToArray(value, length)
 
     def testSpaceDecode(self):
         byte6 = False

@@ -11,16 +11,16 @@ class TestSnipClass(unittest.TestCase):
 
     def testGetString(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
         s.data[4] = 0
         self.assertEqual(s.getString(1, 5), "AAA")
 
-        s.data = [0x41]*253  # no trailing zero
+        s.data = bytearray([0x41]*253)  # no trailing zero
         self.assertEqual(s.getString(1, 5), "AAAAA")
 
     def testLoadAndGetShort(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
 
         s.addData([4, 0x41, 0x42, 0x43, 0])  # version + "ABC"
         self.assertEqual(s.data[3], 0x43)
@@ -52,11 +52,11 @@ class TestSnipClass(unittest.TestCase):
         # This checks how we're converting strings to byte arrays
         str1 = "1234567890"
 
-        first3Bytes = '{:.3}'.format(str1).encode('ASCII')
+        first3Bytes = '{:.3}'.format(str1).encode('utf-8')
         self.assertEqual(len(first3Bytes), 3)
         self.assertEqual(first3Bytes[0], 0x31)
 
-        first20Bytes = '{:.20}'.format(str1).encode('ASCII')
+        first20Bytes = '{:.20}'.format(str1).encode('utf-8')
         self.assertEqual(first20Bytes[0], 0x31)
 
     def testLoadStrings(self):

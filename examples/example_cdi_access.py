@@ -96,9 +96,10 @@ memoryService = MemoryService(datagramService)
 
 
 # accumulate the CDI information
-resultingCDI = []
+resultingCDI = bytearray()
 
 # callbacks to get results of memory read
+
 
 def memoryReadSuccess(memo):
     """Handle a successful read
@@ -107,7 +108,7 @@ def memoryReadSuccess(memo):
     returned.  At that point, it invokes the XML processing below.
 
     Args:
-        memo (_type_): _description_
+        memo (MemoryReadMemo): _description_
     """
     # print("successful memory read: {}".format(memo.data))
 
@@ -121,15 +122,19 @@ def memoryReadSuccess(memo):
         memo.address = memo.address+64
         # and read again
         memoryService.requestMemoryRead(memo)
+        # The last packet is not yet reached, so don't parse (However,
+        #   parser.feed could be called for realtime processing).
     else :
         # and we're done!
         # save content
         resultingCDI += memo.data
         # concert resultingCDI to a string up to 1st zero
         cdiString = ""
-        for x in resultingCDI:
-            if x == 0 : break
-            cdiString += chr(x)
+        null_i = resultingCDI.find(b'\0')
+        terminate_i = len(resultingCDI)
+        if null_i > -1:
+            terminate_i = min(null_i, terminate_i)
+        cdiString = resultingCDI[:terminate_i].decode("utf-8")
         # print (cdiString)
 
         # and process that
@@ -158,25 +163,41 @@ import xml.sax  # noqa: E402
 class MyHandler(xml.sax.handler.ContentHandler):
     """XML SAX callbacks in a handler object"""
     def __init__(self):
-        self._charBuffer = []
+        self._charBuffer = bytearray()
 
     def startElement(self, name, attrs):
+        """_summary_
+
+        Args:
+            name (_type_): _description_
+            attrs (_type_): _description_
+        """
         print("Start: ", name)
         if attrs is not None and attrs :
             print("  Attributes: ", attrs.getNames())
 
     def endElement(self, name):
+        """_summary_
+
+        Args:
+            name (_type_): _description_
+        """
         print(name, "content:", self._flushCharBuffer())
         print("End: ", name)
         pass
 
     def _flushCharBuffer(self):
-        s = ''.join(self._charBuffer)
-        self._charBuffer = []
+        """Decode the buffer, clear it, and return all content.
+
+        Returns:
+            str: The content of the bytes buffer decoded as utf-8.
+        """
+        s = self._charBuffer.decode("utf-8")
+        self._charBuffer.clear()
         return s
 
     def characters(self, data):
-        self._charBuffer.append(data)
+        self._charBuffer.extend(data)
 
 
 handler = MyHandler()
@@ -188,6 +209,10 @@ def processXML(content) :
     Args:
         content (_type_): _description_
     """
+    # NOTE: The data is complete in this example since processXML is
+    #   only called when there is a null terminator, which indicates the
+    #   last packet was reached for the requested read.
+    #   - See memoryReadSuccess comments for details.
     xml.sax.parseString(content, handler)
     print("\nParser done")
 

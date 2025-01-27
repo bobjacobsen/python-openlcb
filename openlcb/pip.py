@@ -44,8 +44,8 @@ class PIP(Enum):
         for pip in PIP.list():
             if (pip.value & contents == pip.value):
                 val = pip.name.replace("_", " ").title()
-                if val.startswith("Adcdi") : 
-                    val = "ADCDI Protocol" # Handle special case
+                if val.startswith("Adcdi"):
+                    val = "ADCDI Protocol"  # Handle special case
                 retval.append(val)
         return retval
 
@@ -54,8 +54,8 @@ class PIP(Enum):
         retval = []
         for pip in contents:
             val = pip.name.replace("_", " ").title()
-            if val.startswith("Adcdi") : 
-                val = "ADCDI Protocol" # Handle special case
+            if val.startswith("Adcdi") :
+                val = "ADCDI Protocol"  # Handle special case
             retval.append(val)
         return retval
 

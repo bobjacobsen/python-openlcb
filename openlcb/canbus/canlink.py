@@ -110,7 +110,8 @@ class CanLink(LinkLayer):
         Args:
             frame (_type_): _description_
         """
-        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None, [])
+        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None,
+                      bytearray())
         self.fireListeners(msg)
 
     def defineAndReserveAlias(self):
@@ -154,9 +155,9 @@ class CanLink(LinkLayer):
     # invoked when the link layer comes up and down
     def linkStateChange(self, state):  # state is of the State enum
         if state == CanLink.State.Permitted:
-            msg = Message(MTI.Link_Layer_Up, NodeID(0), None, [])
+            msg = Message(MTI.Link_Layer_Up, NodeID(0), None, bytearray())
         else:
-            msg = Message(MTI.Link_Layer_Down, NodeID(0), None, [])
+            msg = Message(MTI.Link_Layer_Down, NodeID(0), None, bytearray())
         self.fireListeners(msg)
 
     def handleReceivedCID(self, frame):  # CanFrame
@@ -274,7 +275,7 @@ class CanLink(LinkLayer):
                 key = CanLink.AccumKey(mti, sourceID, destID)
                 if dgCode == 0x00A_000_000 or dgCode == 0x00B_000_000:
                     #    start of message, create the entry in the accumulator
-                    self.accumulator[key] = []
+                    self.accumulator[key] = bytearray()
                 else:
                     # not start frame
                     # check for never properly started, this is an error
@@ -327,7 +328,7 @@ class CanLink(LinkLayer):
                 key = CanLink.AccumKey(mti, sourceID, destID)
                 if (frame.data[0] & 0x20 == 0):
                     #    is start, create the entry in the accumulator
-                    self.accumulator[key] = []
+                    self.accumulator[key] = bytearray()
                 else:
                     # not start frame
                     # check for first bit set never seen
@@ -465,27 +466,27 @@ class CanLink(LinkLayer):
             data (_type_): _description_
 
         Returns:
-            _type_: _description_
+            list[bytearray]:  A list of one or more data segments.
         """
         nSegments = (len(data)+7) // 8
         # ^ the +7 is since integer division takes the floor value
         if nSegments == 0:
-            return [[]]
+            return [bytearray()]
 
         if nSegments == 1:
             return [data]
 
         #    multiple frames
-        retval = []
+        segments = []
         for i in range(0, nSegments-2+1):  # first entry of 2 has full data
-            nextEntry = (data[i*8:i*8+7+1]).copy()
-            retval.append(nextEntry)
+            nextEntry = data[i*8:i*8+7+1]
+            segments.append(nextEntry)
 
         #    add the last
-        lastEntry = (data[8*(nSegments-1):]).copy()
-        retval.append(lastEntry)
+        lastEntry = data[8*(nSegments-1):]
+        segments.append(lastEntry)
 
-        return retval
+        return segments
 
     def segmentAddressedDataArray(self, alias, data):
         '''Segment data into zero or more arrays
@@ -497,30 +498,30 @@ class CanLink(LinkLayer):
             data (_type_): _description_
 
         Returns:
-            _type_: _description_
+            list[bytearray]: A list of one or more data segments.
         '''
         part0 = (alias >> 8) & 0xF
         part1 = alias & 0xFF
         nSegments = (len(data)+5) // 6  # the +5 is since integer division
         #   takes the floor value
         if nSegments == 0:
-            return [[part0, part1]]
+            return [bytearray([part0, part1])]
         if nSegments == 1:
-            return [[part0, part1]+data]
+            return [bytearray([part0, part1])+data]
 
         #    multiple frames
-        retval = []
+        segments = []
         for i in range(0, nSegments-2+1):  # first entry of 2 has full data
-            nextEntry = [part0 | 0x30, part1]+(data[i*6:i*6+5+1]).copy()
-            retval.append(nextEntry)
+            nextEntry = bytearray([part0 | 0x30, part1]) + data[i*6:i*6+5+1]
+            segments.append(nextEntry)
 
         #    add the last
-        lastEntry = [part0 | 0x20, part1]+(data[6*(nSegments-1):]).copy()
-        retval.append(lastEntry)
+        lastEntry = bytearray([part0 | 0x20, part1]) + data[6*(nSegments-1):]
+        segments.append(lastEntry)
         #    mark first (last already done above)
-        retval[0][0] &= ~0x20
+        segments[0][0] &= ~0x20
 
-        return retval
+        return segments
 
     #    MARK: common code
     def checkAndHandleAliasCollision(self, frame):
