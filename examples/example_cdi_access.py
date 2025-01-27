@@ -197,6 +197,11 @@ class MyHandler(xml.sax.handler.ContentHandler):
         return s
 
     def characters(self, data):
+        """Received characters handler
+        Args:
+            data (Union[bytearray, bytes, list[int]]): any
+              data (any type accepted by bytearray extend).
+        """
         self._charBuffer.extend(data)
 
 
