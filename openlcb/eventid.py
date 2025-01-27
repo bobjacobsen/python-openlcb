@@ -9,6 +9,9 @@ Provides conversion to and from Ints and Strings in standard form.
 '''
 
 
+from openlcb import emit_cast
+
+
 class EventID:
     def __str__(self):
         '''Display in standard format'''
@@ -28,7 +31,7 @@ class EventID:
             self.eventId = result
         elif isinstance(data, EventID):
             self.eventId = data.eventId
-        elif isinstance(data, list):
+        elif isinstance(data, bytearray):
             self.eventId = 0
             if (len(data) > 0):
                 self.eventId |= (data[0] & 0xFF) << 56
@@ -46,11 +49,13 @@ class EventID:
                 self.eventId |= (data[6] & 0xFF) << 8
             if (len(data) > 7):
                 self.eventId |= (data[7] & 0xFF)
+        # elif isinstance(data, list):
         else:
-            print("invalid data type to EventID constructor", data)
+            raise TypeError("invalid data type to EventID constructor: {}"
+                            .format(emit_cast(data)))
 
     def toArray(self):
-        return [
+        return bytearray([
             (self.eventId >> 56) & 0xFF,
             (self.eventId >> 48) & 0xFF,
             (self.eventId >> 40) & 0xFF,
@@ -59,7 +64,7 @@ class EventID:
             (self.eventId >> 16) & 0xFF,
             (self.eventId >> 8) & 0xFF,
             (self.eventId) & 0xFF
-        ]
+        ])
 
     def __eq__(self, other):
         if self.eventId != other.eventId:

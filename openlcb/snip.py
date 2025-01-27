@@ -40,7 +40,7 @@ class SNIP:
         self.userProvidedNodeName = uName
         self.userProvidedDescription = uDesc
 
-        self.data = [0]*253
+        self.data = bytearray([0]*253)
         self.index = 0
 
         self.updateSnipDataFromStrings()
@@ -106,26 +106,24 @@ class SNIP:
         return 0
 
     def getString(self, first, maxLength):
-        """
-        Retrieve a string from a starting byte index & largest possible length
+        """Get the string at index `first`
+        ending with either a null or having maxLength,
+        whichever comes first.
 
         Args:
-            first (int): start index
-            maxLength (int): prevent overflow
+            first (int): Where in data to start.
+            maxLength (int): Maximum length of string to return.
 
         Returns:
-            str: Any string (decoded from UTF-8 bytes)
+            str: The string decoded as UTF-8 from data bytes.
         """
-        last = first
-        while last < first+maxLength :
-            if self.data[last] == 0:
-                break
-            last += 1
-        # last should point at the first zero or last location
-        if first == last:
-            return ""
-        retval = bytes(self.data[first:last]).decode("utf-8")
-        return retval
+        null_i = self.data.find(b'\0', first)
+        terminate_i = first + maxLength
+        if null_i > -1:
+            terminate_i = min(null_i, terminate_i)
+        # terminate_i should point at the first zero or exclusive end
+        return self.data[first:terminate_i].decode("utf-8")
+
 
     def addData(self, in_data):
         '''
@@ -157,7 +155,7 @@ class SNIP:
         Store strings into SNIP accumulated data
         '''
         # clear string
-        self.data = [0]*253
+        self.data = bytearray([0]*253)
 
         self.index = 1  # next storage location
         self.data[0] = 4  # first part version
@@ -230,7 +228,7 @@ class SNIP:
     def returnStrings(self):
         '''copy out until the 6th zero byte'''
         stop = self.findString(6)
-        retval = [0]*stop
+        retval = bytearray([0]*stop)
         if stop == 0:
             return retval
         for i in range(0, stop-1):

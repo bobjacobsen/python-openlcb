@@ -25,7 +25,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
 
     def testLinkUp(self):
         self.node21.state = Node.State.Uninitialized
-        msg = Message(MTI.Link_Layer_Up, NodeID(0), NodeID(0), [])
+        msg = Message(MTI.Link_Layer_Up, NodeID(0), NodeID(0), bytearray())
 
         self.processor.process(msg, self.node21)
 
@@ -39,7 +39,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
 
     def testLinkDown(self):
         self.node21.state = Node.State.Initialized
-        msg = Message(MTI.Link_Layer_Down, NodeID(0), NodeID(0), [])
+        msg = Message(MTI.Link_Layer_Down, NodeID(0), NodeID(0), bytearray())
 
         self.processor.process(msg, self.node21)
 
@@ -49,7 +49,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
     def testVerifyGlobal(self):
         # not related to node
         msg1 = Message(MTI.Verify_NodeID_Number_Global, NodeID(13), None,
-                       [0, 0, 0, 0, 12, 21])
+                       bytearray([0, 0, 0, 0, 12, 21]))
         self.processor.process(msg1, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 0)
 
@@ -61,14 +61,14 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
 
         # global this Node ID
         msg3 = Message(MTI.Verify_NodeID_Number_Global, NodeID(13), None,
-                       [0, 0, 0, 0, 0, 21])
+                       bytearray([0, 0, 0, 0, 0, 21]))
         self.processor.process(msg3, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
 
     def testVerifyAddressed(self):
         # not related to node
         msg1 = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(13),
-                       NodeID(24), [0, 0, 0, 0, 0, 24])
+                       NodeID(24), bytearray([0, 0, 0, 0, 0, 24]))
         self.processor.process(msg1, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 0)
 
@@ -81,7 +81,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
 
         # addressed this Node ID
         msg3 = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(13),
-                       NodeID(21), [0, 0, 0, 0, 0, 21])
+                       NodeID(21), bytearray([0, 0, 0, 0, 0, 21]))
         self.processor.process(msg3, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
 
@@ -99,8 +99,9 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
         msg2 = Message(MTI.Protocol_Support_Inquiry, NodeID(13), NodeID(21))
         self.processor.process(msg2, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
-        self.assertEqual(LinkMockLayer.sentMessages[0].data,
-                         [0x44, 0x10, 0x00, 0x00, 0x00, 0x00])
+        self.assertEqual(
+            LinkMockLayer.sentMessages[0].data,
+            bytearray([0x44, 0x10, 0x00, 0x00, 0x00, 0x00]))
 
     def testSnip(self):
         self.node21.snip.manufacturerName = "Sample Nodes"
@@ -121,7 +122,7 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
         self.processor.process(msg2, self.node21)
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         self.assertEqual(LinkMockLayer.sentMessages[0].data[0:3],
-                         [0x04, 0x53, 0x61])
+                         bytearray([0x04, 0x53, 0x61]))
         self.assertEqual(len(LinkMockLayer.sentMessages[0].data), 46)
 
     def testIdentifyEventsAddressed(self):
@@ -148,8 +149,9 @@ class TestLocalNodeProcessorClass(unittest.TestCase):
         self.assertEqual(LinkMockLayer.sentMessages[0].mti,
                          MTI.Optional_Interaction_Rejected)
         self.assertEqual(len(LinkMockLayer.sentMessages[0].data), 4)
-        self.assertEqual(LinkMockLayer.sentMessages[0].data,
-                         [0x10, 0x43, 0x09, 0x48])  # error code, MTI
+        self.assertEqual(
+            LinkMockLayer.sentMessages[0].data,
+            bytearray([0x10, 0x43, 0x09, 0x48]))  # error code, MTI
 
     def testDontRejectOIR(self):
         msg1 = Message(MTI.Optional_Interaction_Rejected, NodeID(13),

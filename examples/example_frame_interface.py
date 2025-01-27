@@ -52,7 +52,7 @@ canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(printFrame)
 
 # send an AME frame with arbitrary alias to provoke response
-frame = CanFrame(ControlFrame.AME.value, 1, [])
+frame = CanFrame(ControlFrame.AME.value, 1, bytearray())
 print("SL: {}".format(frame))
 canPhysicalLayerGridConnect.sendCanFrame(frame)
 

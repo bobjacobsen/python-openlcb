@@ -70,7 +70,12 @@ class DatagramReadMemo:
 
 
 class DatagramService:
-    '''Known datagram protocol types'''
+    """Known datagram protocol types
+
+    Args:
+        linkLayer (CanLink): Could actually be any link layer such as
+            LinkMockLayer (for testing) or CanLink.
+    """
 
     class ProtocolID(Enum):
         LogRequest      = 0x01
@@ -281,7 +286,7 @@ class DatagramService:
                 Datagram Standard & Technical Note for meaning. Defaults to 0.
         """
         message = Message(MTI.Datagram_Received_OK, self.linkLayer.localNodeID,
-                          dg.srcID, [flags])
+                          dg.srcID, bytearray([flags]))
         self.linkLayer.sendMessage(message)
 
     def negativeReplyToDatagram(self, dg, err):
@@ -295,5 +300,5 @@ class DatagramService:
         data0 = ((err >> 8) & 0xFF)
         data1 = (err & 0xFF)
         message = Message(MTI.Datagram_Rejected, self.linkLayer.localNodeID,
-                          dg.srcID, [data0, data1])
+                          dg.srcID, bytearray([data0, data1]))
         self.linkLayer.sendMessage(message)

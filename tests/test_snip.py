@@ -22,16 +22,16 @@ class TestSnipClass(unittest.TestCase):
 
     def testGetString(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
         s.data[4] = 0
         self.assertEqual(s.getString(1, 5), "AAA")
 
-        s.data = [0x41]*253  # no trailing zero
+        s.data = bytearray([0x41]*253)  # no trailing zero
         self.assertEqual(s.getString(1, 5), "AAAAA")
 
     def testLoadAndGetShort(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
 
         s.addData([4, 0x41, 0x42, 0x43, 0])  # version + "ABC"
         self.assertEqual(s.data[3], 0x43)

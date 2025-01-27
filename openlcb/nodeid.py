@@ -4,10 +4,10 @@ from openlcb import emit_cast
 class NodeID:
     """A 6-byte (48-bit) Node ID.
     The constructor is manually overloaded as follows:
-    - data (int): If int.
-    - data (str): If str. Six dot-separated hex pairs.
-    - data (NodeID): If NodeID. data.nodeID is used in this case.
-    - data (list[int]): If list. Six ints.
+    - nodeId (int): If int.
+    - nodeId (str): If str. Six dot-separated hex pairs.
+    - nodeId (NodeID): If NodeID. data.nodeID is used in this case.
+    - nodeId (bytearray): If bytearray (formerly list[int]). Six ints.
 
     Args:
         data (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
@@ -39,7 +39,7 @@ class NodeID:
             self.nodeId = result
         elif isinstance(data, NodeID):
             self.nodeId = data.nodeId
-        elif isinstance(data, list):
+        elif isinstance(data, bytearray):
             self.nodeId = 0
             if (len(data) > 0):
                 self.nodeId |= (data[0] & 0xFF) << 40
@@ -53,18 +53,22 @@ class NodeID:
                 self.nodeId |= (data[4] & 0xFF) << 8
             if (len(data) > 5):
                 self.nodeId |= (data[5] & 0xFF)
+        elif isinstance(data, list):
+            print("invalid data type to nodeid constructor."
+                  " Expected bytearray (formerly list[int])"
+                  " unless int, str nor NodeID", data)
         else:
             print("invalid data type to nodeid constructor", data)
 
     def toArray(self):
-        return [
+        return bytearray([
             (self.nodeId >> 40) & 0xFF,
             (self.nodeId >> 32) & 0xFF,
             (self.nodeId >> 24) & 0xFF,
             (self.nodeId >> 16) & 0xFF,
             (self.nodeId >> 8) & 0xFF,
             (self.nodeId) & 0xFF
-        ]
+        ])
 
     def __eq__(self, other):
         if other is None:

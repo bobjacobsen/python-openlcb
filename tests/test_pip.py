@@ -23,7 +23,7 @@ class TestPipClass(unittest.TestCase):
         )
 
     def testContainsFromRaw2(self):
-        array = [0x10, 0x10]
+        array = bytearray([0x10, 0x10])
         result = PIP.setContentsFromList(array)
         self.assertEqual(
             result,
@@ -32,7 +32,7 @@ class TestPipClass(unittest.TestCase):
         )
 
     def testContainsFromRaw4(self):
-        array = [0x10, 0x10, 0, 0]
+        array = bytearray([0x10, 0x10, 0, 0])
         result = PIP.setContentsFromList(array)
         self.assertEqual(
             result,

@@ -11,15 +11,18 @@ class Message:
         mti (MTI): Message Type Indicator.
         source (NodeID): Message source.
         destination (NodeID): Set to None for global.
-        data (list[int], optional): Data being transmitted. Defaults to
-            [].
+        data (bytearray, optional): Data being transmitted. Defaults to
+            empty bytearray().
     """
 
-    def __init__(self, mti, source, destination, data=[]):
+    def __init__(self, mti, source, destination, data=bytearray()):
         # For args, see class docstring.
         self.mti = mti
         self.source = source
         self.destination = destination
+        if not isinstance(data, bytearray):
+            raise TypeError("Expected bytearray, got {}"
+                            .format(type(data).__name__))
         self.data = data
 
     def isGlobal(self):
