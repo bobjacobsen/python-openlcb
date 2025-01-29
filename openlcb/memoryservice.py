@@ -33,7 +33,7 @@ class MemoryReadMemo:
     """Memo carries request and reply.
 
     Args:
-        nodeID (NodeID): Node from which the memory read request is issued.
+        nodeID (NodeID): Remote node id (where to read).
         size (int): Size of the data to be read, typically in bytes.
         space (int): Encoded memory space identifier, where values:
             - 0xFF to 0xFD are special spaces, and only the least significant
@@ -69,9 +69,7 @@ class MemoryReadMemo:
 class MemoryWriteMemo:
     """A memory write request within an OpenLCB network.
     Args:
-        nodeID (NodeID):  _description_:
-            Node from which the write request is issued,
-            or Node for which write is requested?
+        nodeID (NodeID): Remote node id (where to write).
         okReply (Callable): Callback function to handle successful write
             responses. The callback receives this MemoryWriteMemo instance.
         rejectedReply (Callable): Callback function to handle rejected
@@ -87,7 +85,7 @@ class MemoryWriteMemo:
         data (bytes): The actual data to be written to the specified
             memory address.
     """
-    # FIXME: docstring entry for nodeID above
+
     def __init__(self, nodeID, okReply, rejectedReply, size, space, address,
                  data):
         # For args see class docstring.
