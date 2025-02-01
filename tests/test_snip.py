@@ -1,4 +1,15 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
 import unittest
+
+
+if __name__ == "__main__":
+    # Allow importing repo copy of openlcb if running tests from repo manually.
+    TESTS_DIR = os.path.dirname(os.path.realpath(__file__))
+    REPO_DIR = os.path.dirname(TESTS_DIR)
+    sys.path.insert(0, REPO_DIR)
+
 
 from openlcb.snip import SNIP
 
@@ -11,16 +22,16 @@ class TestSnipClass(unittest.TestCase):
 
     def testGetString(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
         s.data[4] = 0
         self.assertEqual(s.getString(1, 5), "AAA")
 
-        s.data = [0x41]*253  # no trailing zero
+        s.data = bytearray([0x41]*253)  # no trailing zero
         self.assertEqual(s.getString(1, 5), "AAAAA")
 
     def testLoadAndGetShort(self):
         s = SNIP()  # init to all zeros
-        s.data = [0x41]*253
+        s.data = bytearray([0x41]*253)
 
         s.addData([4, 0x41, 0x42, 0x43, 0])  # version + "ABC"
         self.assertEqual(s.data[3], 0x43)
@@ -52,11 +63,11 @@ class TestSnipClass(unittest.TestCase):
         # This checks how we're converting strings to byte arrays
         str1 = "1234567890"
 
-        first3Bytes = '{:.3}'.format(str1).encode('ASCII')
+        first3Bytes = '{:.3}'.format(str1).encode('utf-8')
         self.assertEqual(len(first3Bytes), 3)
         self.assertEqual(first3Bytes[0], 0x31)
 
-        first20Bytes = '{:.20}'.format(str1).encode('ASCII')
+        first20Bytes = '{:.20}'.format(str1).encode('utf-8')
         self.assertEqual(first20Bytes[0], 0x31)
 
     def testLoadStrings(self):
@@ -125,6 +136,24 @@ class TestSnipClass(unittest.TestCase):
         self.assertEqual(result[23], 0x45)
         self.assertEqual(result[24], 0x46)
         self.assertEqual(result[25], 0)
+
+    def testReturnCyrillicStrings(self):
+        # See also testReturnCyrillicStrings in test_memoryservice
+        # If you have characters specific to UTF-8 (either in code or comment)
+        #   add the following as the 1st or 2nd line of the py file:
+        # -*- coding: utf-8 -*-
+        s = SNIP()  # init to all zeros
+
+        s.manufacturerName = "ABC"
+        s.modelName = "DEF"
+        s.hardwareVersion = "1EF"
+        s.softwareVersion = "2EF"
+        s.userProvidedNodeName = b'\xd0\x94\xd0\xbc\xd0\xb8\xd1\x82\xd1\x80\xd0\xb8\xd0\xb9'.decode("utf-8")   # Cyrillic spelling of the name Dmitry
+        s.userProvidedDescription = "4EF"
+
+        s.updateSnipDataFromStrings()
+        self.assertEqual(s.getStringN(4), "Дмитрий")  # Cyrillic spelling of the name Dmitry. This string should appear as 7 Cyrillic characters like Cyrillic-demo-Dmitry.png in doc (14 bytes in a hex editor), otherwise your editor does not support utf-8 and editing this file with it could break it.
+        # TODO: Russian version is Дми́трий according to <https://en.wikipedia.org/wiki/Dmitry>. See Cyrillic-demo-Dmitry-Russian.png in doc.
 
     def testName(self):
         s = SNIP()  # init to all zeros

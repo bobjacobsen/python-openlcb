@@ -7,11 +7,15 @@ class NodeID:
     - nodeId (int): If int.
     - nodeId (str): If str. Six dot-separated hex pairs.
     - nodeId (NodeID): If NodeID. data.nodeID is used in this case.
-    - nodeId (list[int]): If list. Six ints.
+    - nodeId (bytearray): If bytearray (formerly list[int]). Six ints.
 
     Args:
-        nodeId (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
+        data (Union[int,str,NodeID,list[int]]): Node ID in int, dotted
             hex string, NodeID, or list[int] form.
+
+    Attributes:
+        nodeId (int): The node id in int form (uses 48 bits, so Python
+            will allocate 64-bit or larger int)
     """
     def __str__(self):
         '''Display in standard format'''
@@ -35,7 +39,7 @@ class NodeID:
             self.nodeId = result
         elif isinstance(data, NodeID):
             self.nodeId = data.nodeId
-        elif isinstance(data, list):
+        elif isinstance(data, bytearray):
             self.nodeId = 0
             if (len(data) > 0):
                 self.nodeId |= (data[0] & 0xFF) << 40
@@ -49,18 +53,22 @@ class NodeID:
                 self.nodeId |= (data[4] & 0xFF) << 8
             if (len(data) > 5):
                 self.nodeId |= (data[5] & 0xFF)
+        elif isinstance(data, list):
+            print("invalid data type to nodeid constructor."
+                  " Expected bytearray (formerly list[int])"
+                  " unless int, str nor NodeID", data)
         else:
             print("invalid data type to nodeid constructor", data)
 
     def toArray(self):
-        return [
+        return bytearray([
             (self.nodeId >> 40) & 0xFF,
             (self.nodeId >> 32) & 0xFF,
             (self.nodeId >> 24) & 0xFF,
             (self.nodeId >> 16) & 0xFF,
             (self.nodeId >> 8) & 0xFF,
             (self.nodeId) & 0xFF
-        ]
+        ])
 
     def __eq__(self, other):
         if other is None:

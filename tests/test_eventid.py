@@ -20,7 +20,7 @@ class TestEventIDClass(unittest.TestCase):
         self.assertEqual(str(eid5), "08.09.0A.0B.0C.0D.0E.0F")
 
     def testInitArray(self):
-        array = [8, 9, 10, 11, 12, 13, 14, 15]
+        array = bytearray([8, 9, 10, 11, 12, 13, 14, 15])
         eid = EventID(array)
         self.assertEqual(str(eid), "08.09.0A.0B.0C.0D.0E.0F")
         eid2 = EventID("FF.09.0A.0B.0C.0D.0E.0F")
@@ -29,7 +29,7 @@ class TestEventIDClass(unittest.TestCase):
     def testToArray(self):
         eid = EventID(0x0102030405060708)
         self.assertEqual(eid.toArray(),
-                         [1, 2, 3, 4, 5, 6, 7, 8])
+                         bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
 
     def testDescription(self):
         eid = EventID(0x08090A0B0C0D0E0F)

@@ -36,12 +36,12 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
 
     def testPipReplyFull(self) :
         msg1 = Message(MTI.Protocol_Support_Reply, NodeID(12), NodeID(13),
-                       [0x10, 0x10, 0x00, 0x00])
+                       bytearray([0x10, 0x10, 0x00, 0x00]))
         self.processor.process(msg1, self.node21)
         self.assertEqual(self.node21.pipSet, set(()))
 
         msg2 = Message(MTI.Protocol_Support_Reply, NodeID(21), NodeID(12),
-                       [0x10, 0x10, 0x00, 0x00])
+                       bytearray([0x10, 0x10, 0x00, 0x00]))
         self.processor.process(msg2, self.node21)
         self.assertEqual(self.node21.pipSet,
                          set([PIP.MEMORY_CONFIGURATION_PROTOCOL,
@@ -49,12 +49,12 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
 
     def testPipReply2(self) :
         msg1 = Message(MTI.Protocol_Support_Reply, NodeID(12), NodeID(13),
-                       [0x10, 0x10])
+                       bytearray([0x10, 0x10]))
         self.processor.process(msg1, self.node21)
         self.assertEqual(self.node21.pipSet, set(()))
 
         msg2 = Message(MTI.Protocol_Support_Reply, NodeID(21), NodeID(12),
-                       [0x10, 0x10])
+                       bytearray([0x10, 0x10]))
         self.processor.process(msg2, self.node21)
         self.assertEqual(self.node21.pipSet,
                          set([PIP.MEMORY_CONFIGURATION_PROTOCOL,
@@ -113,7 +113,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
 
         # add some data
         msg = Message(MTI.Simple_Node_Ident_Info_Reply, NodeID(21), NodeID(12),
-                      [4, 0x31, 0x32, 0, 0, 0])
+                      bytearray([4, 0x31, 0x32, 0, 0, 0]))
         self.processor.process(msg, self.node21)
 
         self.assertEqual(self.node21.snip.manufacturerName, "12")
@@ -121,7 +121,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
     def testProducerIdentified(self) :
         self.node21.state = Node.State.Initialized
         msg = Message(MTI.Producer_Identified_Active, self.node21.id, None,
-                      [1, 2, 3, 4, 5, 6, 7, 8])
+                      bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
         self.processor.process(msg, self.node21)
         self.assertTrue(self.node21.events.isProduced(
             EventID(0x01_02_03_04_05_06_07_08)
@@ -130,7 +130,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
     def testProducerIdentifiedDifferentNode(self) :
         self.node21.state = Node.State.Initialized
         msg = Message(MTI.Producer_Identified_Active, NodeID(1), None,
-                      [1, 2, 3, 4, 5, 6, 7, 8])
+                      bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
         self.processor.process(msg, self.node21)
         self.assertFalse(self.node21.events.isProduced(
             EventID(0x01_02_03_04_05_06_07_08)
@@ -139,7 +139,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
     def testConsumerIdentified(self) :
         self.node21.state = Node.State.Initialized
         msg = Message(MTI.Consumer_Identified_Active, self.node21.id, None,
-                      [1, 2, 3, 4, 5, 6, 7, 8])
+                      bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
         self.processor.process(msg, self.node21)
         self.assertTrue(self.node21.events.isConsumed(
             EventID(0x01_02_03_04_05_06_07_08)
@@ -148,7 +148,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
     def testConsumerIdentifiedDifferentNode(self) :
         self.node21.state = Node.State.Initialized
         msg = Message(MTI.Consumer_Identified_Active, NodeID(1), None,
-                      [1, 2, 3, 4, 5, 6, 7, 8])
+                      bytearray([1, 2, 3, 4, 5, 6, 7, 8]))
         self.processor.process(msg, self.node21)
         self.assertFalse(self.node21.events.isConsumed(
             EventID(0x01_02_03_04_05_06_07_08)
@@ -156,7 +156,7 @@ class TesRemoteNodeProcessorClass(unittest.TestCase):
 
     def testNewNodeSeen(self) :
         self.node21.state = Node.State.Initialized
-        msg = Message(MTI.New_Node_Seen, NodeID(21), [])
+        msg = Message(MTI.New_Node_Seen, NodeID(21), bytearray())
         self.processor.process(msg, self.node21)
 
 

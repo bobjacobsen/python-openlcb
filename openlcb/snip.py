@@ -8,6 +8,23 @@ class SNIP:
     Provides support for loading via short or long messages. A SNIP is
     write-once; when the underlying connection resets, a new SNIP struct should
     be installed in the node.
+
+    Args:
+        mfgName (str, optional): The manufacturer name for the node
+            (vendor or creator of device).
+        model (str, optional): The model name of the node, indicating a
+            specific product.
+        hVersion (str, optional): The hardware version identifier
+            (physical revision of the hardware).
+        sVersion (str, optional): The software version identifier.
+            Indicates the firmware or control software version running
+            on the node.
+        uName (str, optional): The user-provided node name. This can be
+            customized by the user to provide a recognizable identifier for
+            the node.
+        uDesc (str, optional): The user-provided description for the node.
+            This provides additional information about the node's function or
+            location.
     '''
 
     def __init__(self, mfgName="",
@@ -23,7 +40,7 @@ class SNIP:
         self.userProvidedNodeName = uName
         self.userProvidedDescription = uDesc
 
-        self.data = [0]*253
+        self.data = bytearray([0]*253)
         self.index = 0
 
         self.updateSnipDataFromStrings()
@@ -88,20 +105,25 @@ class SNIP:
         # fell out without finding
         return 0
 
-    #  Retrieve a string from a starting byte index and largest possible length
-    #
-    #   The `maxLength` parameter prevents overflow
     def getString(self, first, maxLength):
-        last = first
-        while last < first+maxLength :
-            if self.data[last] == 0:
-                break
-            last += 1
-        # last should point at the first zero or last location
-        if first == last:
-            return ""
-        retval = ''.join([chr(i) for i in self.data[first:last]])
-        return retval
+        """Get the string at index `first`
+        ending with either a null or having maxLength,
+        whichever comes first.
+
+        Args:
+            first (int): Where in data to start.
+            maxLength (int): Maximum length of string to return.
+
+        Returns:
+            str: The string decoded as UTF-8 from data bytes.
+        """
+        null_i = self.data.find(b'\0', first)
+        terminate_i = first + maxLength
+        if null_i > -1:
+            terminate_i = min(null_i, terminate_i)
+        # terminate_i should point at the first zero or exclusive end
+        return self.data[first:terminate_i].decode("utf-8")
+
 
     def addData(self, in_data):
         '''
@@ -133,14 +155,14 @@ class SNIP:
         Store strings into SNIP accumulated data
         '''
         # clear string
-        self.data = [0]*253
+        self.data = bytearray([0]*253)
 
         self.index = 1  # next storage location
         self.data[0] = 4  # first part version
 
         # mfgArray = Data(manufacturerName.utf8.prefix(40))
         # ^ leave one space for zero
-        mfgArray = '{:.40}'.format(self.manufacturerName).encode('ascii')
+        mfgArray = '{:.40}'.format(self.manufacturerName).encode('utf-8')
         if len(mfgArray) > 0 :
             for i in range(0, len(mfgArray)):
                 self.data[self.index] = mfgArray[i]
@@ -150,7 +172,7 @@ class SNIP:
         self.index += 1
 
         # mdlArray = Data(modelName.utf8.prefix(40))
-        mdlArray = '{:.40}'.format(self.modelName).encode('ascii')
+        mdlArray = '{:.40}'.format(self.modelName).encode('utf-8')
         if len(mdlArray) > 0:
             for i in range(0, len(mdlArray)):
                 self.data[self.index] = mdlArray[i]
@@ -160,7 +182,7 @@ class SNIP:
         self.index += 1
 
         # hdvArray = Data(hardwareVersion.utf8.prefix(20))
-        hdvArray = '{:.20}'.format(self.hardwareVersion).encode('ascii')
+        hdvArray = '{:.20}'.format(self.hardwareVersion).encode('utf-8')
         if len(hdvArray) > 0:
             for i in range(0, len(hdvArray)):
                 self.data[self.index] = hdvArray[i]
@@ -170,7 +192,7 @@ class SNIP:
         self.index += 1
 
         # sdvArray = Data(softwareVersion.utf8.prefix(20))
-        sdvArray = '{:.20}'.format(self.softwareVersion).encode('ascii')
+        sdvArray = '{:.20}'.format(self.softwareVersion).encode('utf-8')
         if len(sdvArray) > 0 :
             for i in range(0, len(sdvArray)):
                 self.data[self.index] = sdvArray[i]
@@ -183,7 +205,7 @@ class SNIP:
         self.index += 1
 
         # upnArray = Data(userProvidedNodeName.utf8.prefix(62))
-        upnArray = '{:.62}'.format(self.userProvidedNodeName).encode('ascii')
+        upnArray = '{:.62}'.format(self.userProvidedNodeName).encode('utf-8')
         if len(upnArray) > 0 :
             for i in range(0, len(upnArray)):
                 self.data[self.index] = upnArray[i]
@@ -194,7 +216,7 @@ class SNIP:
 
         # updArray = Data(userProvidedDescription.utf8.prefix(63))
         updArray = \
-            '{:.63}'.format(self.userProvidedDescription).encode('ascii')
+            '{:.63}'.format(self.userProvidedDescription).encode('utf-8')
         if len(updArray) > 0 :
             for i in range(0, len(updArray)):
                 self.data[self.index] = updArray[i]
@@ -206,7 +228,7 @@ class SNIP:
     def returnStrings(self):
         '''copy out until the 6th zero byte'''
         stop = self.findString(6)
-        retval = [0]*stop
+        retval = bytearray([0]*stop)
         if stop == 0:
             return retval
         for i in range(0, stop-1):

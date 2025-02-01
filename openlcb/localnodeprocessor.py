@@ -104,7 +104,8 @@ class LocalNodeProcessor(Processor):
         part1 = ((pips >> 24) & 0xFF)
         part2 = ((pips >> 16) & 0xFF)
         part3 = ((pips >> 8) & 0xFF)
-        retval = [part1, part2, part3, 0, 0, 0]  # JMRI wants to see 6 bytes
+        retval = bytearray(
+            [part1, part2, part3, 0, 0, 0])  # JMRI wants to see 6 bytes
 
         msg = Message(MTI.Protocol_Support_Reply, node.id,  message.source,
                       retval)
@@ -144,8 +145,8 @@ class LocalNodeProcessor(Processor):
         logging.info("received unexpected {}, send OIR".format(message))
         msg = Message(MTI.Optional_Interaction_Rejected,  node.id,
                       message.source,
-                      [0x10, 0x43, ((originalMTI >> 8) & 0xFF),
-                       (originalMTI & 0xFF)])  # permanent error
+                      bytearray([0x10, 0x43, ((originalMTI >> 8) & 0xFF),
+                                 (originalMTI & 0xFF)]))  # permanent error
         self.linkLayer.sendMessage(msg)
 
     # private method

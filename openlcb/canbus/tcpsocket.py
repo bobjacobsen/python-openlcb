@@ -29,7 +29,7 @@ class TcpSocket:
     def send(self, string):
         """Send a single string.
         """
-        msg = string.encode('ascii')
+        msg = string.encode('utf-8')
         total_sent = 0
         while total_sent < len(msg[total_sent:]):
             sent = self.sock.send(msg[total_sent:])
@@ -50,17 +50,17 @@ class TcpSocket:
         Returns:
             str: The received bytes decoded into a UTF-8 string.
         '''
-        chunks = []
+        data = bytearray()
         bytes_recd = 0
         while bytes_recd < MSGLEN:
             chunk = self.sock.recv(min(MSGLEN - bytes_recd, 1))
             if chunk == b'':
                 raise RuntimeError("socket connection broken")
-            chunks.append(chunk)
+            data.extend(chunk)
             bytes_recd = bytes_recd + len(chunk)
             if 0x3B in chunk:
                 break
-        return b''.join(chunks).decode("utf-8")
+        return data.decode("utf-8")
 
     def close(self):
         self.sock.close()

@@ -38,13 +38,13 @@ class TcpLink(LinkLayer):
         self.linkCall = None
         self.accumulatedParts = {}
         self.nextInternallyAssignedNodeID = 1
-        self.accumulatedData = []
+        self.accumulatedData = bytearray()
 
     def linkPhysicalLayer(self, lpl):
         """Register the handler for when the layer is up.
 
         Args:
-            lpl (function): A handler that accepts a bytes object, usually a
+            lpl (Callable): A handler that accepts a bytes object, usually a
                 socket connection send() method.
         """
         self.linkCall = lpl
@@ -92,7 +92,7 @@ class TcpLink(LinkLayer):
         and groups them into single OpenLCB messages as needed
 
         Args:
-            messagePart (int) : Raw message data. A single TCP-level message,
+            messagePart (bytearray) : Raw message data. A single TCP-level message,
                 which may include all or part of a single OpenLCB message.
         """
         # set the source NodeID from the data
@@ -115,7 +115,7 @@ class TcpLink(LinkLayer):
                              "".format(gatewayNodeID))
                 # start over
             # start accumulation
-            self.accumulatedParts[key] = []
+            self.accumulatedParts[key] = bytearray()
         # accumulate next part
         self.accumulatedParts[key].extend(messagePart[17:])
         # is the accumulation complete?
@@ -156,21 +156,21 @@ class TcpLink(LinkLayer):
         """
         Link started,  notify upper layers
         """
-        msg = Message(MTI.Link_Layer_Up, NodeID(0), None, [])
+        msg = Message(MTI.Link_Layer_Up, NodeID(0), None, bytearray())
         self.fireListeners(msg)
 
     def linkRestarted(self):
         """
         Send a LinkRestarted message upstream.
         """
-        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None, [])
+        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None, bytearray())
         self.fireListeners(msg)
 
     def linkDown(self):
         """
         Link dropped,  notify upper layers
         """
-        msg = Message(MTI.Link_Layer_Down, NodeID(0), None, [])
+        msg = Message(MTI.Link_Layer_Down, NodeID(0), None, bytearray())
         self.fireListeners(msg)
 
     def sendMessage(self, message):
@@ -182,7 +182,7 @@ class TcpLink(LinkLayer):
 
         mti = message.mti
 
-        outputBytes = [0x80, 0x00]  # flags
+        outputBytes = bytearray([0x80, 0x00])  # flags
 
         length = 12+2+6+len(message.data)
         if mti.addressPresent() : length = length+6
@@ -190,7 +190,7 @@ class TcpLink(LinkLayer):
         l0 = (length & 0xFF0000) >> 16
         l1 = (length & 0xFF00) >> 8
         l2 = (length & 0xFF)
-        outputBytes.extend([l0, l1, l2])
+        outputBytes.extend([l0, l1, l2])  # bytearray accepts extend list[int]
 
         outputBytes.extend(self.localNodeID.toArray())
 

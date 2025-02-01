@@ -126,9 +126,9 @@ def result(arg1, arg2=None, arg3=None, result=True) :
     Args:
         arg1: Any value.
         arg2: value to compare to arg1. Defaults to None.
-        arg3: fail if arg1 not equal to arg1; arg3 is then message. Defaults to
-            None.
-        result (bool, optional): _description_. Defaults to True.
+        arg3: fail if arg1 not equal to arg1; arg3 is then message.
+            Defaults to None.
+        result (bool, optional): Expected result. Defaults to True.
 
     Raises:
         ValueError: If only arg1 was provided (undefined behavior--in other

@@ -31,97 +31,114 @@ class CanPhysicalLayerGridConnectTest(unittest.TestCase):
     def testVerifyNodeSent(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
 
-        gc.sendCanFrame(CanFrame(0x19170, 0x365, [0x02, 0x01, 0x12, 0xFE,
-                                                  0x05, 0x6C]))
+        gc.sendCanFrame(CanFrame(0x19170, 0x365, bytearray([
+                                 0x02, 0x01, 0x12, 0xFE,
+                                 0x05, 0x6C])))
         self.assertEqual(self.capturedString, ":X19170365N020112FE056C;\n")
 
     def testOneFrameReceivedExactlyHeaderOnly(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes = [0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36, 0x35,
-                 0x4e, 0x3b, 0x0a]  # :X19490365N;
+        bytes = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36, 0x35,
+            0x4e, 0x3b, 0x0a])  # :X19490365N;
 
         gc.receiveChars(bytes)
 
-        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, bytearray()))
 
     def testOneFrameReceivedExactlyWithData(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes = [0x3a, 0x58, 0x31, 0x39, 0x31, 0x42, 0x30, 0x33, 0x36, 0x35,
-                 0x4e, 0x30,
-                 0x32, 0x30, 0x31, 0x31, 0x32, 0x46, 0x45, 0x30, 0x35, 0x36,
-                 0x43, 0x3b]
+        bytes = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x31, 0x42, 0x30, 0x33, 0x36, 0x35,
+            0x4e, 0x30,
+            0x32, 0x30, 0x31, 0x31, 0x32, 0x46, 0x45, 0x30, 0x35, 0x36,
+            0x43, 0x3b])
         # :X19170365N020112FE056C;
 
         gc.receiveChars(bytes)
 
         self.assertEqual(
             self.receivedFrames[0],
-            CanFrame(0x191B0365, [0x02, 0x01, 0x12, 0xFE, 0x05, 0x6C])
+            CanFrame(0x191B0365,
+                     bytearray([0x02, 0x01, 0x12, 0xFE, 0x05, 0x6C]))
         )
 
     def testOneFrameReceivedHeaderOnlyTwice(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes = [0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36, 0x35,
-                 0x4e, 0x3b, 0x0a]  # :X19490365N;
+        bytes = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36, 0x35,
+            0x4e, 0x3b, 0x0a])  # :X19490365N;
 
         gc.receiveChars(bytes+bytes)
 
-        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, []))
-        self.assertEqual(self.receivedFrames[1], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[0],
+                         CanFrame(0x19490365, bytearray()))
+        self.assertEqual(self.receivedFrames[1],
+                         CanFrame(0x19490365, bytearray()))
 
     def testOneFrameReceivedHeaderOnlyPlusPartOfAnother(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes = [0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36,
-                 0x35, 0x4e, 0x3b, 0x0a,  # :X19490365N;
-                 0x3a, 0x58]
+        bytes = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33, 0x36,
+            0x35, 0x4e, 0x3b, 0x0a,  # :X19490365N;
+            0x3a, 0x58])
         gc.receiveChars(bytes)
 
-        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[0],
+                         CanFrame(0x19490365, bytearray()))
 
-        bytes = [0x31, 0x39, 0x34, 0x39, 0x30, 0x33,
-                 0x36, 0x35, 0x4e, 0x3b, 0x0a]
+        bytes = bytearray([
+            0x31, 0x39, 0x34, 0x39, 0x30, 0x33,
+            0x36, 0x35, 0x4e, 0x3b, 0x0a])
         gc.receiveChars(bytes)
 
-        self.assertEqual(self.receivedFrames[1], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[1],
+                         CanFrame(0x19490365, bytearray()))
 
     def testOneFrameReceivedInTwoChunks(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes1 = [0x3a, 0x58, 0x31, 0x39, 0x31, 0x37, 0x30, 0x33, 0x36, 0x35,
-                  0x4e, 0x30]
+        bytes1 = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x31, 0x37, 0x30, 0x33, 0x36, 0x35,
+            0x4e, 0x30])
         # :X19170365N020112FE056C;
 
         gc.receiveChars(bytes1)
 
-        bytes2 = [0x32, 0x30, 0x31, 0x31, 0x32, 0x46, 0x45, 0x30, 0x35, 0x36,
-                  0x43, 0x3b]
+        bytes2 = bytearray([
+            0x32, 0x30, 0x31, 0x31, 0x32, 0x46, 0x45, 0x30, 0x35, 0x36,
+            0x43, 0x3b])
         gc.receiveChars(bytes2)
 
         self.assertEqual(
             self.receivedFrames[0],
-            CanFrame(0x19170365, [0x02, 0x01, 0x12, 0xFE, 0x05, 0x6C])
+            CanFrame(0x19170365,
+                     bytearray([0x02, 0x01, 0x12, 0xFE, 0x05, 0x6C]))
         )
 
     def testSequence(self):
         gc = CanPhysicalLayerGridConnect(self.captureString)
         gc.registerFrameReceivedListener(self.receiveListener)
-        bytes = [0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33,
-                 0x36, 0x35, 0x4e, 0x3b, 0x0a]
+        bytes = bytearray([
+            0x3a, 0x58, 0x31, 0x39, 0x34, 0x39, 0x30, 0x33,
+            0x36, 0x35, 0x4e, 0x3b, 0x0a])
         # :X19490365N;
 
         gc.receiveChars(bytes)
 
         self.assertEqual(len(self.receivedFrames), 1)
-        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[0],
+                         CanFrame(0x19490365, bytearray()))
         self.receivedFrames = []
 
         gc.receiveChars(bytes)
         self.assertEqual(len(self.receivedFrames), 1)
-        self.assertEqual(self.receivedFrames[0], CanFrame(0x19490365, []))
+        self.assertEqual(self.receivedFrames[0],
+                         CanFrame(0x19490365, bytearray()))
 
 
 if __name__ == '__main__':

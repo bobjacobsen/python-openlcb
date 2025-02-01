@@ -33,12 +33,25 @@ class MemoryReadMemo:
     """Memo carries request and reply.
 
     Args:
-        nodeID (_type_): _description_
-        size (_type_): _description_
-        space (_type_): _description_
-        address (_type_): _description_
-        rejectedReply (_type_): _description_
-        dataReply (_type_): _description_
+        nodeID (NodeID): Remote node id (where to read).
+        size (int): Size of the data to be read, typically in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the read operation
+            should be performed.
+        rejectedReply (Callable[MemoryReadMemo]): Callback function to handle
+            rejected read responses.
+            The callback will receive this MemoryReadMemo instance.
+        dataReply (Callable[MemoryReadMemo]): Callback function to handle successful
+            read responses (called after okReply which is handled by
+            MemoryService). The callback will receive the data read from
+            memory. This is passed as a MemoryReadMemo object with the
+            data member set
+
+    Attributes:
+        data(bytearray): The data that was read.
     """
     def __init__(self, nodeID, size, space, address, rejectedReply, dataReply):
         # For args see class docstring.
@@ -50,20 +63,29 @@ class MemoryReadMemo:
         self.dataReply = dataReply
         # for convenience, data can be added or updated after creation of the
         # memo
-        self.data = []
+        self.data = bytearray()
 
 
 class MemoryWriteMemo:
-    """_summary_
+    """A memory write request within an OpenLCB network.
     Args:
-        nodeID (_type_): Node from which write is requested
-        okReply (_type_): _description_
-        rejectedReply (_type_): _description_
-        size (_type_): _description_
-        space (_type_): _description_
-        address (_type_): _description_
-        data (_type_): _description_
+        nodeID (NodeID): Remote node id (where to write).
+        okReply (Callable): Callback function to handle successful write
+            responses. The callback receives this MemoryWriteMemo instance.
+        rejectedReply (Callable): Callback function to handle rejected
+            write responses. The callback receives this MemoryWriteMemo
+            instance.
+        size (int): Size of the data to be written in bytes.
+        space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
+        address (int): The address in memory where the data should be
+            written.
+        data (bytes): The actual data to be written to the specified
+            memory address.
     """
+
     def __init__(self, nodeID, okReply, rejectedReply, size, space, address,
                  data):
         # For args see class docstring.
@@ -77,6 +99,12 @@ class MemoryWriteMemo:
 
 
 class MemoryService:
+    """Manage memory read and write requests
+    (64 bytes at a time).
+
+    Args:
+        service (DatagramService): See DatagramService.
+    """
 
     def __init__(self, service):
         self.service = service
@@ -90,10 +118,14 @@ class MemoryService:
         )
 
     def spaceDecode(self, space):
-        """convert from a space number to either
+        """Convert from a space number to either
+        False and command byte or True and standard memory space
 
         Args:
-            space (_type_): _description_
+            space (int): Encoded memory space identifier, where values:
+            - 0xFF to 0xFD are special spaces, and only the least significant
+              2 bits are relevant.
+            - 0x00 to 0xFC represent standard memory spaces directly.
 
         Returns:
             tuple(bool, byte): (False, 1-3 for in command byte) :
@@ -101,8 +133,9 @@ class MemoryService:
                 or (True, space number) : spaces 0 - 0xFC
                 (NOTE: type of space may affect type of output)
         """
-        # TODO: Maybe check type of space & raise TypeError if not something
-        #   valid, whether byte, int, or whatever is ok.
+        # TODO: Maybe check type of space & raise TypeError if not
+        #   something valid, whether byte, int, or what is ok [add
+        #   more _description_ to space in docstring].
         if space >= 0xFD:
             return (False, space & 0x03)
         return (True, space)
@@ -138,8 +171,10 @@ class MemoryService:
         addr3 = ((memo.address >> 16) & 0xFF)
         addr4 = ((memo.address >> 8) & 0xFF)
         addr5 = (memo.address & 0xFF)
-        data = [DatagramService.ProtocolID.MemoryOperation.value, spaceFlag,
-                addr2, addr3, addr4, addr5]
+        data = bytearray([
+            DatagramService.ProtocolID.MemoryOperation.value, spaceFlag,
+            addr2, addr3, addr4, addr5])
+        # NOTE: list[int] is ok for bytearray extend (`+` requires cast)
         if byte6:
             data.extend([(memo.space & 0xFF)])
         data.extend([memo.size])
@@ -242,6 +277,11 @@ class MemoryService:
         return True
 
     def requestMemoryWrite(self, memo):
+        """Request memory write.
+
+        Args:
+            memo (MemoryWriteMemo): information to send
+        """
         # preserve the request
         self.writeMemos.append(memo)
         # create & send a write datagram
@@ -253,8 +293,10 @@ class MemoryService:
         addr3 = ((memo.address >> 16) & 0xFF)
         addr4 = ((memo.address >> 8) & 0xFF)
         addr5 = (memo.address & 0xFF)
-        data = [DatagramService.ProtocolID.MemoryOperation.value, spaceFlag,
-                addr2, addr3, addr4, addr5]
+        data = bytearray([
+            DatagramService.ProtocolID.MemoryOperation.value, spaceFlag,
+            addr2, addr3, addr4, addr5
+        ])
         if byte6:
             data.extend([(memo.space & 0xFF)])
         data.extend(memo.data)
@@ -262,7 +304,22 @@ class MemoryService:
         self.service.sendDatagram(dgWriteMemo)
 
     def requestSpaceLength(self, space, nodeID, callback):
-        '''Request the length of a specific memory space from a remote node.'''
+        '''Request the length of a specific memory space from a remote node.
+
+        Args:
+            space (int): Encoded memory space identifier. This can be a
+                value within a specific range, as defined in the
+                `spaceDecode` method.
+            nodeID (NodeID): ID of remote node from which the memory space length is
+                requested.
+            callback (Callable): Callback function that will receive the
+                response. The callback will receive an integer address
+                as a parameter, representing the address of the
+                requested memory space or -1 if not present.
+
+        Returns:
+            None
+        '''
         if self.spaceLengthCallback is not None:
             logging.error("Overlapping calls to requestSpaceLength")
             return
@@ -278,8 +335,8 @@ class MemoryService:
         """Convert an array in MSB-first order to an integer
 
         Args:
-            data (Union[bytes,bytearray,list[int]]): MSB-first order encoded
-                32-bit int
+            data (Union[bytes,bytearray,list[int]]): MSB-first order
+                encoded 32-bit int
 
         Returns:
             int: The converted data as a number.
@@ -292,25 +349,26 @@ class MemoryService:
 
     def arrayToUInt64(self, data):
         """Parse a MSB-first order 64-bit integer
+        (Python auto-sizes int, so this is same as arrayToInt).
+        """
+        return self.arrayToInt(data)
+
+    @staticmethod
+    def arrayToString(data, length):
+        """Decode utf-8 bytes to string
+        up to the 1st zero byte or given length,
+        whichever is fewer characters.
 
         Args:
-            data (Union[bytes,bytearray,list[int]]): MSB-first order encoded
-                64-bit int
+            data (Union[bytearray, bytes]): A string encoded as bytes.
+            length (int): The used length the data.
 
         Returns:
-            int: The converted data as a number (Python determines
-                actual in-memory size based on the value).
+            str: Data decoded as text.
         """
-        result = 0
-        for index in range(0, len(data)):
-            result = result << 8
-            result = result | data[index]
-        return result
-
-    def arrayToString(self, data, length):
-        '''
-        Converts an array to a string up to the 1st zero byte or given length
-        '''
+        if not isinstance(data, bytearray):
+            raise TypeError("Expected bytearray (formerly list[int]), got {}"
+                            .format(type(data).__name__))
         zeroIndex = len(data)
         try:
             temp = data.index(0)
@@ -325,48 +383,70 @@ class MemoryService:
         if byteCount == 0:
             return ""
 
-        result = ''.join([chr(i) for i in data[:byteCount]])
+        result = data[:byteCount].decode('utf-8')
         return result
 
-    def intToArray(self, value, length):
-        if length == 1:
-            return [(value & 0xff)]
-        if length == 2:
-            return [((value >> 8) & 0xff), (value & 0xff)]
-        if length == 4:
-            return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                    ((value >> 8) & 0xff),  (value & 0xff)]
-        if length == 8:
-            return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
-                    ((value >> 40) & 0xff), ((value >> 32) & 0xff),
-                    ((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                    ((value >> 8) & 0xff), (value & 0xff)]
-        return []
+    @staticmethod
+    def intToArray(value, length):
+        """Convert an integer into an array of given length
 
-    def uInt64ToArray(self, value, length):
-        '''converts a 64-bit integer into an array of given length'''
-        if length == 1:
-            return [(value & 0xff)]
-        if length == 2:
-            return [((value >> 8) & 0xff), (value & 0xff)]
-        if length == 4:
-            return [((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                    ((value >> 8) & 0xff),  (value & 0xff)]
-        if length == 8:
-            return [((value >> 56) & 0xff), ((value >> 48) & 0xff),
-                    ((value >> 40) & 0xff), ((value >> 32) & 0xff),
-                    ((value >> 24) & 0xff), ((value >> 16) & 0xff),
-                    ((value >> 8) & 0xff), (value & 0xff)]
-        return []
+        Args:
+            value (int): any value
+            length (int): Byte count (1, 2, 4, or 8).
 
-    def stringToArray(self, value, length):
+        Returns:
+            bytearray: The value encoded in big-endian format.
+        """
+        if value >= (1 << (length * 8)):  # TODO: ? also exclude value < 0 ?
+            raise ValueError("Value {} cannot fit in {} bytes."
+                             .format(value, length))
+        if length == 1:
+            return bytearray([
+                (value & 0xff)
+            ])
+        if length == 2:
+            return bytearray([
+                ((value >> 8) & 0xff), (value & 0xff)
+            ])
+        if length == 4:
+            return bytearray([
+                ((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                ((value >> 8) & 0xff),  (value & 0xff)
+            ])
+        if length == 8:
+            return bytearray([
+                ((value >> 56) & 0xff), ((value >> 48) & 0xff),
+                ((value >> 40) & 0xff), ((value >> 32) & 0xff),
+                ((value >> 24) & 0xff), ((value >> 16) & 0xff),
+                ((value >> 8) & 0xff), (value & 0xff)
+            ])
+        logging.error("integer length {} is not implemented.".format(length))
+        return bytearray()
+
+    @staticmethod
+    def uInt64ToArray(value, length):
+        '''Convert a 64-bit integer into an array of given length
+        (Python auto-sizes int, so this is same as intToArray)
+        '''
+        return MemoryService.intToArray(value, length)
+
+    @staticmethod
+    def stringToArray(value, length):
         '''Converts a string to an array of given length
         padding with 0 bytes as needed
         '''
-        strToUInt8 = value.encode('ascii')
+        strToUInt8 = value.encode('utf-8')
         byteCount = min(length, len(strToUInt8))
-        contentPart = list(strToUInt8[:byteCount])
-        padding = [0]*length
-        contentPart.extend(padding)
-
-        return contentPart[:length]
+        # convert to bytearray since bytes is immutable:
+        contentPart = bytearray(strToUInt8[:byteCount])
+        if len(contentPart) >= length:
+            if len(contentPart) > length:
+                logging.warning(
+                    "MemoryService stringToArray: len(value)=={}"
+                    " exceeds length {}".format(len(value), length))
+                # TODO: Truncate (or is any length ok for the caller)?
+            return contentPart
+        # list[int] is compatible bytearray extend but not `+` so cast
+        #   to bytearray after getting list[int] of remaining length:
+        padding = bytearray([0] * (length-len(contentPart)))
+        return contentPart + padding

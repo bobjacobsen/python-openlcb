@@ -19,7 +19,7 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
     def __init__(self, callback):
         CanPhysicalLayer.__init__(self)
         self.canSendCallback = callback
-        self.inboundBuffer = []
+        self.inboundBuffer = bytearray()
 
     def setCallBack(self, callback):
         self.canSendCallback = callback
@@ -35,9 +35,9 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
         '''Receive a string from the outside link to be parsed
 
         Args:
-            string (str): An ASCII string to parse.
+            string (str): A UTF-8 string to parse.
         '''
-        self.receiveChars(string.encode("ASCII"))
+        self.receiveChars(string.encode("utf-8"))
 
     # Provide characters from the outside link to be parsed
     def receiveChars(self, data):
@@ -47,7 +47,7 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
             #  ^ ';' ends message so we have at least one (CR/LF not required)
             # found end, now find start of that same message, earlier in buffer
             for index in range(0, len(self.inboundBuffer)):
-                outData = []
+                outData = bytearray()
                 if 0x3B not in self.inboundBuffer[index:]:
                     break
                 if self.inboundBuffer[index] == 0x3A:  # ':' starts message
@@ -68,7 +68,7 @@ class CanPhysicalLayerGridConnect(CanPhysicalLayer):
                         part1 = (byte1 & 0xF)+9 if byte1 > 0x39 else byte1 & 0xF  # noqa: E501
                         byte2 = self.inboundBuffer[index+11+2*dataItem+1]
                         part2 = (byte2 & 0xF)+9 if byte2 > 0x39 else byte2 & 0xF  # noqa: E501
-                        outData += [part1 << 4 | part2]
+                        outData += bytearray([part1 << 4 | part2])
                         lastByte += 2
                     # lastByte is index of ; in this message
 

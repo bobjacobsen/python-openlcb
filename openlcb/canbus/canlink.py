@@ -54,49 +54,59 @@ class CanLink(LinkLayer):
         Inhibited = 2,
         Permitted = 3
 
-    def receiveListener(self, frame):  # CanFrame
+    def receiveListener(self, frame):
+        """Call the correct handler if any for a received frame.
 
-        if self.decodeControlFrameFormat(frame) == ControlFrame.LinkUp:
+        Args:
+            frame (CanFrame): Any CanFrame, OpenLCB/LCC or not (if
+                not then ignored).
+        """
+        control_frame = self.decodeControlFrameFormat(frame)
+        if control_frame == ControlFrame.LinkUp:
             self.handleReceivedLinkUp(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkRestarted:  # noqa: E501
+        elif control_frame == ControlFrame.LinkRestarted:  # noqa: E501
             self.handleReceivedLinkRestarted(frame)
-        elif self.decodeControlFrameFormat(frame) in (ControlFrame.LinkCollision,  # noqa: E501
-                                                      ControlFrame.LinkError):
+        elif control_frame in (ControlFrame.LinkCollision,  # noqa: E501
+                               ControlFrame.LinkError):
             logging.warning("Unexpected error report {:08X}"
                             "".format(frame.header))
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.LinkDown:
+        elif control_frame == ControlFrame.LinkDown:
             self.handleReceivedLinkDown(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.CID:
+        elif control_frame == ControlFrame.CID:
             self.handleReceivedCID(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.RID:
+        elif control_frame == ControlFrame.RID:
             self.handleReceivedRID(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.AMD:
+        elif control_frame == ControlFrame.AMD:
             self.handleReceivedAMD(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.AME:
+        elif control_frame == ControlFrame.AME:
             self.handleReceivedAME(frame)
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.AMR:
+        elif control_frame == ControlFrame.AMR:
             self.handleReceivedAMR(frame)
-        elif self.decodeControlFrameFormat(frame) in (ControlFrame.EIR0,
-                                                      ControlFrame.EIR1,
-                                                      ControlFrame.EIR2,
-                                                      ControlFrame.EIR3):
+        elif control_frame in (ControlFrame.EIR0,
+                               ControlFrame.EIR1,
+                               ControlFrame.EIR2,
+                               ControlFrame.EIR3):
             pass   # ignored upon receipt
-        elif self.decodeControlFrameFormat(frame) == ControlFrame.Data:
+        elif control_frame == ControlFrame.Data:
             self.handleReceivedData(frame)
-        elif (self.decodeControlFrameFormat(frame)
+        elif (control_frame
               == ControlFrame.UnknownFormat):
             logging.warning("Unexpected CAN header 0x{:08X}"
                             "".format(frame.header))
         else:
+            # This should never happen due to how
+            #   decodeControlFrameFormat works, but this is a "not
+            #   implemented" output for ensuring completeness (If this
+            #   case occurs, some code is missing above).
             logging.warning("Invalid control frame format 0x{:08X}"
-                            "".format(self.decodeControlFrameFormat(frame)))
+                            "".format(control_frame))
 
-    def handleReceivedLinkUp(self, frame):  # CanFrame
+    def handleReceivedLinkUp(self, frame):
         """Link started, update state, start process to create alias.
         LinkUp message will be sent when alias process completes.
 
         Args:
-            frame (_type_): _description_
+            frame (CanFrame): A LinkUp frame.
         """
         # start the alias allocation in Inhibited state
         self.state = CanLink.State.Inhibited
@@ -104,13 +114,14 @@ class CanLink(LinkLayer):
         #    notify upper layers
         self.linkStateChange(self.state)
 
-    def handleReceivedLinkRestarted(self, frame):  # CanFrame
+    def handleReceivedLinkRestarted(self, frame):
         """Send a LinkRestarted message upstream.
 
         Args:
-            frame (_type_): _description_
+            frame (CanFrame): A LinkRestarted frame.
         """
-        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None, [])
+        msg = Message(MTI.Link_Layer_Restarted, NodeID(0), None,
+                      bytearray())
         self.fireListeners(msg)
 
     def defineAndReserveAlias(self):
@@ -135,11 +146,11 @@ class CanLink(LinkLayer):
     #    called on restart
     #    TODO: (restart) This is not called; there's no callback for it in
     #    Telnet library
-    def handleReceivedLinkDown(self, frame):  # CanFrame
+    def handleReceivedLinkDown(self, frame):
         """return to Inhibited state until link back up
 
         Args:
-            frame (_type_): _description_
+            frame (CanFrame): an link down frame.
         """
         # NOTE: since no working link, not sending the AMR frame
         self.state = CanLink.State.Inhibited
@@ -154,9 +165,9 @@ class CanLink(LinkLayer):
     # invoked when the link layer comes up and down
     def linkStateChange(self, state):  # state is of the State enum
         if state == CanLink.State.Permitted:
-            msg = Message(MTI.Link_Layer_Up, NodeID(0), None, [])
+            msg = Message(MTI.Link_Layer_Up, NodeID(0), None, bytearray())
         else:
-            msg = Message(MTI.Link_Layer_Down, NodeID(0), None, [])
+            msg = Message(MTI.Link_Layer_Down, NodeID(0), None, bytearray())
         self.fireListeners(msg)
 
     def handleReceivedCID(self, frame):  # CanFrame
@@ -274,7 +285,7 @@ class CanLink(LinkLayer):
                 key = CanLink.AccumKey(mti, sourceID, destID)
                 if dgCode == 0x00A_000_000 or dgCode == 0x00B_000_000:
                     #    start of message, create the entry in the accumulator
-                    self.accumulator[key] = []
+                    self.accumulator[key] = bytearray()
                 else:
                     # not start frame
                     # check for never properly started, this is an error
@@ -306,6 +317,7 @@ class CanLink(LinkLayer):
                 destAlias = 0
                 if (len(frame.data) > 0):
                     destAlias |= (frame.data[0] & 0x0F) << 8  # rm f bits
+                    # TODO: Is this ok when len(frame.data) <= 1? Still << 8?
                 if (len(frame.data) > 1):
                     destAlias |= (frame.data[1] & 0xFF)
                 try:
@@ -327,7 +339,7 @@ class CanLink(LinkLayer):
                 key = CanLink.AccumKey(mti, sourceID, destID)
                 if (frame.data[0] & 0x20 == 0):
                     #    is start, create the entry in the accumulator
-                    self.accumulator[key] = []
+                    self.accumulator[key] = bytearray()
                 else:
                     # not start frame
                     # check for first bit set never seen
@@ -462,30 +474,31 @@ class CanLink(LinkLayer):
         of no more than 8 bytes for datagram.
 
         Args:
-            data (_type_): _description_
+            data (list): The input data to be segmented.
 
         Returns:
-            _type_: _description_
+            list[bytearray]:  A list of one or more data segments.
+                Each contains exactly 8 bytes except possibly the last.
         """
         nSegments = (len(data)+7) // 8
         # ^ the +7 is since integer division takes the floor value
         if nSegments == 0:
-            return [[]]
+            return [bytearray()]
 
         if nSegments == 1:
             return [data]
 
         #    multiple frames
-        retval = []
+        segments = []
         for i in range(0, nSegments-2+1):  # first entry of 2 has full data
-            nextEntry = (data[i*8:i*8+7+1]).copy()
-            retval.append(nextEntry)
+            nextEntry = data[i*8:i*8+7+1]
+            segments.append(nextEntry)
 
         #    add the last
-        lastEntry = (data[8*(nSegments-1):]).copy()
-        retval.append(lastEntry)
+        lastEntry = data[8*(nSegments-1):]
+        segments.append(lastEntry)
 
-        return retval
+        return segments
 
     def segmentAddressedDataArray(self, alias, data):
         '''Segment data into zero or more arrays
@@ -493,34 +506,37 @@ class CanLink(LinkLayer):
         for addressed non-datagram messages.
 
         Args:
-            alias (int): _description_
-            data (_type_): _description_
+            alias (int): A 12-bit alias to be included at the start of
+                each segment.
+            data (list): The input data to be segmented.
 
         Returns:
-            _type_: _description_
+            list[bytearray]: A list of one or more data segments.
+                Each list begins with the alias (split into
+                two parts) followed by segmented data.
         '''
         part0 = (alias >> 8) & 0xF
         part1 = alias & 0xFF
         nSegments = (len(data)+5) // 6  # the +5 is since integer division
         #   takes the floor value
         if nSegments == 0:
-            return [[part0, part1]]
+            return [bytearray([part0, part1])]
         if nSegments == 1:
-            return [[part0, part1]+data]
+            return [bytearray([part0, part1])+data]
 
         #    multiple frames
-        retval = []
+        segments = []
         for i in range(0, nSegments-2+1):  # first entry of 2 has full data
-            nextEntry = [part0 | 0x30, part1]+(data[i*6:i*6+5+1]).copy()
-            retval.append(nextEntry)
+            nextEntry = bytearray([part0 | 0x30, part1]) + data[i*6:i*6+5+1]
+            segments.append(nextEntry)
 
         #    add the last
-        lastEntry = [part0 | 0x20, part1]+(data[6*(nSegments-1):]).copy()
-        retval.append(lastEntry)
+        lastEntry = bytearray([part0 | 0x20, part1]) + data[6*(nSegments-1):]
+        segments.append(lastEntry)
         #    mark first (last already done above)
-        retval[0][0] &= ~0x20
+        segments[0][0] &= ~0x20
 
-        return retval
+        return segments
 
     #    MARK: common code
     def checkAndHandleAliasCollision(self, frame):

@@ -27,7 +27,8 @@ class TestNodeStoreClass(unittest.TestCase):
         node2 = Node(NodeID(240))
         dut.store(node2)
 
-        self.assertEqual(dut.asArray(), [node1, node2], "as array")
+        self.assertEqual(dut.asArray(), [node1, node2],
+                         "as array")
 
 
 if __name__ == '__main__':
