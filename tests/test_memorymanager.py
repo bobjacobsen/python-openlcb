@@ -11,7 +11,7 @@ from openlcb import emit_cast
 from openlcb.canbus.canlink import CanLink
 from openlcb.canbus.canphysicallayergridconnect import CanPhysicalLayerGridConnect
 from openlcb.cdivar import SIGNED_INT_MINIMUMS, CDIVar
-from openlcb.datagramservice import DatagramService, DatagramWriteMemo
+from openlcb.datagramservice import DatagramService, DatagramSendMemo
 from openlcb.dataprocessormemo import DataProcessorMemo
 from openlcb.localnode import LocalNode
 from openlcb.localnodeprocessor import LocalNodeProcessor

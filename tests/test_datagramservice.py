@@ -1,8 +1,8 @@
 import unittest
 
 from openlcb.datagramservice import (
-    DatagramReadMemo,
-    DatagramWriteMemo,
+    DatagramReceiveMemo,
+    DatagramSendMemo,
     DatagramService,
 )
 from openlcb.linklayer import LinkLayer
@@ -41,16 +41,16 @@ class DatagramServiceTest(unittest.TestCase):
         )
         LinkMockLayer.sentMessages = []
         self.received = False
-        self.readMemos = []
+        self.receiveMemos = []  # type: list[DatagramReceiveMemo]
         self.callback = False
 
     def receiveListener(self, msg):
         self.received = True
-        self.readMemos.append(msg)
+        self.receiveMemos.append(msg)
         return True
 
     def testFireDatagramReceived(self):
-        msg = DatagramReadMemo(NodeID(12), bytearray())
+        msg = DatagramReceiveMemo(NodeID(12), bytearray())
         receiver = self.receiveListener
 
         self.service.registerDatagramReceivedListener(receiver)
@@ -60,11 +60,11 @@ class DatagramServiceTest(unittest.TestCase):
         self.assertTrue(self.received)
 
     def testWriteMemoEquatable(self):
-        dm1a = DatagramWriteMemo(NodeID(2), bytearray())
-        dm1b = DatagramWriteMemo(NodeID(2), bytearray())
-        dm2 = DatagramWriteMemo(NodeID(12), bytearray())
-        dm3 = DatagramWriteMemo(NodeID(12), bytearray([1]))
-        dm4 = DatagramWriteMemo(NodeID(12), bytearray([1, 2, 3]))
+        dm1a = DatagramSendMemo(NodeID(2), bytearray())
+        dm1b = DatagramSendMemo(NodeID(2), bytearray())
+        dm2 = DatagramSendMemo(NodeID(12), bytearray())
+        dm3 = DatagramSendMemo(NodeID(12), bytearray([1]))
+        dm4 = DatagramSendMemo(NodeID(12), bytearray([1, 2, 3]))
 
         self.assertEqual(dm1a, dm1b)
         self.assertNotEqual(dm1a, dm2)
@@ -74,11 +74,11 @@ class DatagramServiceTest(unittest.TestCase):
         self.assertNotEqual(dm3, dm4)
 
     def testReadMemoEquatable(self):
-        dm1a = DatagramReadMemo(NodeID(1), bytearray())
-        dm1b = DatagramReadMemo(NodeID(1), bytearray())
-        dm2 = DatagramReadMemo(NodeID(11), bytearray())
-        dm3 = DatagramReadMemo(NodeID(11), bytearray([1]))
-        dm4 = DatagramReadMemo(NodeID(11), bytearray([1, 2, 3]))
+        dm1a = DatagramReceiveMemo(NodeID(1), bytearray())
+        dm1b = DatagramReceiveMemo(NodeID(1), bytearray())
+        dm2 = DatagramReceiveMemo(NodeID(11), bytearray())
+        dm3 = DatagramReceiveMemo(NodeID(11), bytearray([1]))
+        dm4 = DatagramReceiveMemo(NodeID(11), bytearray([1, 2, 3]))
 
         self.assertEqual(dm1a, dm1b)
         self.assertNotEqual(dm1a, dm2)
@@ -96,15 +96,15 @@ class DatagramServiceTest(unittest.TestCase):
         self.assertEqual(self.service.datagramType([0x20, 2, 3]),
                          DatagramService.ProtocolID.MemoryOperation)
 
-    def writeCallBackCheck(self, memo):
+    def sendCallBackCheck(self, memo):
         self.callback = True
 
     def testSendDatagramOK(self):
-        writeMemo = DatagramWriteMemo(NodeID(22),
-                                      bytearray([0x20, 0x42, 0x30]),
-                                      self.writeCallBackCheck)
+        sendMemo = DatagramSendMemo(NodeID(22),
+                                    bytearray([0x20, 0x42, 0x30]),
+                                    self.sendCallBackCheck)
 
-        self.service.sendDatagram(writeMemo)
+        self.service.sendDatagram(sendMemo)
 
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
 
@@ -115,13 +115,13 @@ class DatagramServiceTest(unittest.TestCase):
         self.assertTrue(self.callback)
 
     def testSendThreeDatagramOK(self):
-        writeMemo = DatagramWriteMemo(NodeID(22),
-                                      bytearray([0x20, 0x42, 0x30]),
-                                      self.writeCallBackCheck)
+        sendMemo = DatagramSendMemo(NodeID(22),
+                                    bytearray([0x20, 0x42, 0x30]),
+                                    self.sendCallBackCheck)
 
-        self.service.sendDatagram(writeMemo)
-        self.service.sendDatagram(writeMemo)
-        self.service.sendDatagram(writeMemo)
+        self.service.sendDatagram(sendMemo)
+        self.service.sendDatagram(sendMemo)
+        self.service.sendDatagram(sendMemo)
 
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
         # ^ only first is send until reply
@@ -153,11 +153,11 @@ class DatagramServiceTest(unittest.TestCase):
         self.assertEqual(len(LinkMockLayer.sentMessages), 3)
 
     def testSendDatagramRejected(self):
-        writeMemo = DatagramWriteMemo(NodeID(22),
-                                      bytearray([0x20, 0x42, 0x30]), None,
-                                      self.writeCallBackCheck)
+        sendMemo = DatagramSendMemo(NodeID(22),
+                                    bytearray([0x20, 0x42, 0x30]), None,
+                                    self.sendCallBackCheck)
 
-        self.service.sendDatagram(writeMemo)
+        self.service.sendDatagram(sendMemo)
 
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)
 
@@ -178,9 +178,9 @@ class DatagramServiceTest(unittest.TestCase):
 
         # check that it went through
         self.assertTrue(self.received)
-        self.assertEqual(len(self.readMemos), 1)
+        self.assertEqual(len(self.receiveMemos), 1)
 
-        self.service.positiveReplyToDatagram(self.readMemos[0], 0)
+        self.service.positiveReplyToDatagram(self.receiveMemos[0], 0)
 
         # check message came through
         self.assertEqual(len(LinkMockLayer.sentMessages), 1)

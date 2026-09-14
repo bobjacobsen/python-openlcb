@@ -35,9 +35,9 @@ from openlcb import (
     emit_cast,
 )
 from openlcb.datagramservice import (
-    # DatagramReadMemo,
-    DatagramReadMemo,
-    DatagramWriteMemo,
+    # DatagramReceiveMemo,
+    DatagramReceiveMemo,
+    DatagramSendMemo,
     DatagramService,
 )
 from openlcb.convert import Convert
@@ -154,7 +154,7 @@ lists:
     MEMORY_CONFIGURATION_PROTOCOL and other applicable protocols in its
     PIP set (See Node constructor).
     - Each node must have its own MemoryService instance since
-      DatagramReadMemo does not carry a destination address.
+      DatagramReceiveMemo does not carry a destination address.
 """
 TWO_BIT_PARAMS = {
     # region *lists* (last 2 bits are MemorySpaceIndex.fromNumber param)
@@ -316,7 +316,7 @@ def assertMemoOK(memo: Union[MemoryReadMemo, MemoryWriteMemo]):
 
 
 def parseReplyDatagram(memo: Union[MemoryReadMemo, MemoryWriteMemo],
-                       dmemo: Union[DatagramReadMemo, DatagramWriteMemo]):
+                       dmemo: Union[DatagramReceiveMemo, DatagramSendMemo]):
     """Parse dmemo and set errorCode and/or error attributes of memo"""
     if not dmemo.data or dmemo.data[0] != 0x20:
         logger.warning(
@@ -470,19 +470,19 @@ class MemoryService:
             data.extend([(memo.space & 0xFF)])
         data.extend([memo.size])
         logger.debug(
-            "[requestMemoryReadNext] creating DatagramWriteMemo"
+            "[requestMemoryReadNext] creating DatagramSendMemo"
             f" to destID={memo.nodeID} with data={list(data)}")
-        dgWriteMemo = DatagramWriteMemo(memo.nodeID, data,
-                                        self.receivedOkReplyToWrite)
-        self.service.sendDatagram(dgWriteMemo)
+        dgSendMemo = DatagramSendMemo(memo.nodeID, data,
+                                      self.receivedOkReplyToWrite)
+        self.service.sendDatagram(dgSendMemo)
 
-    def receivedOkReplyToWrite(self, memo: Union[DatagramWriteMemo, None]):
+    def receivedOkReplyToWrite(self, memo: Union[DatagramSendMemo, None]):
         '''Wait for following response to be returned via listener.
         This is normal.
         '''
         pass
 
-    def datagramReceivedListener(self, dmemo: DatagramReadMemo) -> bool:
+    def datagramReceivedListener(self, dmemo: DatagramReceiveMemo) -> bool:
         '''Process a datagram.
 
         Sends the positive reply and returns true if this is from our service.
@@ -609,7 +609,7 @@ class MemoryService:
                     #   https://github.com/openlcb/documents/issues/190)?
                     replyData += descBytes
                     # FIXME: Need to send Datagram Received OK datagram 1st?
-                    spaceInfoReplyMemo = DatagramWriteMemo(
+                    spaceInfoReplyMemo = DatagramSendMemo(
                         dmemo.srcID,
                         replyData
                     )
@@ -741,7 +741,7 @@ class MemoryService:
                      " on invalid request (expected bytes, got None)")
                 assert len(payload) <= 64
                 replyBytes += payload
-                requestedMemoryMemo = DatagramWriteMemo(
+                requestedMemoryMemo = DatagramSendMemo(
                     dmemo.srcID,
                     replyBytes
                 )
@@ -789,7 +789,7 @@ class MemoryService:
 
     @staticmethod
     def failedMemo(mcOp: MCOp, srcID: NodeID, address: int, space: int,
-                   errorCode: int, message) -> DatagramWriteMemo:
+                   errorCode: int, message) -> DatagramSendMemo:
         assert isinstance(mcOp, MCOp)
         assert isinstance(srcID, NodeID)
         assert isinstance(address, int)
@@ -811,7 +811,7 @@ class MemoryService:
             messageBytes = bytearray(message.encode("utf-8"))
             messageBytes.append(0x00)  # null terminator
             replyBytes += messageBytes
-        return DatagramWriteMemo(
+        return DatagramSendMemo(
             srcID,
             replyBytes
         )
@@ -842,7 +842,7 @@ class MemoryService:
             assert memo.space <= 0xFF, f"Space {memo.space} out of byte range"
             data.extend([(memo.space & 0xFF)])
         data.extend(memo.data)
-        dgWriteMemo = DatagramWriteMemo(memo.nodeID, data)
+        dgWriteMemo = DatagramSendMemo(memo.nodeID, data)
         self.service.sendDatagram(dgWriteMemo)
 
     def requestSpaceLength(self, space: int, nodeID: NodeID,
@@ -868,7 +868,7 @@ class MemoryService:
             return
         self.spaceLengthCallback = callback
         # send request
-        dgReqMemo = DatagramWriteMemo(
+        dgReqMemo = DatagramSendMemo(
             nodeID,
             bytearray([
                 DatagramService.ProtocolID.MemoryOperation.value,

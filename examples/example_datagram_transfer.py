@@ -28,7 +28,7 @@ from openlcb.canbus.canlink import CanLink  # noqa:E402
 from openlcb.nodeid import NodeID  # noqa:E402
 from openlcb.datagramservice import (  # noqa:E402
     DatagramService,
-    DatagramWriteMemo,
+    DatagramSendMemo,
 )
 
 # specify connection information
@@ -74,7 +74,7 @@ canLink.registerMessageReceivedListener(datagramService.process)
 
 
 # create a call-back for replies to write datagram
-def writeCallBackCheck(memo):
+def sendCallBackCheck(memo):
     print("Write complete call back")
 
 
@@ -82,7 +82,7 @@ def datagramReceiver(memo):
     """A call-back for when datagrams received
 
     Args:
-        DatagramReadMemo: The datagram object
+        DatagramReceiveMemo: The datagram object
 
     Returns:
         bool: Always True (means we sent the reply to this datagram)
@@ -118,12 +118,12 @@ def datagramWrite():
     import time
     time.sleep(1)
 
-    writeMemo = DatagramWriteMemo(
+    sendMemo = DatagramSendMemo(
         NodeID(settings['farNodeID']),
         bytearray([0x20, 0x43, 0x00, 0x00, 0x00, 0x00, 0x14]),
-        writeCallBackCheck
+        sendCallBackCheck
     )
-    datagramService.sendDatagram(writeMemo)
+    datagramService.sendDatagram(sendMemo)
 
 
 thread = threading.Thread(target=datagramWrite)

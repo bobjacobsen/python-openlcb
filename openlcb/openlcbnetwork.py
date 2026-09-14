@@ -26,7 +26,7 @@ from openlcb.canbus.canphysicallayergridconnect import (
 )
 from openlcb.canbus.canlink import CanLink
 from openlcb.cdimemo import CDIMemo
-from openlcb.datagramservice import DatagramReadMemo, DatagramService
+from openlcb.datagramservice import DatagramReceiveMemo, DatagramService
 from openlcb.dataprocessor import DataFormat
 from openlcb.dataprocessormemo import DataProcessorMemo
 from openlcb.memoryservice import MemoryReadMemo, MemoryService
@@ -211,11 +211,11 @@ class OpenLCBNetwork:
     #     # print("   RL: {}".format(frame))
     #     pass
 
-    def _printDatagram(self, memo: DatagramReadMemo):
+    def _printDatagram(self, memo: DatagramReceiveMemo):
         """A call-back for when datagrams received
 
         Args:
-            memo (DatagramReadMemo): The datagram object
+            memo (DatagramReceiveMemo): The datagram object
 
         Returns:
             bool: Always False (True would mean we sent a reply to the
