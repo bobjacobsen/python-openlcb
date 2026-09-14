@@ -40,8 +40,8 @@ from openlcb.memoryservice import (  # noqa: E402
     MemoryService,
 )
 from openlcb.datagramservice import (  # noqa: E402
-    # DatagramWriteMemo,
-    # DatagramReadMemo,
+    # DatagramSendMemo,
+    # DatagramReceiveMemo,
     DatagramService,
 )
 

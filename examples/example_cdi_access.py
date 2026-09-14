@@ -91,7 +91,7 @@ def printDatagram(memo):
     """A call-back for when datagrams received
 
     Args:
-        DatagramReadMemo: The datagram object
+        DatagramReceiveMemo: The datagram object
 
     Returns:
         bool: Always False (True would mean we sent a reply to the datagram,

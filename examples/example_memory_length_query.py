@@ -26,8 +26,8 @@ from openlcb.canbus.canphysicallayergridconnect import (  # noqa: E402
 from openlcb.canbus.canlink import CanLink  # noqa: E402
 from openlcb.nodeid import NodeID  # noqa: E402
 from openlcb.datagramservice import (  # noqa: E402
-    # DatagramWriteMemo,
-    # DatagramReadMemo,
+    # DatagramSendMemo,
+    # DatagramReceiveMemo,
     DatagramService,
 )
 from openlcb.memoryservice import (  # noqa: E402
@@ -82,7 +82,7 @@ def printDatagram(memo):
     """create a call-back to print datagram contents when received
 
     Args:
-        memo (DatagramReadMemo): The datagram received
+        memo (DatagramReceiveMemo): The datagram received
 
     Returns:
         bool: Always False (True would mean we sent a reply to this datagram,

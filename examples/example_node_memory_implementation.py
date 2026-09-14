@@ -48,7 +48,7 @@ from openlcb.canbus.canphysicallayergridconnect import (  # noqa: E402
 )
 from openlcb.canbus.canlink import CanLink  # noqa: E402
 from openlcb.nodeid import NodeID  # noqa: E402
-from openlcb.datagramservice import DatagramReadMemo, DatagramService  # noqa: E402, E501
+from openlcb.datagramservice import DatagramReceiveMemo, DatagramService  # noqa: E402, E501
 from openlcb.memoryservice import MemoryService  # noqa: E402
 from openlcb.message import Message  # noqa: E402
 from openlcb.mti import MTI  # noqa: E402
@@ -151,11 +151,11 @@ cdi = """<?xml version="1.0" encoding="utf-8"?>
 assert_xml(cdi)
 
 
-def handleDatagram(memo: DatagramReadMemo):
+def handleDatagram(memo: DatagramReceiveMemo):
     """create a call-back to print datagram contents when received
 
     Args:
-        memo (DatagramReadMemo): The datagram received
+        memo (DatagramReceiveMemo): The datagram received
 
     Returns:
         bool: Always False (True would mean we sent a reply to the datagram,
